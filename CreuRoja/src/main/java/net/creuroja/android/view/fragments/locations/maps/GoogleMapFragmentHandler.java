@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.fragments.locations.maps;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -85,6 +85,7 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 
 	public void drawMarkers() {
 		if (setUpMap() && mLocationList != null) {
+			map.clear();
 			for (Location location : mLocationList.getLocations()) {
 				drawMarker(location);
 			}
@@ -111,9 +112,18 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 		}
 	}
 
+	@Override public void search(String query) {
+		Bundle args = null;
+		if (query != null) {
+			args = new Bundle();
+			args.putString(MapFragmentHandler.ARG_SEARCH_QUERY, query);
+		}
+		getFragment().getLoaderManager()
+				.restartLoader(LOADER_LOCATIONS, args, new LocationListCallbacks());
+	}
+
 	@Override public void setUp() {
-		mMapFragment.getLoaderManager()
-				.restartLoader(LOADER_LOCATIONS, null, new LocationListCallbacks());
+		search(null);
 	}
 
 	@Override public Fragment getFragment() {
@@ -145,8 +155,21 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 
 	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
 		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			String selection = null;
+			String[] selectionArgs = null;
+			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
+				String query = args.getString(MapFragmentHandler.ARG_SEARCH_QUERY);
+				selection = CreuRojaContract.Locations.NAME + " LIKE ? OR " +
+							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
+							CreuRojaContract.Locations.ADDRESS + " LIKE ?";
+				selectionArgs = new String[3];
+				selectionArgs[0] = "%" + query + "%";
+				selectionArgs[1] = "%" + query + "%";
+				selectionArgs[2] = "%" + query + "%";
+			}
 			Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
-			return new CursorLoader(mMapFragment.getActivity(), uri, null, null, null, null);
+			return new CursorLoader(mMapFragment.getActivity(), uri, null, selection,
+					selectionArgs, null);
 		}
 
 		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
