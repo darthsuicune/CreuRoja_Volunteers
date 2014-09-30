@@ -2,6 +2,7 @@ package net.creuroja.android.view.fragments.locations.maps;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,8 +10,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -19,12 +20,15 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.locations.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.locations.RailsLocationList;
+import net.creuroja.android.model.locations.loaders.DirectionsLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +39,7 @@ import java.util.Map;
 public class GoogleMapFragmentHandler implements MapFragmentHandler {
 	private static final LatLng DEFAULT_POSITION = new LatLng(41.3958, 2.1739);
 	private static final int LOADER_LOCATIONS = 1;
+	private static final int LOADER_DIRECTIONS = 2;
 
 	SupportMapFragment mMapFragment;
 	GoogleMap map;
@@ -99,9 +104,21 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 		return map != null;
 	}
 
-	@Override public void drawDirections(Location location) {
-		//TODO: Calculate your current position and draw route
-		Toast.makeText(mMapFragment.getActivity(), "NOT YET IMPLEMENTED", Toast.LENGTH_LONG).show();
+	@Override public void getDirections(android.location.Location origin, Location destination) {
+		Bundle bundle = new Bundle();
+		bundle.putDouble(DirectionsLoader.ARG_ORIG_LAT, origin.getLatitude());
+		bundle.putDouble(DirectionsLoader.ARG_ORIG_LONG, origin.getLongitude());
+		bundle.putDouble(DirectionsLoader.ARG_DEST_LAT, destination.mLatitude);
+		bundle.putDouble(DirectionsLoader.ARG_DEST_LONG, destination.mLongitude);
+		getFragment().getLoaderManager()
+				.restartLoader(LOADER_DIRECTIONS, bundle, new DirectionsCallbacks());
+	}
+
+	private void drawDirections(Directions directions) {
+		PolylineOptions directionsOptions = new PolylineOptions();
+		directionsOptions.addAll(directions.getPoints());
+		directionsOptions.color(Color.parseColor("#CC0000"));
+		map.addPolyline(directionsOptions);
 	}
 
 	@Override public void toggleLocations(LocationType type, boolean newState) {
@@ -120,6 +137,15 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 		}
 		getFragment().getLoaderManager()
 				.restartLoader(LOADER_LOCATIONS, args, new LocationListCallbacks());
+	}
+
+	@Override public boolean locate(android.location.Location location) {
+		if (map != null) {
+			map.animateCamera(CameraUpdateFactory
+					.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+			return true;
+		}
+		return false;
 	}
 
 	@Override public void setUp() {
@@ -168,7 +194,7 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 				selectionArgs[2] = "%" + query + "%";
 			}
 			Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
-			return new CursorLoader(mMapFragment.getActivity(), uri, null, selection,
+			return new CursorLoader(getFragment().getActivity(), uri, null, selection,
 					selectionArgs, null);
 		}
 
@@ -179,6 +205,22 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 
 		@Override public void onLoaderReset(Loader<Cursor> loader) {
 			//Nothing to do here
+		}
+	}
+
+	private class DirectionsCallbacks implements LoaderManager.LoaderCallbacks<Directions> {
+
+		@Override public Loader<Directions> onCreateLoader(int id, Bundle args) {
+			return new DirectionsLoader(getFragment().getActivity(), args);
+		}
+
+		@Override public void onLoadFinished(Loader<Directions> directionsLoader,
+											 Directions directions) {
+			drawDirections(directions);
+		}
+
+		@Override public void onLoaderReset(Loader<Directions> directionsLoader) {
+
 		}
 	}
 }

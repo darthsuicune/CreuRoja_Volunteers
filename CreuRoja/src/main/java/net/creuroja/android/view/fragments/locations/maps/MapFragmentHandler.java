@@ -13,11 +13,13 @@ public interface MapFragmentHandler {
 
 	public abstract void setMapType(MapType mapType);
 
-	public abstract void drawDirections(Location location);
+	public abstract void getDirections(android.location.Location origin, Location destination);
 
 	public abstract void toggleLocations(LocationType type, boolean active);
 
 	public abstract void search(String query);
+
+	public abstract boolean locate(android.location.Location location);
 
 	public void setUp();
 

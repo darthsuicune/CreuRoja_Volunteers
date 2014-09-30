@@ -1,11 +1,14 @@
 package net.creuroja.android.controller.locations.activities;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +22,12 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationClient;
 
 import net.creuroja.android.R;
 import net.creuroja.android.controller.general.SettingsActivity;
@@ -37,6 +46,7 @@ import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
 
+import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.*;
 import static net.creuroja.android.view.fragments.locations.NavigationDrawerFragment.MapNavigationDrawerCallbacks;
 import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragmentHandler.MapInteractionListener;
 import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
@@ -44,8 +54,7 @@ import static net.creuroja.android.view.fragments.locations.maps.LocationCardFra
 public class LocationsIndexActivity extends ActionBarActivity
 		implements LoginManager, MapNavigationDrawerCallbacks, LocationsListListener,
 		OnLocationCardInteractionListener, MapInteractionListener, OnDirectionsRequestedListener,
-		LocationDetailFragment.OnLocationDetailsInteractionListener,
-		SearchView.OnQueryTextListener {
+		OnLocationDetailsInteractionListener {
 	private static final String TAG_MAP = "CreuRojaMap";
 	private static final String TAG_LIST = "CreuRojaLocationList";
 	private static final String TAG_CARD = "CreuRojaLocationCard";
@@ -56,6 +65,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private MapFragmentHandler mapFragmentHandler;
 	private LocationListFragment listFragment;
 	private LocationCardFragment cardFragment;
+
+	private LocationClient mLocationClient;
 
 	// Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	private CharSequence mTitle;
@@ -71,6 +82,18 @@ public class LocationsIndexActivity extends ActionBarActivity
 					prefs.getString(Settings.LOCATIONS_INDEX_TYPE, ViewMode.MAP.toString());
 			currentViewMode = ViewMode.getViewMode(preferredMode);
 		}
+
+		mLocationClient =
+				new LocationClient(this, new GooglePlayServicesClient.ConnectionCallbacks() {
+					@Override public void onConnected(Bundle bundle) {
+					}
+
+					@Override public void onDisconnected() {
+					}
+				}, new GoogleApiClient.OnConnectionFailedListener() {
+					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
+					}
+				});
 		startUi();
 		bootSync();
 	}
@@ -106,6 +129,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 			default:
 				//Nothing to do here
 				break;
+		}
+		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
+			//noinspection ResourceType
+			findViewById(R.id.location_details_container)
+					.setVisibility(currentViewMode.getDetailsBlockVisibility());
 		}
 		prefs.edit().putString(Settings.LOCATIONS_INDEX_TYPE, currentViewMode.toString()).apply();
 		setMainFragment();
@@ -154,8 +182,12 @@ public class LocationsIndexActivity extends ActionBarActivity
 		openLocationDetails(location);
 	}
 
-	@Override public void onDirectionsRequested(Location location) {
-		mapFragmentHandler.drawDirections(location);
+	@Override public void onDirectionsRequested(Location destination) {
+		if (ViewMode.LIST == currentViewMode) {
+			onViewModeChanged(ViewMode.MAP);
+		}
+		android.location.Location origin = getCurrentLocation();
+		mapFragmentHandler.getDirections(origin, destination);
 	}
 
 	@Override public void onCardCloseRequested() {
@@ -223,7 +255,17 @@ public class LocationsIndexActivity extends ActionBarActivity
 				// Assumes current activity is the searchable activity
 				searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 				searchView.setIconifiedByDefault(true);
-				searchView.setOnQueryTextListener(this);
+				searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+					@Override public boolean onQueryTextSubmit(String s) {
+						performSearch(s);
+						return true;
+					}
+
+					@Override public boolean onQueryTextChange(String s) {
+						performSearch(s);
+						return true;
+					}
+				});
 			}
 			restoreActionBar();
 			return true;
@@ -244,18 +286,23 @@ public class LocationsIndexActivity extends ActionBarActivity
 				performSync();
 				return true;
 			case R.id.action_search:
+				//Handled upon menu creation
 				return true;
 			case R.id.action_locate:
-				//TODO: Change to true after implementation
 				locate();
-				return super.onOptionsItemSelected(item);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
 
 	private void locate() {
-		//TODO: implement
+		android.location.Location location = getCurrentLocation();
+		if (location != null) {
+			if (currentViewMode == ViewMode.MAP) {
+				mapFragmentHandler.locate(location);
+			}
+		}
 	}
 
 	private void bootSync() {
@@ -276,15 +323,31 @@ public class LocationsIndexActivity extends ActionBarActivity
 		startActivity(intent);
 	}
 
-	private void openLocationDetails(Location location) {
-		int orientation = getResources().getConfiguration().orientation;
-		//Map should be full screen on landscape. Hide the details container for it.
-		if (Configuration.ORIENTATION_LANDSCAPE == orientation) {
-			findViewById(R.id.location_details_container)
-					.setVisibility((currentViewMode == ViewMode.MAP) ? View.GONE : View.VISIBLE);
+	private android.location.Location getCurrentLocation() {
+		if (areLocationServicesEnabled()) {
+			if (mLocationClient.getLastLocation() != null) {
+				return mLocationClient.getLastLocation();
+			} else {
+				Toast.makeText(getApplicationContext(), R.string.locating, Toast.LENGTH_SHORT)
+						.show();
+			}
+		} else {
+			showLocationSettings();
 		}
+		return null;
+	}
+
+	private boolean areLocationServicesEnabled() {
+		LocationManager lm =
+				(LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+		return (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+				lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+	}
+
+	private void openLocationDetails(Location location) {
 		//Viewing the list in portrait, or the map, a new activity must be launched
-		if (currentViewMode == ViewMode.MAP || orientation == Configuration.ORIENTATION_PORTRAIT) {
+		if (currentViewMode == ViewMode.MAP ||
+			getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			Intent intent = new Intent(this, LocationDetailsActivity.class);
 			intent.putExtra(LocationDetailsActivity.EXTRA_LOCATION_ID, location.mRemoteId);
 			startActivity(intent);
@@ -293,7 +356,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 			LocationDetailFragment fragment =
 					(LocationDetailFragment) manager.findFragmentByTag(TAG_DETAILS);
 			if (fragment == null) {
-				fragment = LocationDetailFragment.newInstance(location.mRemoteId);
+				fragment = newInstance(location.mRemoteId);
 				manager.beginTransaction()
 						.add(R.id.location_details_container, fragment, TAG_DETAILS).commit();
 			} else {
@@ -302,14 +365,19 @@ public class LocationsIndexActivity extends ActionBarActivity
 		}
 	}
 
-	@Override public boolean onQueryTextSubmit(String s) {
-		performSearch(s);
-		return true;
-	}
-
-	@Override public boolean onQueryTextChange(String s) {
-		performSearch(s);
-		return true;
+	private void showLocationSettings() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.location_disabled_title);
+		builder.setMessage(R.string.location_disabled_message);
+		builder.setPositiveButton(R.string.open_location_settings,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialogInterface, int i) {
+						startActivity(new Intent(
+								android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+					}
+				});
+		builder.setNegativeButton(R.string.cancel, null);
+		builder.create().show();
 	}
 
 	private void performSearch(String query) {
@@ -340,6 +408,16 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 		public int getValue() {
 			return mValue;
+		}
+
+		public int getDetailsBlockVisibility() {
+			switch (this) {
+				case LIST:
+					return View.VISIBLE;
+				case MAP:
+				default:
+					return View.GONE;
+			}
 		}
 	}
 }
