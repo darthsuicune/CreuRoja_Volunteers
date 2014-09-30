@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.fragments.locations.maps;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.locations.Location;
+import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +26,7 @@ public class LocationCardFragment extends Fragment {
 
 	//Callback for the Activity
 	private OnLocationCardInteractionListener mListener;
+	private OnDirectionsRequestedListener mDirectionsListener;
 	//General location card view
 	private View cardView;
 
@@ -67,6 +69,7 @@ public class LocationCardFragment extends Fragment {
 		super.onAttach(activity);
 		try {
 			mListener = (OnLocationCardInteractionListener) activity;
+			mDirectionsListener = (OnDirectionsRequestedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					activity.toString() + " must implement OnLocationCardInteractionListener");
@@ -110,8 +113,6 @@ public class LocationCardFragment extends Fragment {
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnLocationCardInteractionListener {
-		public void onDirectionsRequested(Location location);
-
 		public void onCardCloseRequested();
 
 		public void onCardDetailsRequested(Location location);

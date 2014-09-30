@@ -38,6 +38,7 @@ public class LocationDetailFragment extends Fragment
 	private TextView mNameView;
 
 	private OnLocationDetailsInteractionListener mListener;
+	private OnDirectionsRequestedListener mDirectionsListener;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -79,6 +80,7 @@ public class LocationDetailFragment extends Fragment
 		super.onAttach(activity);
 		try {
 			mListener = (OnLocationDetailsInteractionListener) activity;
+			mDirectionsListener = (OnDirectionsRequestedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					activity.toString() + " must implement OnLocationDetailsInteractionListener");
@@ -99,14 +101,23 @@ public class LocationDetailFragment extends Fragment
 	}
 
 	@Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		if(cursor.moveToFirst()) {
+		if (cursor.moveToFirst()) {
 			mLocation = new Location(cursor);
-			mNameView.setText(mLocation.mName);
+			showLocationInfo();
 		}
 	}
 
 	@Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
+	}
+
+	private void showLocationInfo() {
+		mNameView.setText(mLocation.mName);
+	}
+
+	public void setLocation(Location location) {
+		this.mLocation = location;
+		showLocationInfo();
 	}
 
 	/**

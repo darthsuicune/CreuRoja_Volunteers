@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.fragments.locations.maps;
 
 import android.support.v4.app.Fragment;
 
@@ -9,12 +9,17 @@ import net.creuroja.android.model.locations.LocationType;
  * Created by denis on 10.08.14.
  */
 public interface MapFragmentHandler {
+	public static final String ARG_SEARCH_QUERY = "searchQuery";
 
 	public abstract void setMapType(MapType mapType);
 
-	public abstract void drawDirections(Location location);
+	public abstract void getDirections(android.location.Location origin, Location destination);
 
 	public abstract void toggleLocations(LocationType type, boolean active);
+
+	public abstract void search(String query);
+
+	public abstract boolean locate(android.location.Location location);
 
 	public void setUp();
 

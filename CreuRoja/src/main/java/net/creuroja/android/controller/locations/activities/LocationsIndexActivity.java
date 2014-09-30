@@ -1,8 +1,15 @@
 package net.creuroja.android.controller.locations.activities;
 
+import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -11,8 +18,16 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationClient;
 
 import net.creuroja.android.R;
 import net.creuroja.android.controller.general.SettingsActivity;
@@ -23,22 +38,27 @@ import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
-import net.creuroja.android.view.fragments.locations.LocationCardFragment;
+import net.creuroja.android.view.fragments.locations.LocationDetailFragment;
 import net.creuroja.android.view.fragments.locations.LocationListFragment;
-import net.creuroja.android.view.fragments.locations.MapFragmentHandler;
 import net.creuroja.android.view.fragments.locations.NavigationDrawerFragment;
-import net.creuroja.android.view.fragments.locations.factories.MapFragmentHandlerFactory;
+import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
+import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
+import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
+import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
 
-import static net.creuroja.android.view.fragments.locations.GoogleMapFragmentHandler.MapInteractionListener;
-import static net.creuroja.android.view.fragments.locations.LocationCardFragment.OnLocationCardInteractionListener;
+import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.*;
 import static net.creuroja.android.view.fragments.locations.NavigationDrawerFragment.MapNavigationDrawerCallbacks;
+import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragmentHandler.MapInteractionListener;
+import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity
 		implements LoginManager, MapNavigationDrawerCallbacks, LocationsListListener,
-		OnLocationCardInteractionListener, MapInteractionListener {
+		OnLocationCardInteractionListener, MapInteractionListener, OnDirectionsRequestedListener,
+		OnLocationDetailsInteractionListener {
 	private static final String TAG_MAP = "CreuRojaMap";
 	private static final String TAG_LIST = "CreuRojaLocationList";
 	private static final String TAG_CARD = "CreuRojaLocationCard";
+	private static final String TAG_DETAILS = "CreuRojaDetail";
 
 	// This are the fragments that the activity handles
 	private NavigationDrawerFragment mNavigationDrawerFragment;
@@ -46,13 +66,13 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private LocationListFragment listFragment;
 	private LocationCardFragment cardFragment;
 
+	private LocationClient mLocationClient;
+
 	// Used to store the last screen title. For use in {@link #restoreActionBar()}.
 	private CharSequence mTitle;
 	private SharedPreferences prefs;
 
 	private ViewMode currentViewMode;
-
-	private boolean alreadyCreated;
 
 	// Callbacks for when the auth token is returned
 	@Override
@@ -62,12 +82,37 @@ public class LocationsIndexActivity extends ActionBarActivity
 					prefs.getString(Settings.LOCATIONS_INDEX_TYPE, ViewMode.MAP.toString());
 			currentViewMode = ViewMode.getViewMode(preferredMode);
 		}
+
+		mLocationClient =
+				new LocationClient(this, new GooglePlayServicesClient.ConnectionCallbacks() {
+					@Override public void onConnected(Bundle bundle) {
+					}
+
+					@Override public void onDisconnected() {
+					}
+				}, new GoogleApiClient.OnConnectionFailedListener() {
+					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
+					}
+				});
 		startUi();
 		bootSync();
 	}
 
 	@Override
 	public void failedLogin() {
+	}
+
+	private void startUi() {
+		setContentView(R.layout.activity_locations);
+		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.navigation_drawer);
+		mTitle = getTitle();
+
+		// Set up the drawer.
+		mNavigationDrawerFragment
+				.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+		setMainFragment();
 	}
 
 	@Override public void onViewModeChanged(ViewMode newViewMode) {
@@ -84,6 +129,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 			default:
 				//Nothing to do here
 				break;
+		}
+		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
+			//noinspection ResourceType
+			findViewById(R.id.location_details_container)
+					.setVisibility(currentViewMode.getDetailsBlockVisibility());
 		}
 		prefs.edit().putString(Settings.LOCATIONS_INDEX_TYPE, currentViewMode.toString()).apply();
 		setMainFragment();
@@ -132,8 +182,12 @@ public class LocationsIndexActivity extends ActionBarActivity
 		openLocationDetails(location);
 	}
 
-	@Override public void onDirectionsRequested(Location location) {
-		mapFragmentHandler.drawDirections(location);
+	@Override public void onDirectionsRequested(Location destination) {
+		if (ViewMode.LIST == currentViewMode) {
+			onViewModeChanged(ViewMode.MAP);
+		}
+		android.location.Location origin = getCurrentLocation();
+		mapFragmentHandler.getDirections(origin, destination);
 	}
 
 	@Override public void onCardCloseRequested() {
@@ -164,22 +218,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 			}
 			manager.beginTransaction().add(R.id.location_card_container, cardFragment, TAG_CARD)
 					.commit();
-		} else {
-			cardFragment.setLocation(location);
 		}
-	}
-
-	private void startUi() {
-		setContentView(R.layout.activity_locations);
-		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.navigation_drawer);
-		mTitle = getTitle();
-
-		// Set up the drawer.
-		mNavigationDrawerFragment
-				.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
-
-		setMainFragment();
+		cardFragment.setLocation(location);
 	}
 
 	public void restoreActionBar() {
@@ -193,22 +233,40 @@ public class LocationsIndexActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		alreadyCreated = (savedInstanceState != null);
+		boolean alreadyCreated = (savedInstanceState != null);
 		if (alreadyCreated && AccountUtils.getAccount(this) != null) {
 			successfulLogin();
 		} else {
 			AccountUtils.validateLogin(this, this);
 		}
-
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
-			// Only show items in the action bar relevant to this screen
-			// if the drawer is not showing. Otherwise, let the drawer
-			// decide what to show in the action bar.
+			// Only show items in the action bar relevant to this screen if the drawer is not
+			// showing. Otherwise, let the drawer decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.locations, menu);
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+				SearchManager searchManager =
+						(SearchManager) getSystemService(Context.SEARCH_SERVICE);
+				SearchView searchView =
+						(SearchView) menu.findItem(R.id.action_search).getActionView();
+				// Assumes current activity is the searchable activity
+				searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+				searchView.setIconifiedByDefault(true);
+				searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+					@Override public boolean onQueryTextSubmit(String s) {
+						performSearch(s);
+						return true;
+					}
+
+					@Override public boolean onQueryTextChange(String s) {
+						performSearch(s);
+						return true;
+					}
+				});
+			}
 			restoreActionBar();
 			return true;
 		}
@@ -228,24 +286,23 @@ public class LocationsIndexActivity extends ActionBarActivity
 				performSync();
 				return true;
 			case R.id.action_search:
-				//TODO: Change to true after implementation
-				search();
-				return super.onOptionsItemSelected(item);
+				//Handled upon menu creation
+				return true;
 			case R.id.action_locate:
-				//TODO: Change to true after implementation
 				locate();
-				return super.onOptionsItemSelected(item);
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
 
 	private void locate() {
-		//TODO: implement
-	}
-
-	private void search() {
-		//TODO: implement
+		android.location.Location location = getCurrentLocation();
+		if (location != null) {
+			if (currentViewMode == ViewMode.MAP) {
+				mapFragmentHandler.locate(location);
+			}
+		}
 	}
 
 	private void bootSync() {
@@ -266,11 +323,70 @@ public class LocationsIndexActivity extends ActionBarActivity
 		startActivity(intent);
 	}
 
+	private android.location.Location getCurrentLocation() {
+		if (areLocationServicesEnabled()) {
+			if (mLocationClient.getLastLocation() != null) {
+				return mLocationClient.getLastLocation();
+			} else {
+				Toast.makeText(getApplicationContext(), R.string.locating, Toast.LENGTH_SHORT)
+						.show();
+			}
+		} else {
+			showLocationSettings();
+		}
+		return null;
+	}
+
+	private boolean areLocationServicesEnabled() {
+		LocationManager lm =
+				(LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+		return (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+				lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+	}
+
 	private void openLocationDetails(Location location) {
-		//TODO: Attach fragment if landscape / enough width and not map.
-		Intent intent = new Intent(this, LocationDetailsActivity.class);
-		intent.putExtra(LocationDetailsActivity.EXTRA_LOCATION_ID, location.mRemoteId);
-		startActivity(intent);
+		//Viewing the list in portrait, or the map, a new activity must be launched
+		if (currentViewMode == ViewMode.MAP ||
+			getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			Intent intent = new Intent(this, LocationDetailsActivity.class);
+			intent.putExtra(LocationDetailsActivity.EXTRA_LOCATION_ID, location.mRemoteId);
+			startActivity(intent);
+		} else {
+			FragmentManager manager = getSupportFragmentManager();
+			LocationDetailFragment fragment =
+					(LocationDetailFragment) manager.findFragmentByTag(TAG_DETAILS);
+			if (fragment == null) {
+				fragment = newInstance(location.mRemoteId);
+				manager.beginTransaction()
+						.add(R.id.location_details_container, fragment, TAG_DETAILS).commit();
+			} else {
+				fragment.setLocation(location);
+			}
+		}
+	}
+
+	private void showLocationSettings() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.location_disabled_title);
+		builder.setMessage(R.string.location_disabled_message);
+		builder.setPositiveButton(R.string.open_location_settings,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialogInterface, int i) {
+						startActivity(new Intent(
+								android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+					}
+				});
+		builder.setNegativeButton(R.string.cancel, null);
+		builder.create().show();
+	}
+
+	private void performSearch(String query) {
+		if (mapFragmentHandler != null && mapFragmentHandler.getFragment().isAdded()) {
+			mapFragmentHandler.search(query);
+		}
+		if (listFragment != null && listFragment.isAdded()) {
+			listFragment.search(query);
+		}
 	}
 
 	public enum ViewMode {
@@ -292,6 +408,16 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 		public int getValue() {
 			return mValue;
+		}
+
+		public int getDetailsBlockVisibility() {
+			switch (this) {
+				case LIST:
+					return View.VISIBLE;
+				case MAP:
+				default:
+					return View.GONE;
+			}
 		}
 	}
 }

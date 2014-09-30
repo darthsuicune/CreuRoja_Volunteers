@@ -1,14 +1,11 @@
-package net.creuroja.android.view.fragments.locations.factories;
+package net.creuroja.android.view.fragments.locations.maps;
 
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
-import net.creuroja.android.view.fragments.locations.GoogleMapFragmentHandler;
-import net.creuroja.android.view.fragments.locations.MapFragmentHandler;
-
-import static net.creuroja.android.view.fragments.locations.GoogleMapFragmentHandler.getMapOptions;
+import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragmentHandler.getMapOptions;
 
 /**
  * Created by lapuente on 03.09.14.

@@ -28,6 +28,7 @@ import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.locations.RailsLocationList;
+import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class LocationListFragment extends ListFragment {
 			throw new ClassCastException(
 					activity.toString() + " must implement LocationsListListener");
 		}
-		getLoaderManager().restartLoader(LOADER_LOCATIONS, null, new LocationListCallbacks());
+		search(null);
 	}
 
 	@Override
@@ -111,6 +112,15 @@ public class LocationListFragment extends ListFragment {
 		mLocationList.toggleLocationType(type, newState);
 		mAdapter = new LocationListAdapter(getActivity());
 		setListAdapter(mAdapter);
+	}
+
+	public void search(String query) {
+		Bundle args = null;
+		if (query != null) {
+			args = new Bundle();
+			args.putString(MapFragmentHandler.ARG_SEARCH_QUERY, query);
+		}
+		getLoaderManager().restartLoader(LOADER_LOCATIONS, args, new LocationListCallbacks());
 	}
 
 	static class ViewHolder {
@@ -167,8 +177,20 @@ public class LocationListFragment extends ListFragment {
 
 	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
 		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			String selection = null;
+			String[] selectionArgs = null;
+			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
+				String query = args.getString(MapFragmentHandler.ARG_SEARCH_QUERY);
+				selection = CreuRojaContract.Locations.NAME + " LIKE ? OR " +
+							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
+							CreuRojaContract.Locations.ADDRESS + " LIKE ?";
+				selectionArgs = new String[3];
+				selectionArgs[0] = "%" + query + "%";
+				selectionArgs[1] = "%" + query + "%";
+				selectionArgs[2] = "%" + query + "%";
+			}
 			Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
-			return new CursorLoader(getActivity(), uri, null, null, null, null);
+			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
 		}
 
 		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
