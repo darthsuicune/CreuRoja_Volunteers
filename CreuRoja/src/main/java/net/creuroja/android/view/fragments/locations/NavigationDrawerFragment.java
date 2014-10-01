@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
-import net.creuroja.android.controller.locations.activities.LocationsIndexActivity;
+import net.creuroja.android.activities.locations.LocationsIndexActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.LocationType;

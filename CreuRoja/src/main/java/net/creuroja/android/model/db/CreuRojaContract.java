@@ -20,6 +20,8 @@ public final class CreuRojaContract {
 		public static final String TYPE = "location_type";
 		public static final String UPDATED_AT = "updated_at";
 		public static final String ACTIVE = "active";
+
+		//Distinct values for location types.
 		protected static final String DISTINCT_LOCATIONS = "distinctLocations";
 		public static final Uri CONTENT_DISTINCT_LOCATIONS =
 				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/" + DISTINCT_LOCATIONS);
@@ -69,11 +71,13 @@ public final class CreuRojaContract {
 		public static final String NAME = "name";
 		public static final String SURNAME = "surname";
 		public static final String EMAIL = "email";
-		public static final String PASSWORD_DIGEST = "password_digest";
 		public static final String ROLE = "role";
-		public static final String CREATED_AT = "created_at";
-		public static final String UPDATED_AT = "updated_at";
 		public static final String ACTIVE = "active";
+		public static final String PHONE = "phone";
+		//New (version 2)
+		public static final String REMOTE_ID = "remote_id";
+		public static final String TYPES = "types";
+		public static final String ACCESS_TOKEN = "accessToken";
 	}
 
 }

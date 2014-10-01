@@ -1,4 +1,4 @@
-package net.creuroja.android.controller.general;
+package net.creuroja.android.activities.general;
 
 
 import android.accounts.Account;
@@ -342,6 +342,9 @@ public class LoginActivity extends AccountAuthenticatorActivity
 			intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountUtils.ACCOUNT_TYPE);
 			intent.putExtra(AccountManager.KEY_AUTHTOKEN, response.authToken());
 			intent.putExtra(AccountManager.KEY_PASSWORD, mPassword);
+			if(response.isValid() && response.user() != null) {
+				response.user().save(getContentResolver());
+			}
 		}
 
 

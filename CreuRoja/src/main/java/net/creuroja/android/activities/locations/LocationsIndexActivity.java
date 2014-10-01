@@ -1,4 +1,4 @@
-package net.creuroja.android.controller.locations.activities;
+package net.creuroja.android.activities.locations;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -30,8 +30,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationClient;
 
 import net.creuroja.android.R;
-import net.creuroja.android.controller.general.SettingsActivity;
-import net.creuroja.android.controller.locations.LocationsListListener;
+import net.creuroja.android.activities.general.SettingsActivity;
+import net.creuroja.android.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.locations.Location;
@@ -278,6 +278,9 @@ public class LocationsIndexActivity extends ActionBarActivity
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
+			case R.id.action_view_profile:
+				viewProfile();
+				return true;
 			case R.id.action_settings:
 				openSettings();
 				return true;
@@ -293,6 +296,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void viewProfile() {
+		Intent intent = new Intent(this, UserProfileActivity.class);
+		startActivity(intent);
 	}
 
 	private void locate() {

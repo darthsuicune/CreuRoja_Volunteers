@@ -1,5 +1,7 @@
 package net.creuroja.android.model.webservice;
 
+import net.creuroja.android.model.users.User;
+
 /**
  * Created by denis on 19.06.14.
  */
@@ -12,4 +14,5 @@ public interface LoginResponse {
 	public String authToken();
 	public int errorCode();
 	public String errorMessage();
+	public User user();
 }

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 
 	private static final String DB_NAME = "CreuRoja";
-	private static final int DB_VERSION = 1;
+	private static final int DB_VERSION = 2;
 
 	private static final String CREATE = "CREATE TABLE ";
 	private static final String KEY = " INTEGER PRIMARY KEY AUTOINCREMENT, ";
@@ -21,8 +21,28 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 		if (db.isReadOnly()) {
 			db = getWritableDatabase();
 		}
+		createLocationsTable(db, null);
+		createServicesTable(db, null);
+		createVehiclesTable(db, null);
+		createUsersTable(db, null);
+	}
 
-		db.execSQL(CREATE + CreuRojaContract.Locations.TABLE_NAME + " (" +
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		switch (oldVersion) {
+			case 1:
+				removeTable(db, CreuRojaContract.Users.TABLE_NAME);
+				createUsersTable(db, null);
+				break;
+		}
+
+	}
+
+	private void createLocationsTable(SQLiteDatabase db, String tableName) {
+		if (tableName == null) {
+			tableName = CreuRojaContract.Locations.TABLE_NAME;
+		}
+		db.execSQL(CREATE + tableName + " (" +
 				   CreuRojaContract.Locations._ID + KEY + CreuRojaContract.Locations.NAME +
 				   " TEXT NOT NULL, " + CreuRojaContract.Locations.DESCRIPTION + " TEXT, " +
 				   CreuRojaContract.Locations.ADDRESS + " TEXT, " +
@@ -32,10 +52,14 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				   CreuRojaContract.Locations.TYPE + " TEXT NOT NULL, " +
 				   CreuRojaContract.Locations.REMOTE_ID + " INTEGER NOT NULL, " +
 				   CreuRojaContract.Locations.UPDATED_AT + " DATETIME NOT NULL, " +
-				   CreuRojaContract.Locations.ACTIVE + " BOOLEAN)"
-		);
+				   CreuRojaContract.Locations.ACTIVE + " BOOLEAN)");
+	}
 
-		db.execSQL(CREATE + CreuRojaContract.Services.TABLE_NAME + " (" +
+	private void createServicesTable(SQLiteDatabase db, String tableName) {
+		if (tableName == null) {
+			tableName = CreuRojaContract.Services.TABLE_NAME;
+		}
+		db.execSQL(CREATE + tableName + " (" +
 				   CreuRojaContract.Services._ID + KEY + CreuRojaContract.Services.NAME +
 				   " TEXT NOT NULL, " + CreuRojaContract.Services.DESCRIPTION + " TEXT NOT NULL, " +
 				   CreuRojaContract.Services.ASSEMBLYID + " INTEGER NOT NULL, " +
@@ -44,10 +68,14 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				   CreuRojaContract.Services.ENDTIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.CODE + " TEXT, " +
 				   CreuRojaContract.Services.CREATED_AT + " DATETIME NOT NULL, " +
-				   CreuRojaContract.Services.UPDATED_AT + " DATETIME NOT NULL)"
-		);
+				   CreuRojaContract.Services.UPDATED_AT + " DATETIME NOT NULL)");
+	}
 
-		db.execSQL(CREATE + CreuRojaContract.Vehicles.TABLE_NAME + " (" +
+	private void createVehiclesTable(SQLiteDatabase db, String tableName) {
+		if (tableName == null) {
+			tableName = CreuRojaContract.Vehicles.TABLE_NAME;
+		}
+		db.execSQL(CREATE + tableName + " (" +
 				   CreuRojaContract.Vehicles._ID + KEY + CreuRojaContract.Vehicles.BRAND +
 				   " TEXT NOT NULL, " + CreuRojaContract.Vehicles.MODEL + " TEXT NOT NULL, " +
 				   CreuRojaContract.Vehicles.LICENSE + " TEXT NOT NULL, " +
@@ -57,23 +85,26 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				   CreuRojaContract.Vehicles.NOTES + " TEXT NOT NULL, " +
 				   CreuRojaContract.Vehicles.OPERATIVE + " BOOLEAN NOT NULL, " +
 				   CreuRojaContract.Vehicles.CREATED_AT + " DATETIME NOT NULL, " +
-				   CreuRojaContract.Vehicles.UPDATED_AT + " DATETIME NOT NULL)"
-		);
+				   CreuRojaContract.Vehicles.UPDATED_AT + " DATETIME NOT NULL)");
+	}
 
-		db.execSQL(CREATE + CreuRojaContract.Users.TABLE_NAME + " (" + CreuRojaContract.Users._ID +
+	private void createUsersTable(SQLiteDatabase db, String tableName) {
+		if (tableName == null) {
+			tableName = CreuRojaContract.Users.TABLE_NAME;
+		}
+		db.execSQL(CREATE + tableName + " (" + CreuRojaContract.Users._ID +
 				   KEY + CreuRojaContract.Users.NAME + " TEXT NOT NULL, " +
 				   CreuRojaContract.Users.SURNAME + " TEXT NOT NULL, " +
 				   CreuRojaContract.Users.EMAIL + " TEXT NOT NULL, " +
-				   CreuRojaContract.Users.PASSWORD_DIGEST + " TEXT NOT NULL, " +
 				   CreuRojaContract.Users.ROLE + " TEXT NOT NULL, " +
-				   CreuRojaContract.Users.CREATED_AT + " DATETIME NOT NULL, " +
-				   CreuRojaContract.Users.UPDATED_AT + " DATETIME NOT NULL, " +
-				   CreuRojaContract.Users.ACTIVE + " BOOLEAN NOT NULL)"
-		);
-
+				   CreuRojaContract.Users.ACCESS_TOKEN + " TEXT NOT NULL, " +
+				   CreuRojaContract.Users.REMOTE_ID + " INTEGER NOT NULL, " +
+				   CreuRojaContract.Users.TYPES + " TEXT NOT NULL, " +
+				   CreuRojaContract.Users.PHONE + " TEXT NOT NULL, " +
+				   CreuRojaContract.Users.ACTIVE + " BOOLEAN NOT NULL)");
 	}
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	private void removeTable(SQLiteDatabase db, String tableName) {
+		db.execSQL("DROP TABLE " + tableName);
 	}
 }

@@ -1,4 +1,4 @@
-package net.creuroja.android.controller.locations.activities;
+package net.creuroja.android.activities.locations;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;

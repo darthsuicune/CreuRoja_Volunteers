@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import net.creuroja.android.controller.general.LoginActivity;
+import net.creuroja.android.activities.general.LoginActivity;
 
 /**
  * Created by lapuente on 16.06.14.

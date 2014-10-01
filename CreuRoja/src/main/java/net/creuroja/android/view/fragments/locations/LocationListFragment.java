@@ -22,7 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
-import net.creuroja.android.controller.locations.LocationsListListener;
+import net.creuroja.android.activities.locations.LocationsListListener;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationList;

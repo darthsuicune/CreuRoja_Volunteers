@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_user_profile">User Profile</string>
+    <string name="user_role_volunteer">"Volunteer"</string>
+    <string name="user_role_technician">"Technician"</string>
+    <string name="user_role_admin">"Admin"</string>
+    <string name="view_profile">"View profile"</string>
+</resources>

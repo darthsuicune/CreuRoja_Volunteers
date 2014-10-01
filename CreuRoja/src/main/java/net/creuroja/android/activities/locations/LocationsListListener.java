@@ -1,4 +1,4 @@
-package net.creuroja.android.controller.locations;
+package net.creuroja.android.activities.locations;
 
 import net.creuroja.android.model.locations.Location;
 

@@ -92,6 +92,7 @@ public class CreuRojaProvider extends ContentProvider {
 		}
 	}
 
+
 	@Override public int bulkInsert(Uri uri, ContentValues[] values) {
 		int count = super.bulkInsert(uri, values);
 		if (count > 0) {
