@@ -46,7 +46,15 @@ public class CreuRojaProvider extends ContentProvider {
         }
     }
 
-    @Override
+	@Override public int bulkInsert(Uri uri, ContentValues[] values) {
+		int count = super.bulkInsert(uri, values);
+		if (count > 0) {
+			getContext().getContentResolver().notifyChange(uri, null);
+		}
+		return count;
+	}
+
+	@Override
     public Uri insert(Uri uri, ContentValues values) {
         String table = getTable(uri);
         long id = mDbHelper.getWritableDatabase().insert(table, null, values);
