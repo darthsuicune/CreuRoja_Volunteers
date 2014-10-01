@@ -10,8 +10,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 19
+        minSdkVersion 9
+        targetSdkVersion 20
         versionCode 20
         versionName "1.9"
     }

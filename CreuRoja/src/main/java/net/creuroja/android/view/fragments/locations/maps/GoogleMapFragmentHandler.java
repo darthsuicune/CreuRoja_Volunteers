@@ -3,7 +3,6 @@ package net.creuroja.android.view.fragments.locations.maps;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -181,21 +180,20 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 
 	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
 		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			String selection = null;
-			String[] selectionArgs = null;
+			CursorLoader loader = new CursorLoader(getFragment().getActivity());
+			loader.setUri(CreuRojaContract.Locations.CONTENT_LOCATIONS);
 			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
 				String query = args.getString(MapFragmentHandler.ARG_SEARCH_QUERY);
-				selection = CreuRojaContract.Locations.NAME + " LIKE ? OR " +
+				loader.setSelection(CreuRojaContract.Locations.NAME + " LIKE ? OR " +
 							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
-							CreuRojaContract.Locations.ADDRESS + " LIKE ?";
-				selectionArgs = new String[3];
-				selectionArgs[0] = "%" + query + "%";
-				selectionArgs[1] = "%" + query + "%";
-				selectionArgs[2] = "%" + query + "%";
+							CreuRojaContract.Locations.ADDRESS + " LIKE ?");
+				loader.setSelectionArgs(new String[]{
+						"%" + query + "%",
+						"%" + query + "%",
+						"%" + query + "%"
+				});
 			}
-			Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
-			return new CursorLoader(getFragment().getActivity(), uri, null, selection,
-					selectionArgs, null);
+			return loader;
 		}
 
 		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

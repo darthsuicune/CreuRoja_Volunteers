@@ -46,7 +46,8 @@ import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
 
-import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.*;
+import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.OnLocationDetailsInteractionListener;
+import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.newInstance;
 import static net.creuroja.android.view.fragments.locations.NavigationDrawerFragment.MapNavigationDrawerCallbacks;
 import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragmentHandler.MapInteractionListener;
 import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;

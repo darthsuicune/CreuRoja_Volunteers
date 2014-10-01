@@ -96,7 +96,7 @@ public class CreuRojaProvider extends ContentProvider {
 	@Override public int bulkInsert(Uri uri, ContentValues[] values) {
 		int count = super.bulkInsert(uri, values);
 		if (count > 0) {
-			getContext().getContentResolver().notifyChange(uri, null);
+			getContext().getContentResolver().notifyChange(uri, null, false);
 		}
 		return count;
 	}
@@ -108,8 +108,8 @@ public class CreuRojaProvider extends ContentProvider {
 		Uri result = null;
 		if (id != -1) {
 			result = ContentUris.withAppendedId(uri, id);
-			getContext().getContentResolver().notifyChange(uri, null);
-			getContext().getContentResolver().notifyChange(result, null);
+			getContext().getContentResolver().notifyChange(uri, null, false);
+			getContext().getContentResolver().notifyChange(result, null, false);
 		}
 		return result;
 	}
@@ -133,7 +133,7 @@ public class CreuRojaProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		String table = getTable(uri);
 		int count = mDbHelper.getWritableDatabase().delete(table, selection, selectionArgs);
-		getContext().getContentResolver().notifyChange(uri, null);
+		getContext().getContentResolver().notifyChange(uri, null, false);
 		return count;
 	}
 
@@ -141,7 +141,7 @@ public class CreuRojaProvider extends ContentProvider {
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		String table = getTable(uri);
 		int count = mDbHelper.getWritableDatabase().update(table, values, selection, selectionArgs);
-		getContext().getContentResolver().notifyChange(uri, null);
+		getContext().getContentResolver().notifyChange(uri, null, false);
 		return count;
 	}
 

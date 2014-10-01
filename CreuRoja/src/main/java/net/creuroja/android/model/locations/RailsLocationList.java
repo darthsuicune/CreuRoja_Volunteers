@@ -30,22 +30,19 @@ public class RailsLocationList implements LocationList {
 	private Map<LocationType, Boolean> mToggledLocations;
 	private SharedPreferences prefs;
 
-	public RailsLocationList(HttpResponse response, SharedPreferences prefs) {
-		try {
-			createFromJson(RestWebServiceClient.getAsString(response));
-		} catch (IOException | JSONException e) {
-			e.printStackTrace();
-		}
+	public RailsLocationList(HttpResponse response, SharedPreferences prefs)
+			throws IOException, JSONException {
+		createFromJson(RestWebServiceClient.getAsString(response));
 		init(prefs);
 	}
 
 	public RailsLocationList(Cursor cursor, SharedPreferences prefs) {
-		if(cursor.moveToFirst()) {
+		if (cursor.moveToFirst()) {
 			do {
 				Location location = new Location(cursor);
 				mLocationList.add(location);
 				mIdList.add(location.mRemoteId);
-			} while(cursor.moveToNext());
+			} while (cursor.moveToNext());
 		}
 		cursor.close();
 		init(prefs);
@@ -54,14 +51,14 @@ public class RailsLocationList implements LocationList {
 	private void init(SharedPreferences prefs) {
 		this.prefs = prefs;
 		mToggledLocations = new HashMap<>();
-		for(LocationType type : LocationType.values()) {
+		for (LocationType type : LocationType.values()) {
 			mToggledLocations.put(type, type.getViewable(prefs));
 		}
 	}
 
 	private void createFromJson(String json) throws JSONException {
 		JSONArray array = new JSONArray(json);
-		for(int i = 0; i < array.length(); i++) {
+		for (int i = 0; i < array.length(); i++) {
 			JSONObject object = array.getJSONObject(i);
 			Location location = new Location(object);
 			mLocationList.add(location);
@@ -72,8 +69,8 @@ public class RailsLocationList implements LocationList {
 	@Override
 	public List<Location> getLocations() {
 		List<Location> result = new ArrayList<>();
-		for(Location location : mLocationList) {
-			if(mToggledLocations.get(location.mType)) {
+		for (Location location : mLocationList) {
+			if (mToggledLocations.get(location.mType)) {
 				result.add(location);
 			}
 		}
@@ -81,8 +78,8 @@ public class RailsLocationList implements LocationList {
 	}
 
 	@Override public Location getById(long id) {
-		for(Location location : mLocationList) {
-			if(location.mRemoteId == id) {
+		for (Location location : mLocationList) {
+			if (location.mRemoteId == id) {
 				return location;
 			}
 		}
@@ -98,11 +95,11 @@ public class RailsLocationList implements LocationList {
 		LocationList currentLocations =
 				new RailsLocationList(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
-		for(Location location : mLocationList) {
-			if(location.newerThan(lastUpdateTime)) {
+		for (Location location : mLocationList) {
+			if (location.newerThan(lastUpdateTime)) {
 				lastUpdateTime = location.mUpdatedAt;
 			}
-			if(location.mActive) {
+			if (location.mActive) {
 				if (currentLocations.has(location)) {
 					location.update(cr);
 				} else {
@@ -112,15 +109,14 @@ public class RailsLocationList implements LocationList {
 				location.delete(cr);
 			}
 		}
-		if(forInsert.size() > 0) {
-			cr.bulkInsert(CreuRojaContract.Locations.CONTENT_LOCATIONS,
-					forInsert.toArray(new ContentValues[forInsert.size()]));
+		if (forInsert.size() > 0) {
+			cr.bulkInsert(uri, forInsert.toArray(new ContentValues[forInsert.size()]));
 		}
 	}
 
 	public boolean has(Location location) {
-		for(Integer current : mIdList) {
-			if(current == location.mRemoteId) {
+		for (Integer current : mIdList) {
+			if (current == location.mRemoteId) {
 				return true;
 			}
 		}

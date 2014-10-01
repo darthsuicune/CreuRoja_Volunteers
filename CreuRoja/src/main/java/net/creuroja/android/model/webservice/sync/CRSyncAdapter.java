@@ -24,6 +24,7 @@ import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
 
 import org.apache.http.HttpResponse;
+import org.json.JSONException;
 
 import java.io.IOException;
 
@@ -84,11 +85,17 @@ public class CRSyncAdapter extends AbstractThreadedSyncAdapter implements Client
 	}
 
 	@Override public void onValidResponse(HttpResponse response) {
-		LocationList locationList = new RailsLocationList(response, prefs);
-		locationList.save(mContext.getContentResolver());
+		LocationList locationList = null;
+		try {
+			locationList = new RailsLocationList(response, prefs);
+			locationList.save(mContext.getContentResolver());
 
-		prefs.edit().putString(Settings.LAST_UPDATE_TIME, locationList.getLastUpdateTime())
-				.apply();
+			prefs.edit().putString(Settings.LAST_UPDATE_TIME, locationList.getLastUpdateTime())
+					.apply();
+		} catch (IOException | JSONException e) {
+			onServerError();
+			e.printStackTrace();
+		}
 	}
 
 	@Override public void onUnauthorized() {
