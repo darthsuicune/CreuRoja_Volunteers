@@ -252,7 +252,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 						(SearchManager) getSystemService(Context.SEARCH_SERVICE);
 				SearchView searchView =
 						(SearchView) menu.findItem(R.id.action_search).getActionView();
-				// Assumes current activity is the searchable activity
 				searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 				searchView.setIconifiedByDefault(true);
 				searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
