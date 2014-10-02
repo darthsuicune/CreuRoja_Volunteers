@@ -3,6 +3,7 @@ package net.creuroja.android.view.fragments.locations.maps;
 import android.support.v4.app.Fragment;
 
 import net.creuroja.android.model.locations.Location;
+import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
 
 /**
@@ -20,6 +21,8 @@ public interface MapFragmentHandler {
 	public abstract void search(String query);
 
 	public abstract boolean locate(android.location.Location location);
+
+	public abstract void updateList(LocationList list);
 
 	public void setUp();
 

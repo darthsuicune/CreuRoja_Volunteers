@@ -82,7 +82,7 @@ public class NavigationDrawerFragment extends Fragment {
 							 Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 		prepareViewModes(v);
-		prepareLegendItems(v);
+		prepareLegendItems();
 		prepareMapTypes(v);
 		return v;
 	}
@@ -150,7 +150,7 @@ public class NavigationDrawerFragment extends Fragment {
 		});
 	}
 
-	private void prepareLegendItems(View v) {
+	public void prepareLegendItems() {
 		getLoaderManager().restartLoader(LOADER_LOCATION_TYPES, null, new LocationTypesCallback());
 	}
 

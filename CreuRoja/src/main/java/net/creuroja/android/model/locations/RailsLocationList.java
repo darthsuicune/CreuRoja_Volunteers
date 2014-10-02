@@ -44,7 +44,6 @@ public class RailsLocationList implements LocationList {
 				mIdList.add(location.mRemoteId);
 			} while (cursor.moveToNext());
 		}
-		cursor.close();
 		init(prefs);
 	}
 

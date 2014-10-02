@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
-import net.creuroja.android.activities.locations.LocationsListListener;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationList;
@@ -106,6 +105,12 @@ public class LocationListFragment extends ListFragment {
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
 		mListener.onLocationListItemSelected(mLocationList.get(position));
+	}
+
+	public void updateList(LocationList list) {
+		mLocationList = list;
+		mAdapter = new LocationListAdapter(getActivity());
+		setListAdapter(mAdapter);
 	}
 
 	public void toggleLocations(LocationType type, boolean newState) {
@@ -202,5 +207,8 @@ public class LocationListFragment extends ListFragment {
 		@Override public void onLoaderReset(Loader<Cursor> loader) {
 			//Nothing to do here
 		}
+	}
+	public interface LocationsListListener {
+		public void onLocationListItemSelected(Location location);
 	}
 }

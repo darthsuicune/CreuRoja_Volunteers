@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import net.creuroja.android.activities.locations.LocationsIndexActivity;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.Directions;
 import net.creuroja.android.model.locations.Location;
@@ -147,6 +148,11 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 		return false;
 	}
 
+	@Override public void updateList(LocationList list) {
+		mLocationList = list;
+		drawMarkers();
+	}
+
 	@Override public void setUp() {
 		search(null);
 	}
@@ -185,20 +191,18 @@ public class GoogleMapFragmentHandler implements MapFragmentHandler {
 			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
 				String query = args.getString(MapFragmentHandler.ARG_SEARCH_QUERY);
 				loader.setSelection(CreuRojaContract.Locations.NAME + " LIKE ? OR " +
-							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
-							CreuRojaContract.Locations.ADDRESS + " LIKE ?");
-				loader.setSelectionArgs(new String[]{
-						"%" + query + "%",
-						"%" + query + "%",
-						"%" + query + "%"
-				});
+									CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
+									CreuRojaContract.Locations.ADDRESS + " LIKE ?");
+				loader.setSelectionArgs(
+						new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"});
 			}
 			return loader;
 		}
 
 		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 			mLocationList = new RailsLocationList(data, prefs);
-			drawMarkers();
+			((LocationsIndexActivity) getFragment().getActivity())
+					.onLocationListUpdated(mLocationList);
 		}
 
 		@Override public void onLoaderReset(Loader<Cursor> loader) {

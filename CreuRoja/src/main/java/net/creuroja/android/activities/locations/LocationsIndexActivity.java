@@ -35,6 +35,7 @@ import net.creuroja.android.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.locations.Location;
+import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
@@ -53,8 +54,9 @@ import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragme
 import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity
-		implements LoginManager, MapNavigationDrawerCallbacks, LocationsListListener,
-		OnLocationCardInteractionListener, MapInteractionListener, OnDirectionsRequestedListener,
+		implements LoginManager, MapNavigationDrawerCallbacks,
+		LocationListFragment.LocationsListListener, OnLocationCardInteractionListener,
+		MapInteractionListener, OnDirectionsRequestedListener,
 		OnLocationDetailsInteractionListener {
 	private static final String TAG_MAP = "CreuRojaMap";
 	private static final String TAG_LIST = "CreuRojaLocationList";
@@ -221,6 +223,18 @@ public class LocationsIndexActivity extends ActionBarActivity
 					.commit();
 		}
 		cardFragment.setLocation(location);
+	}
+
+	public void onLocationListUpdated(LocationList list) {
+		if (mNavigationDrawerFragment != null) {
+			mNavigationDrawerFragment.prepareLegendItems();
+		}
+		if (mapFragmentHandler != null) {
+			mapFragmentHandler.updateList(list);
+		}
+		if (listFragment != null) {
+			listFragment.updateList(list);
+		}
 	}
 
 	public void restoreActionBar() {
