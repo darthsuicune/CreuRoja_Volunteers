@@ -26,13 +26,19 @@ import java.util.Map;
 public class RailsLocationList implements LocationList {
 	private List<Location> mLocationList = new ArrayList<>();
 	private List<Integer> mIdList = new ArrayList<>();
+	private List<LocationType> mTypeList = new ArrayList<>();
 	private String lastUpdateTime = "";
 	private Map<LocationType, Boolean> mToggledLocations;
 	private SharedPreferences prefs;
 
 	public RailsLocationList(HttpResponse response, SharedPreferences prefs)
 			throws IOException, JSONException {
-		createFromJson(RestWebServiceClient.getAsString(response));
+		JSONArray array = new JSONArray(RestWebServiceClient.getAsString(response));
+		for (int i = 0; i < array.length(); i++) {
+			JSONObject object = array.getJSONObject(i);
+			Location location = new Location(object);
+			addLocation(location);
+		}
 		init(prefs);
 	}
 
@@ -40,8 +46,7 @@ public class RailsLocationList implements LocationList {
 		if (cursor.moveToFirst()) {
 			do {
 				Location location = new Location(cursor);
-				mLocationList.add(location);
-				mIdList.add(location.mRemoteId);
+				addLocation(location);
 			} while (cursor.moveToNext());
 		}
 		init(prefs);
@@ -55,14 +60,13 @@ public class RailsLocationList implements LocationList {
 		}
 	}
 
-	private void createFromJson(String json) throws JSONException {
-		JSONArray array = new JSONArray(json);
-		for (int i = 0; i < array.length(); i++) {
-			JSONObject object = array.getJSONObject(i);
-			Location location = new Location(object);
-			mLocationList.add(location);
-			mIdList.add(location.mRemoteId);
+	private void addLocation(Location location) {
+		mLocationList.add(location);
+		mIdList.add(location.mRemoteId);
+		if(!mTypeList.contains(location.mType)) {
+			mTypeList.add(location.mType);
 		}
+
 	}
 
 	@Override
@@ -74,6 +78,10 @@ public class RailsLocationList implements LocationList {
 			}
 		}
 		return result;
+	}
+
+	@Override public List<LocationType> getLocationTypes() {
+		return mTypeList;
 	}
 
 	@Override public Location getById(long id) {

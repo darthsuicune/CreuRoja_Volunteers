@@ -28,23 +28,21 @@ import java.util.List;
 public class LocationsHandlerFragment extends Fragment {
 
 	private static final int LOADER_LOCATIONS = 1;
-	private List<OnLocationsListUpdated> mListeners;
+	private List<OnLocationsListUpdated> mListeners = new ArrayList<>();
 	private SharedPreferences prefs;
+	private LocationList mLocationList;
 
 	public LocationsHandlerFragment() {
 		// Required empty public constructor
 	}
 
+	public static LocationsHandlerFragment newInstance() {
+		return new LocationsHandlerFragment();
+	}
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mListeners = new ArrayList<>();
-		try {
-			mListeners.add((OnLocationsListUpdated) activity);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(
-					activity.toString() + " must implement OnLocationsListUpdated");
-		}
 		prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 		getLoaderManager().restartLoader(LOADER_LOCATIONS, null, new LocationListCallbacks());
 	}
@@ -57,10 +55,9 @@ public class LocationsHandlerFragment extends Fragment {
 
 	public void registerListener(OnLocationsListUpdated listener) {
 		mListeners.add(listener);
-	}
-
-	public void unregisterListener(OnLocationsListUpdated listener) {
-		mListeners.remove(listener);
+		if(mLocationList != null) {
+			listener.onLocationsListUpdated(mLocationList);
+		}
 	}
 
 	public void search(String query) {
@@ -70,6 +67,14 @@ public class LocationsHandlerFragment extends Fragment {
 			args.putString(MapFragmentHandler.ARG_SEARCH_QUERY, query);
 		}
 		getLoaderManager().restartLoader(LOADER_LOCATIONS, args, new LocationListCallbacks());
+	}
+
+	private void notifyListeners() {
+		if (mLocationList != null) {
+			for (OnLocationsListUpdated listener : mListeners) {
+				listener.onLocationsListUpdated(mLocationList);
+			}
+		}
 	}
 
 	/**
@@ -105,10 +110,8 @@ public class LocationsHandlerFragment extends Fragment {
 		}
 
 		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-			LocationList locationsList = new RailsLocationList(data, prefs);
-			for (OnLocationsListUpdated listener : mListeners) {
-				listener.onLocationsListUpdated(locationsList);
-			}
+			mLocationList = new RailsLocationList(data, prefs);
+			notifyListeners();
 		}
 
 		@Override public void onLoaderReset(Loader<Cursor> loader) {

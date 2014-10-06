@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -35,13 +34,13 @@ import net.creuroja.android.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.locations.Location;
-import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
 import net.creuroja.android.view.fragments.locations.LocationDetailFragment;
 import net.creuroja.android.view.fragments.locations.LocationListFragment;
-import net.creuroja.android.view.fragments.locations.NavigationDrawerFragment;
+import net.creuroja.android.view.fragments.locations.LocationsDrawerFragment;
+import net.creuroja.android.view.fragments.locations.LocationsHandlerFragment;
 import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
 import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
@@ -49,8 +48,8 @@ import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFact
 
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.OnLocationDetailsInteractionListener;
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.newInstance;
-import static net.creuroja.android.view.fragments.locations.NavigationDrawerFragment.MapNavigationDrawerCallbacks;
-import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragmentHandler.MapInteractionListener;
+import static net.creuroja.android.view.fragments.locations.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
+import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment.MapInteractionListener;
 import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity
@@ -60,14 +59,16 @@ public class LocationsIndexActivity extends ActionBarActivity
 		OnLocationDetailsInteractionListener {
 	private static final String TAG_MAP = "CreuRojaMap";
 	private static final String TAG_LIST = "CreuRojaLocationList";
+	private static final String TAG_HANDLER = "CreuRojaLocationsHandler";
 	private static final String TAG_CARD = "CreuRojaLocationCard";
 	private static final String TAG_DETAILS = "CreuRojaDetail";
 
 	// This are the fragments that the activity handles
-	private NavigationDrawerFragment mNavigationDrawerFragment;
-	private MapFragmentHandler mapFragmentHandler;
-	private LocationListFragment listFragment;
-	private LocationCardFragment cardFragment;
+	private LocationsDrawerFragment mLocationsDrawerFragment;
+	private MapFragmentHandler mMapFragmentHandler;
+	private LocationListFragment mListFragment;
+	private LocationCardFragment mCardFragment;
+	private LocationsHandlerFragment mLocationsHandlerFragment;
 
 	private LocationClient mLocationClient;
 
@@ -97,6 +98,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
 					}
 				});
+
 		startUi();
 		bootSync();
 	}
@@ -107,13 +109,22 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	private void startUi() {
 		setContentView(R.layout.activity_locations);
-		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.navigation_drawer);
+		FragmentManager manager = getSupportFragmentManager();
+		mLocationsDrawerFragment =
+				(LocationsDrawerFragment) manager.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
 
 		// Set up the drawer.
-		mNavigationDrawerFragment
+		mLocationsDrawerFragment
 				.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+		mLocationsHandlerFragment =
+				(LocationsHandlerFragment) manager.findFragmentByTag(TAG_HANDLER);
+		if (mLocationsHandlerFragment == null) {
+			mLocationsHandlerFragment = LocationsHandlerFragment.newInstance();
+			manager.beginTransaction().add(mLocationsHandlerFragment, TAG_HANDLER).commit();
+		}
+		mLocationsHandlerFragment.registerListener(mLocationsDrawerFragment);
 
 		setMainFragment();
 	}
@@ -145,36 +156,40 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private void setMainFragment() {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
+		LocationsHandlerFragment.OnLocationsListUpdated listener;
 		switch (currentViewMode) {
 			case LIST:
-				if (listFragment == null) {
-					listFragment =
+				if (mListFragment == null) {
+					mListFragment =
 							(LocationListFragment) fragmentManager.findFragmentByTag(TAG_LIST);
-					if (listFragment == null) {
-						listFragment = LocationListFragment.newInstance();
+					if (mListFragment == null) {
+						mListFragment = LocationListFragment.newInstance();
 					}
 				}
-				if (cardFragment != null && cardFragment.isVisible()) {
-					transaction.remove(cardFragment);
+				if (mCardFragment != null && mCardFragment.isVisible()) {
+					transaction.remove(mCardFragment);
 				}
-				transaction.replace(R.id.locations_container, listFragment, TAG_LIST);
+				transaction.replace(R.id.locations_container, mListFragment, TAG_LIST);
+				listener = mListFragment;
+
 				break;
 			case MAP:
 			default:
-				if (mapFragmentHandler == null) {
-					Fragment fragment = fragmentManager.findFragmentByTag(TAG_MAP);
-					mapFragmentHandler =
-							MapFragmentHandlerFactory.getHandler(fragment, this, prefs);
+				if (mMapFragmentHandler == null) {
+					mMapFragmentHandler =
+							(MapFragmentHandler) fragmentManager.findFragmentByTag(TAG_MAP);
+					if (mMapFragmentHandler == null) {
+						mMapFragmentHandler = MapFragmentHandlerFactory.getHandler();
+					}
 				}
-				transaction.replace(R.id.locations_container, mapFragmentHandler.getFragment(),
+				transaction.replace(R.id.locations_container, mMapFragmentHandler.getFragment(),
 						TAG_MAP);
+				listener = mMapFragmentHandler.getOnLocationsListUpdatedListener();
 				break;
 		}
 		transaction.commit();
 		fragmentManager.executePendingTransactions();
-		if (currentViewMode == ViewMode.MAP) {
-			mapFragmentHandler.setUp();
-		}
+		mLocationsHandlerFragment.registerListener(listener);
 	}
 
 	@Override public void onLocationListItemSelected(Location location) {
@@ -190,51 +205,39 @@ public class LocationsIndexActivity extends ActionBarActivity
 			onViewModeChanged(ViewMode.MAP);
 		}
 		android.location.Location origin = getCurrentLocation();
-		mapFragmentHandler.getDirections(origin, destination);
+		mMapFragmentHandler.getDirections(origin, destination);
 	}
 
 	@Override public void onCardCloseRequested() {
-		getSupportFragmentManager().beginTransaction().remove(cardFragment).commit();
+		getSupportFragmentManager().beginTransaction().remove(mCardFragment).commit();
 	}
 
 	@Override public void onNavigationLegendItemSelected(LocationType type, boolean newState) {
 		if (ViewMode.LIST == currentViewMode) {
-			listFragment.toggleLocations(type, newState);
+			mListFragment.toggleLocations(type, newState);
 		} else {
-			mapFragmentHandler.toggleLocations(type, newState);
+			mMapFragmentHandler.toggleLocations(type, newState);
 		}
 
 	}
 
 	@Override public void onNavigationMapTypeSelected(MapFragmentHandler.MapType mapType) {
 		if (ViewMode.MAP == currentViewMode) {
-			mapFragmentHandler.setMapType(mapType);
+			mMapFragmentHandler.setMapType(mapType);
 		}
 	}
 
 	@Override public void onLocationClicked(Location location) {
 		FragmentManager manager = getSupportFragmentManager();
-		if (cardFragment == null) {
-			cardFragment = (LocationCardFragment) manager.findFragmentByTag(TAG_CARD);
-			if (cardFragment == null) {
-				cardFragment = LocationCardFragment.newInstance(location);
+		if (mCardFragment == null) {
+			mCardFragment = (LocationCardFragment) manager.findFragmentByTag(TAG_CARD);
+			if (mCardFragment == null) {
+				mCardFragment = LocationCardFragment.newInstance(location);
 			}
-			manager.beginTransaction().add(R.id.location_card_container, cardFragment, TAG_CARD)
+			manager.beginTransaction().add(R.id.location_card_container, mCardFragment, TAG_CARD)
 					.commit();
 		}
-		cardFragment.setLocation(location);
-	}
-
-	public void onLocationListUpdated(LocationList list) {
-		if (mNavigationDrawerFragment != null) {
-			mNavigationDrawerFragment.prepareLegendItems();
-		}
-		if (mapFragmentHandler != null) {
-			mapFragmentHandler.updateList(list);
-		}
-		if (listFragment != null) {
-			listFragment.updateList(list);
-		}
+		mCardFragment.setLocation(location);
 	}
 
 	public void restoreActionBar() {
@@ -258,7 +261,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
+		if (mLocationsDrawerFragment != null && !mLocationsDrawerFragment.isDrawerOpen()) {
 			// Only show items in the action bar relevant to this screen if the drawer is not
 			// showing. Otherwise, let the drawer decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.locations, menu);
@@ -322,7 +325,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		android.location.Location location = getCurrentLocation();
 		if (location != null) {
 			if (currentViewMode == ViewMode.MAP) {
-				mapFragmentHandler.locate(location);
+				mMapFragmentHandler.locate(location);
 			}
 		}
 	}
@@ -403,12 +406,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 	}
 
 	private void performSearch(String query) {
-		if (mapFragmentHandler != null && mapFragmentHandler.getFragment().isAdded()) {
-			mapFragmentHandler.search(query);
-		}
-		if (listFragment != null && listFragment.isAdded()) {
-			listFragment.search(query);
-		}
+		mLocationsHandlerFragment.search(query);
 	}
 
 	public enum ViewMode {

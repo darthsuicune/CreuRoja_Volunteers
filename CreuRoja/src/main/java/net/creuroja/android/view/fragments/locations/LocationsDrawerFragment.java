@@ -3,17 +3,12 @@ package net.creuroja.android.view.fragments.locations;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -29,7 +24,7 @@ import android.widget.TextView;
 import net.creuroja.android.R;
 import net.creuroja.android.activities.locations.LocationsIndexActivity;
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
@@ -40,8 +35,8 @@ import java.util.List;
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
-public class NavigationDrawerFragment extends Fragment {
-	private static final int LOADER_LOCATION_TYPES = 1;
+public class LocationsDrawerFragment extends Fragment
+		implements LocationsHandlerFragment.OnLocationsListUpdated {
 	private static final int selected = Color.CYAN;
 	private static final int unselected = Color.TRANSPARENT;
 
@@ -57,7 +52,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 	private SharedPreferences prefs;
 
-	public NavigationDrawerFragment() {
+	public LocationsDrawerFragment() {
 	}
 
 	@Override
@@ -82,7 +77,6 @@ public class NavigationDrawerFragment extends Fragment {
 							 Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 		prepareViewModes(v);
-		prepareLegendItems();
 		prepareMapTypes(v);
 		return v;
 	}
@@ -144,14 +138,20 @@ public class NavigationDrawerFragment extends Fragment {
 	private void prepareViewMode(final TextView v, final LocationsIndexActivity.ViewMode mode) {
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View view) {
+				toggleViewMode(view);
 				mapDrawerCallbacks.onViewModeChanged(mode);
 				prefs.edit().putInt(Settings.VIEW_MODE, mode.getValue()).apply();
+				mDrawerLayout.closeDrawers();
+			}
+
+			private void toggleViewMode(View v) {
+				View map = getActivity().findViewById(R.id.navigation_drawer_section_map);
+				View list = getActivity().findViewById(R.id.navigation_drawer_section_list);
+
+				changeToggleBackground(map, v == map);
+				changeToggleBackground(list, v != map);
 			}
 		});
-	}
-
-	public void prepareLegendItems() {
-		getLoaderManager().restartLoader(LOADER_LOCATION_TYPES, null, new LocationTypesCallback());
 	}
 
 	public void prepareLegendItem(final TextView v, final LocationType type) {
@@ -280,6 +280,13 @@ public class NavigationDrawerFragment extends Fragment {
 		return ((ActionBarActivity) getActivity()).getSupportActionBar();
 	}
 
+	@Override public void onLocationsListUpdated(LocationList list) {
+		List<LocationType> types = list.getLocationTypes();
+		for (LocationType type : types) {
+			prepareLegendItem((TextView) getActivity().findViewById(type.mLegendViewId), type);
+		}
+	}
+
 	/**
 	 * Callbacks interface that all activities using this fragment must implement.
 	 */
@@ -331,26 +338,6 @@ public class NavigationDrawerFragment extends Fragment {
 			if (Build.VERSION.SDK_INT >= 11) {
 				getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 			}
-		}
-	}
-
-	private class LocationTypesCallback implements LoaderManager.LoaderCallbacks<Cursor>{
-
-		@Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-			Uri uri = CreuRojaContract.Locations.CONTENT_DISTINCT_LOCATIONS;
-			String[] projection = {CreuRojaContract.Locations._ID, CreuRojaContract.Locations.TYPE};
-			return new CursorLoader(getActivity(), uri, projection, null, null, null);
-		}
-
-		@Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-			List<LocationType> types = LocationType.getCurrentTypes(cursor);
-			for (LocationType type : types) {
-				prepareLegendItem((TextView) getActivity().findViewById(type.mLegendViewId), type);
-			}
-		}
-
-		@Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
 		}
 	}
 }

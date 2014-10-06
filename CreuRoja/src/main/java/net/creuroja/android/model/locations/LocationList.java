@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface LocationList {
 	public List<Location> getLocations();
+	public List<LocationType> getLocationTypes();
 	public Location getById(long id);
 	public Location get(int position);
 	public void save(ContentResolver cr);

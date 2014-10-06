@@ -3,8 +3,9 @@ package net.creuroja.android.view.fragments.locations.maps;
 import android.support.v4.app.Fragment;
 
 import net.creuroja.android.model.locations.Location;
-import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
+
+import static net.creuroja.android.view.fragments.locations.LocationsHandlerFragment.OnLocationsListUpdated;
 
 /**
  * Created by denis on 10.08.14.
@@ -18,13 +19,9 @@ public interface MapFragmentHandler {
 
 	public abstract void toggleLocations(LocationType type, boolean active);
 
-	public abstract void search(String query);
-
 	public abstract boolean locate(android.location.Location location);
 
-	public abstract void updateList(LocationList list);
-
-	public void setUp();
+	public abstract OnLocationsListUpdated getOnLocationsListUpdatedListener();
 
 	public abstract Fragment getFragment();
 

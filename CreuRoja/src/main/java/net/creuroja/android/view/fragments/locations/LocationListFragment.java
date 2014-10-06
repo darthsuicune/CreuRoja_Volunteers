@@ -2,19 +2,11 @@ package net.creuroja.android.view.fragments.locations;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -22,12 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
-import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
-import net.creuroja.android.model.locations.RailsLocationList;
-import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
 import java.util.List;
 
@@ -40,18 +29,13 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link LocationsListListener} callbacks
  * interface.
  */
-public class LocationListFragment extends ListFragment {
-	public static final int LOADER_LOCATIONS = 1;
+public class LocationListFragment extends ListFragment implements
+		LocationsHandlerFragment.OnLocationsListUpdated {
 	private LocationList mLocationList;
 	private LocationsListListener mListener;
 
-	// The fragment's ListView/GridView.
-	private AdapterView<ListAdapter> mListView;
-
 	// The Adapter which will be used to populate the ListView/GridView with Views.
 	private ListAdapter mAdapter;
-
-	private SharedPreferences prefs;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -67,18 +51,13 @@ public class LocationListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
-
-		// Set the adapter
-		mListView = (AdapterView<ListAdapter>) view.findViewById(android.R.id.list);
 		setListAdapter(mAdapter);
-
 		return view;
 	}
 
@@ -91,7 +70,6 @@ public class LocationListFragment extends ListFragment {
 			throw new ClassCastException(
 					activity.toString() + " must implement LocationsListListener");
 		}
-		search(null);
 	}
 
 	@Override
@@ -107,25 +85,18 @@ public class LocationListFragment extends ListFragment {
 		mListener.onLocationListItemSelected(mLocationList.get(position));
 	}
 
-	public void updateList(LocationList list) {
-		mLocationList = list;
-		mAdapter = new LocationListAdapter(getActivity());
-		setListAdapter(mAdapter);
-	}
-
 	public void toggleLocations(LocationType type, boolean newState) {
 		mLocationList.toggleLocationType(type, newState);
 		mAdapter = new LocationListAdapter(getActivity());
 		setListAdapter(mAdapter);
 	}
 
-	public void search(String query) {
-		Bundle args = null;
-		if (query != null) {
-			args = new Bundle();
-			args.putString(MapFragmentHandler.ARG_SEARCH_QUERY, query);
+	@Override public void onLocationsListUpdated(LocationList list) {
+		mLocationList = list;
+		if(this.isAdded()) {
+			mAdapter = new LocationListAdapter(getActivity());
+			setListAdapter(mAdapter);
 		}
-		getLoaderManager().restartLoader(LOADER_LOCATIONS, args, new LocationListCallbacks());
 	}
 
 	static class ViewHolder {
@@ -177,35 +148,6 @@ public class LocationListFragment extends ListFragment {
 				holder.address.setText(location.mAddress);
 				holder.phone.setText(location.mPhone);
 			}
-		}
-	}
-
-	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-			String selection = null;
-			String[] selectionArgs = null;
-			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
-				String query = args.getString(MapFragmentHandler.ARG_SEARCH_QUERY);
-				selection = CreuRojaContract.Locations.NAME + " LIKE ? OR " +
-							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
-							CreuRojaContract.Locations.ADDRESS + " LIKE ?";
-				selectionArgs = new String[3];
-				selectionArgs[0] = "%" + query + "%";
-				selectionArgs[1] = "%" + query + "%";
-				selectionArgs[2] = "%" + query + "%";
-			}
-			Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
-			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
-		}
-
-		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-			mLocationList = new RailsLocationList(data, prefs);
-			mAdapter = new LocationListAdapter(getActivity());
-			setListAdapter(mAdapter);
-		}
-
-		@Override public void onLoaderReset(Loader<Cursor> loader) {
-			//Nothing to do here
 		}
 	}
 	public interface LocationsListListener {
