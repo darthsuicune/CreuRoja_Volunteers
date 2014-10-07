@@ -5,4 +5,9 @@
     <string name="user_role_technician">"Technician"</string>
     <string name="user_role_admin">"Admin"</string>
     <string name="view_profile">"View profile"</string>
+    <string name="user_profile_name_label">"Name"</string>
+    <string name="user_profile_email_label">"Email"</string>
+    <string name="user_profile_role_label">"Role"</string>
+    <string name="user_profile_types_label">"Types"</string>
+    <string name="user_profile_phone_label">"Phone"</string>
 </resources>

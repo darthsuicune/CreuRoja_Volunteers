@@ -98,6 +98,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
 					}
 				});
+		mLocationClient.connect();
 
 		startUi();
 		bootSync();
@@ -127,6 +128,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 		mLocationsHandlerFragment.registerListener(mLocationsDrawerFragment);
 
 		setMainFragment();
+		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
+			//noinspection ResourceType
+			findViewById(R.id.location_details_container)
+					.setVisibility(currentViewMode.getDetailsBlockVisibility());
+		}
 	}
 
 	@Override public void onViewModeChanged(ViewMode newViewMode) {
@@ -143,11 +149,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 			default:
 				//Nothing to do here
 				break;
-		}
-		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
-			//noinspection ResourceType
-			findViewById(R.id.location_details_container)
-					.setVisibility(currentViewMode.getDetailsBlockVisibility());
 		}
 		prefs.edit().putString(Settings.LOCATIONS_INDEX_TYPE, currentViewMode.toString()).apply();
 		setMainFragment();
@@ -171,7 +172,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 				}
 				transaction.replace(R.id.locations_container, mListFragment, TAG_LIST);
 				listener = mListFragment;
-
 				break;
 			case MAP:
 			default:
@@ -205,7 +205,9 @@ public class LocationsIndexActivity extends ActionBarActivity
 			onViewModeChanged(ViewMode.MAP);
 		}
 		android.location.Location origin = getCurrentLocation();
-		mMapFragmentHandler.getDirections(origin, destination);
+		if(origin != null) {
+			mMapFragmentHandler.getDirections(origin, destination);
+		}
 	}
 
 	@Override public void onCardCloseRequested() {

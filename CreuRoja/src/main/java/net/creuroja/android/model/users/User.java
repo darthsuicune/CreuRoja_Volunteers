@@ -39,7 +39,7 @@ public class User {
 	public Role role;
 	public boolean active;
 	public String accessToken;
-	List<String> types;
+	public List<String> types;
 
 	public User(String name, String surname, String email, Role role, boolean active,
 				String accessToken, int remoteId, List<String> types, String phone) {
@@ -109,13 +109,13 @@ public class User {
 			values.put(CreuRojaContract.Users.ACTIVE, active);
 			values.put(CreuRojaContract.Users.ACCESS_TOKEN, accessToken);
 			values.put(CreuRojaContract.Users.REMOTE_ID, remoteId);
-			values.put(CreuRojaContract.Users.TYPES, buildTypesString(types));
+			values.put(CreuRojaContract.Users.TYPES, types());
 			values.put(CreuRojaContract.Users.PHONE, phone);
 		}
 		return values;
 	}
 
-	private String buildTypesString(List<String> types) {
+	public String types() {
 		StringBuilder builder = new StringBuilder();
 		for(String type : types) {
 			builder.append(type);

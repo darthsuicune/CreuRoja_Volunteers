@@ -55,6 +55,12 @@ public class GoogleMapFragment extends SupportMapFragment
 
 	@Override public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		try {
+			listener = (MapInteractionListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(
+					activity.toString() + " must implement MapInteractionListener");
+		}
 		prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 	}
 

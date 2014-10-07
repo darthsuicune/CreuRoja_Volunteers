@@ -30,6 +30,10 @@ public class UserProfileFragment extends Fragment {
 	private User user;
 
 	private TextView mNameView;
+	private TextView mEmailView;
+	private TextView mRoleView;
+	private TextView mTypesView;
+	private TextView mPhoneView;
 
 	public UserProfileFragment() {
 		// Required empty public constructor
@@ -61,6 +65,10 @@ public class UserProfileFragment extends Fragment {
 
 	private void prepareViews(View v) {
 		mNameView = (TextView) v.findViewById(R.id.user_profile_name);
+		mEmailView = (TextView) v.findViewById(R.id.user_profile_email);
+		mTypesView = (TextView) v.findViewById(R.id.user_profile_types);
+		mRoleView = (TextView) v.findViewById(R.id.user_profile_role);
+		mPhoneView = (TextView) v.findViewById(R.id.user_profile_phone);
 	}
 
 	@Override
@@ -84,6 +92,10 @@ public class UserProfileFragment extends Fragment {
 
 	private void showUser() {
 		mNameView.setText(user.toString());
+		mEmailView.setText(user.email);
+		mTypesView.setText(user.types());
+		mRoleView.setText(user.role.toResourceString());
+		mPhoneView.setText(user.phone);
 	}
 
 	/**

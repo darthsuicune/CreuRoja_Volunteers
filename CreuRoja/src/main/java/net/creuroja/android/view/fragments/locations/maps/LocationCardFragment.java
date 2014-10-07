@@ -34,6 +34,7 @@ public class LocationCardFragment extends Fragment {
 	private TextView mAddressView;
 	private TextView mPhoneView;
 	private TextView mDescriptionView;
+	private TextView mRouteView;
 
 	/**
 	 * Use this factory method to create a new instance of
@@ -59,7 +60,6 @@ public class LocationCardFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		cardView = inflater.inflate(R.layout.fragment_location_card, container, false);
-
 		updateView();
 		return cardView;
 	}
@@ -93,12 +93,18 @@ public class LocationCardFragment extends Fragment {
 			mDescriptionView = (TextView) cardView.findViewById(R.id.location_card_description);
 			mPhoneView = (TextView) cardView.findViewById(R.id.location_card_phone);
 			mNameView = (TextView) cardView.findViewById(R.id.location_card_name);
+			mRouteView = (TextView) cardView.findViewById(R.id.location_card_get_directions);
 		}
 		if(mAddressView != null) {
 			mAddressView.setText((mLocation.mAddress == null) ? "" : mLocation.mAddress);
 			mDescriptionView.setText((mLocation.mDescription == null) ? "" : mLocation.mDescription);
 			mPhoneView.setText((mLocation.mPhone == null) ? "" : mLocation.mPhone);
 			mNameView.setText((mLocation.mName == null) ? "" : mLocation.mName);
+			mRouteView.setOnClickListener(new View.OnClickListener() {
+				@Override public void onClick(View view) {
+					mDirectionsListener.onDirectionsRequested(mLocation);
+				}
+			});
 		}
 	}
 

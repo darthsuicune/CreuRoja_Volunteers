@@ -56,7 +56,7 @@ public class LocationListFragment extends ListFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_locationlist, container, false);
+		View view = inflater.inflate(R.layout.fragment_location_list, container, false);
 		setListAdapter(mAdapter);
 		return view;
 	}

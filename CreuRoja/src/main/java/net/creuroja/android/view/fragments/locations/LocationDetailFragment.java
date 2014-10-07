@@ -36,6 +36,13 @@ public class LocationDetailFragment extends Fragment
 	private Location mLocation;
 
 	private TextView mNameView;
+	private TextView mDescriptionView;
+	private TextView mPhoneView;
+	private TextView mAddressView;
+	private TextView mLatitudeView;
+	private TextView mLongitudeView;
+	private TextView mTypeView;
+	private TextView mUpdatedAtView;
 
 	private OnLocationDetailsInteractionListener mListener;
 	private OnDirectionsRequestedListener mDirectionsListener;
@@ -70,9 +77,20 @@ public class LocationDetailFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_locationdetail, container, false);
-		mNameView = (TextView) view.findViewById(R.id.fragment_location_detail_name);
+		View view = inflater.inflate(R.layout.fragment_location_detail, container, false);
+		prepareViews(view);
 		return view;
+	}
+
+	private void prepareViews(View view) {
+		mNameView = (TextView) view.findViewById(R.id.fragment_location_detail_name);
+		mDescriptionView = (TextView) view.findViewById(R.id.fragment_location_detail_description);
+		mPhoneView = (TextView) view.findViewById(R.id.fragment_location_detail_phone);
+		mAddressView = (TextView) view.findViewById(R.id.fragment_location_detail_address);
+		mLatitudeView = (TextView) view.findViewById(R.id.fragment_location_detail_latitude);
+		mLongitudeView = (TextView) view.findViewById(R.id.fragment_location_detail_longitude);
+		mTypeView = (TextView) view.findViewById(R.id.fragment_location_detail_type);
+		mUpdatedAtView = (TextView) view.findViewById(R.id.fragment_location_detail_updated_at);
 	}
 
 	@Override
@@ -91,6 +109,7 @@ public class LocationDetailFragment extends Fragment
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;
+		mDirectionsListener = null;
 	}
 
 	@Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -113,6 +132,13 @@ public class LocationDetailFragment extends Fragment
 
 	private void showLocationInfo() {
 		mNameView.setText(mLocation.mName);
+		mDescriptionView.setText(mLocation.mDescription);
+		mPhoneView.setText(mLocation.mPhone);
+		mAddressView.setText(mLocation.mAddress);
+		mLatitudeView.setText(Double.toString(mLocation.mLatitude));
+		mLongitudeView.setText(Double.toString(mLocation.mLongitude));
+		mTypeView.setText(mLocation.mType.toString());
+		mUpdatedAtView.setText(mLocation.mUpdatedAt);
 	}
 
 	public void setLocation(Location location) {
