@@ -1,4 +1,4 @@
-package net.creuroja.android.model.webservice.sync;
+package net.creuroja.android.model.locations.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -31,13 +31,13 @@ import java.io.IOException;
 /**
  * Created by lapuente on 20.06.14.
  */
-public class CRSyncAdapter extends AbstractThreadedSyncAdapter implements ClientConnectionListener {
+public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter implements ClientConnectionListener {
 	private static final String SYNC_ADAPTER_TAG = "CreuRoja SyncAdapter";
 	private final AccountManager mAccountManager;
 	Context mContext;
 	SharedPreferences prefs;
 
-	public CRSyncAdapter(Context context, boolean autoInitialize) {
+	public LocationsSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
 		mContext = context;
 		mAccountManager = AccountManager.get(context);

@@ -98,7 +98,7 @@
         </activity>
 
         <service
-            android:name="net.creuroja.android.model.webservice.sync.CRSyncService"
+            android:name=".model.locations.sync.LocationsSyncService"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
