@@ -9,14 +9,13 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.locations.RailsLocationList;
 import net.creuroja.android.model.locations.LocationList;
+import net.creuroja.android.model.locations.RailsLocationList;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
@@ -31,7 +30,8 @@ import java.io.IOException;
 /**
  * Created by lapuente on 20.06.14.
  */
-public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter implements ClientConnectionListener {
+public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
+		implements ClientConnectionListener {
 	private static final String SYNC_ADAPTER_TAG = "CreuRoja SyncAdapter";
 	private final AccountManager mAccountManager;
 	Context mContext;
@@ -54,12 +54,9 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter implements
 	@Override public void onPerformSync(Account account, Bundle extras, String authority,
 										ContentProviderClient contentProviderClient,
 										SyncResult syncResult) {
-		ConnectivityManager connectivity =
-				(ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+		//TODO: Implement sync time verification and alarm for starting again.
 
-		if (connectivity != null && connectivity.getActiveNetworkInfo() != null &&
-			connectivity.getActiveNetworkInfo().isAvailable() &&
-			connectivity.getActiveNetworkInfo().isConnected()) {
+		if (Settings.isConnected(mContext)) {
 			try {
 				RestWebServiceClient restClient =
 						new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
@@ -85,7 +82,7 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter implements
 	}
 
 	@Override public void onValidResponse(HttpResponse response) {
-		LocationList locationList = null;
+		LocationList locationList;
 		try {
 			locationList = new RailsLocationList(response, prefs);
 			locationList.save(mContext.getContentResolver());

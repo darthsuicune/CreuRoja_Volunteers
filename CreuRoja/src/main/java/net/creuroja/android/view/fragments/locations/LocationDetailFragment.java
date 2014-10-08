@@ -139,6 +139,13 @@ public class LocationDetailFragment extends Fragment
 		mLongitudeView.setText(Double.toString(mLocation.mLongitude));
 		mTypeView.setText(mLocation.mType.toString());
 		mUpdatedAtView.setText(mLocation.mUpdatedAt);
+
+		//TODO: Replace when button is displayed
+		mLatitudeView.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View view) {
+				mDirectionsListener.onDirectionsRequested(mLocation);
+			}
+		});
 	}
 
 	public void setLocation(Location location) {

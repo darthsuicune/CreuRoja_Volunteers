@@ -45,9 +45,7 @@ public class DirectionsLoader extends AsyncTaskLoader<Directions> {
 	@Override public Directions loadInBackground() {
 		try {
 			mDirections = Directions.get(originLat, originLng, destinationLat, destinationLng);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
 		}
 		return mDirections;

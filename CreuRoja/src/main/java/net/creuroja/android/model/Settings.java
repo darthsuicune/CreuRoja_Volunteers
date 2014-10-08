@@ -1,7 +1,9 @@
 package net.creuroja.android.model;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 
 import net.creuroja.android.model.db.CreuRojaContract;
 
@@ -27,6 +29,15 @@ public class Settings {
 	 * expands it. This shared preference tracks this.
 	 */
 	public static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+
+	public static boolean isConnected(Context context) {
+		ConnectivityManager connectivity =
+				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		return (connectivity != null && connectivity.getActiveNetworkInfo() != null &&
+				connectivity.getActiveNetworkInfo().isAvailable() &&
+				connectivity.getActiveNetworkInfo().isConnected());
+	}
 
 	public static void clean(SharedPreferences prefs, ContentResolver cr) {
 		prefs.edit().clear().apply();

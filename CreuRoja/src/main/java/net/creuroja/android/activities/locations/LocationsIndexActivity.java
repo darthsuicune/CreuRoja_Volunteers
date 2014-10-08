@@ -186,7 +186,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 		mLocationsHandlerFragment.registerListener(listener);
 
 		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
-			//Comment required to avoid warning in AS
+			//Comment required to avoid warning in AS as the value isn't directly passed to
+			// setVisibility
 			//noinspection ResourceType
 			findViewById(R.id.location_details_container)
 					.setVisibility(currentViewMode.getDetailsBlockVisibility());

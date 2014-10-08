@@ -7,16 +7,16 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -45,8 +45,7 @@ import java.util.List;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AccountAuthenticatorActivity
-		implements LoaderManager.LoaderCallbacks<Cursor> {
+public class LoginActivity extends AccountAuthenticatorActivity {
 	public static final int E_MAIL_AUTO_COMPLETE_LOADER = 0;
 	public static final String ARG_ACCOUNT_TYPE = "accountType";
 	public static final String ARG_AUTH_TYPE = "authType";
@@ -95,7 +94,10 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	}
 
 	private void populateAutoComplete() {
-		getLoaderManager().initLoader(E_MAIL_AUTO_COMPLETE_LOADER, null, this);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			getLoaderManager()
+					.initLoader(E_MAIL_AUTO_COMPLETE_LOADER, null, new AutoCompleteLoaderHelper());
+		}
 	}
 
 	/**
@@ -195,56 +197,6 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		}
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-		Uri uri = null;
-		String[] projection = null;
-		String selection = null;
-		String[] selectionArgs = null;
-		String sortOrder = null;
-		switch (id) {
-			case E_MAIL_AUTO_COMPLETE_LOADER:
-				// Retrieve data rows for the device user's 'profile' contact.
-				uri = Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-						ContactsContract.Contacts.Data.CONTENT_DIRECTORY);
-				projection = ProfileQuery.PROJECTION;
-				// Select only email addresses.
-				selection = ContactsContract.Contacts.Data.MIMETYPE + " = ?";
-				selectionArgs =
-						new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE};
-				// Show primary email addresses first. Note that there won't be
-				// a primary email address if the user hasn't specified one.
-				sortOrder = ContactsContract.Contacts.Data.IS_PRIMARY + " DESC";
-				break;
-			default:
-				break;
-		}
-		return new CursorLoader(this, uri, projection, selection, selectionArgs, sortOrder);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-		switch (cursorLoader.getId()) {
-			case E_MAIL_AUTO_COMPLETE_LOADER:
-				List<String> emails = new ArrayList<>();
-				cursor.moveToFirst();
-				while (!cursor.isAfterLast()) {
-					emails.add(cursor.getString(ProfileQuery.ADDRESS));
-					cursor.moveToNext();
-				}
-
-				addEmailsToAutoComplete(emails);
-				break;
-			default:
-				break;
-		}
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-	}
-
 	private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
 		//Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
 		ArrayAdapter<String> adapter =
@@ -254,13 +206,66 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		mEmailView.setAdapter(adapter);
 	}
 
-
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private interface ProfileQuery {
 		String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS,
 							   ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
 
 		int ADDRESS = 0;
-		int IS_PRIMARY = 1;
+	}
+
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	private class AutoCompleteLoaderHelper implements LoaderManager.LoaderCallbacks<Cursor> {
+		@Override
+		public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+			Uri uri = null;
+			String[] projection = null;
+			String selection = null;
+			String[] selectionArgs = null;
+			String sortOrder = null;
+			switch (id) {
+				case E_MAIL_AUTO_COMPLETE_LOADER:
+					// Retrieve data rows for the device user's 'profile' contact.
+					uri = Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
+							ContactsContract.Contacts.Data.CONTENT_DIRECTORY);
+					projection = ProfileQuery.PROJECTION;
+					// Select only email addresses.
+					selection = ContactsContract.Contacts.Data.MIMETYPE + " = ?";
+					selectionArgs =
+							new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE};
+					// Show primary email addresses first. Note that there won't be
+					// a primary email address if the user hasn't specified one.
+					sortOrder = ContactsContract.Contacts.Data.IS_PRIMARY + " DESC";
+					break;
+				default:
+					break;
+			}
+			return new CursorLoader(LoginActivity.this, uri, projection, selection, selectionArgs,
+					sortOrder);
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+			switch (cursorLoader.getId()) {
+				case E_MAIL_AUTO_COMPLETE_LOADER:
+					List<String> emails = new ArrayList<>();
+					cursor.moveToFirst();
+					while (!cursor.isAfterLast()) {
+						emails.add(cursor.getString(ProfileQuery.ADDRESS));
+						cursor.moveToNext();
+					}
+
+					addEmailsToAutoComplete(emails);
+					break;
+				default:
+					break;
+			}
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+		}
 	}
 
 	/**
@@ -342,7 +347,7 @@ public class LoginActivity extends AccountAuthenticatorActivity
 			intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountUtils.ACCOUNT_TYPE);
 			intent.putExtra(AccountManager.KEY_AUTHTOKEN, response.authToken());
 			intent.putExtra(AccountManager.KEY_PASSWORD, mPassword);
-			if(response.isValid() && response.user() != null) {
+			if (response.isValid() && response.user() != null) {
 				response.user().save(getContentResolver());
 			}
 		}

@@ -95,7 +95,7 @@ public class LocationCardFragment extends Fragment {
 			mNameView = (TextView) cardView.findViewById(R.id.location_card_name);
 			mRouteView = (TextView) cardView.findViewById(R.id.location_card_get_directions);
 		}
-		if(mAddressView != null) {
+		if(mAddressView != null && mLocation != null) {
 			mAddressView.setText((mLocation.mAddress == null) ? "" : mLocation.mAddress);
 			mDescriptionView.setText((mLocation.mDescription == null) ? "" : mLocation.mDescription);
 			mPhoneView.setText((mLocation.mPhone == null) ? "" : mLocation.mPhone);
