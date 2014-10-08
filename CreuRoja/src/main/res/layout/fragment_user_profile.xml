@@ -19,50 +19,55 @@
 
         <TextView
             android:id="@+id/user_profile_name"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@string/user_profile_email_label"
+            android:text="@string/user_profile_email_label"
             style="@style/InfoScreenLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/user_profile_email"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@string/user_profile_role_label"
+            android:text="@string/user_profile_role_label"
             style="@style/InfoScreenLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/user_profile_role"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@string/user_profile_types_label"
+            android:text="@string/user_profile_types_label"
             style="@style/InfoScreenLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/user_profile_types"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@string/user_profile_phone_label"
+            android:text="@string/user_profile_phone_label"
             style="@style/InfoScreenLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/user_profile_phone"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

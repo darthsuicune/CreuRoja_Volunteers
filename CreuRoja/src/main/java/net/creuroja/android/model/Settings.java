@@ -12,7 +12,6 @@ public class Settings {
 	public final static String VIEW_MODE = "view_mode";
 	public final static String MAP_TYPE = "map_type";
 	public static final String LAST_UPDATE_TIME = "last_update_time";
-	public static final String LOCATIONS_INDEX_TYPE = "index_type";
 	public static final String SHOW_CUAP = "show_cuap";
 	public static final String SHOW_BRAVO = "show_bravo";
 	public static final String SHOW_ASSEMBLY = "show_assembly";

@@ -47,6 +47,10 @@ public class LocationsDrawerFragment extends Fragment
 
 	private DrawerLayout mDrawerLayout;
 	private View mFragmentContainerView;
+	private LocationsIndexActivity.ViewMode currentViewMode;
+
+	private TextView mListViewTypeToggle;
+	private TextView mMapViewTypeToggle;
 
 	private boolean mFromSavedInstanceState;
 
@@ -128,11 +132,19 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	private void prepareViewModes(View v) {
-		TextView viewMap = (TextView) v.findViewById(R.id.navigation_drawer_section_map);
-		TextView viewList = (TextView) v.findViewById(R.id.navigation_drawer_section_list);
+		mMapViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_map);
+		mListViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_list);
 
-		prepareViewMode(viewMap, LocationsIndexActivity.ViewMode.MAP);
-		prepareViewMode(viewList, LocationsIndexActivity.ViewMode.LIST);
+		prepareViewMode(mMapViewTypeToggle, LocationsIndexActivity.ViewMode.MAP);
+		prepareViewMode(mListViewTypeToggle, LocationsIndexActivity.ViewMode.LIST);
+		if (currentViewMode == null) {
+			currentViewMode = LocationsIndexActivity.ViewMode.getViewMode(
+					prefs.getInt(Settings.VIEW_MODE,
+							LocationsIndexActivity.ViewMode.MAP.getValue()));
+		}
+		toggleViewMode(
+				(currentViewMode == LocationsIndexActivity.ViewMode.LIST) ? mListViewTypeToggle :
+						mMapViewTypeToggle);
 	}
 
 	private void prepareViewMode(final TextView v, final LocationsIndexActivity.ViewMode mode) {
@@ -140,18 +152,18 @@ public class LocationsDrawerFragment extends Fragment
 			@Override public void onClick(View view) {
 				toggleViewMode(view);
 				mapDrawerCallbacks.onViewModeChanged(mode);
+				currentViewMode = mode;
 				prefs.edit().putInt(Settings.VIEW_MODE, mode.getValue()).apply();
 				mDrawerLayout.closeDrawers();
 			}
-
-			private void toggleViewMode(View v) {
-				View map = getActivity().findViewById(R.id.navigation_drawer_section_map);
-				View list = getActivity().findViewById(R.id.navigation_drawer_section_list);
-
-				changeToggleBackground(map, v == map);
-				changeToggleBackground(list, v != map);
-			}
 		});
+	}
+
+	private void toggleViewMode(View v) {
+		if (v != null) {
+			changeToggleBackground(mMapViewTypeToggle, v == mMapViewTypeToggle);
+			changeToggleBackground(mListViewTypeToggle, v == mListViewTypeToggle);
+		}
 	}
 
 	public void prepareLegendItem(final TextView v, final LocationType type) {

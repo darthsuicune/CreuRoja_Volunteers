@@ -46,8 +46,7 @@ public class UserProfileFragment extends Fragment {
 	 * @return A new instance of fragment UserProfileFragment.
 	 */
 	public static UserProfileFragment newInstance() {
-		UserProfileFragment fragment = new UserProfileFragment();
-		return fragment;
+		return new UserProfileFragment();
 	}
 
 	@Override

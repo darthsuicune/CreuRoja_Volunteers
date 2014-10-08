@@ -19,6 +19,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_name"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -32,6 +33,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_description"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -45,6 +47,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_phone"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -58,6 +61,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_address"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -71,6 +75,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_latitude"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -84,6 +89,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_longitude"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -97,6 +103,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_type"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>
@@ -110,6 +117,7 @@
 
         <TextView
             android:id="@+id/fragment_location_detail_updated_at"
+			style="@style/InfoScreenInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"/>

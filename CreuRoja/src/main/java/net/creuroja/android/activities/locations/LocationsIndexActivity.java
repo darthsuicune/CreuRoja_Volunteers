@@ -82,8 +82,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 	@Override
 	public void successfulLogin() {
 		if (currentViewMode == null) {
-			String preferredMode =
-					prefs.getString(Settings.LOCATIONS_INDEX_TYPE, ViewMode.MAP.toString());
+			int preferredMode =
+					prefs.getInt(Settings.VIEW_MODE, ViewMode.MAP.getValue());
 			currentViewMode = ViewMode.getViewMode(preferredMode);
 		}
 
@@ -128,11 +128,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 		mLocationsHandlerFragment.registerListener(mLocationsDrawerFragment);
 
 		setMainFragment();
-		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
-			//noinspection ResourceType
-			findViewById(R.id.location_details_container)
-					.setVisibility(currentViewMode.getDetailsBlockVisibility());
-		}
 	}
 
 	@Override public void onViewModeChanged(ViewMode newViewMode) {
@@ -150,7 +145,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 				//Nothing to do here
 				break;
 		}
-		prefs.edit().putString(Settings.LOCATIONS_INDEX_TYPE, currentViewMode.toString()).apply();
 		setMainFragment();
 	}
 
@@ -190,6 +184,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 		transaction.commit();
 		fragmentManager.executePendingTransactions();
 		mLocationsHandlerFragment.registerListener(listener);
+
+		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
+			findViewById(R.id.location_details_container)
+					.setVisibility(currentViewMode.getDetailsBlockVisibility());
+		}
 	}
 
 	@Override public void onLocationListItemSelected(Location location) {
@@ -267,6 +266,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 			// Only show items in the action bar relevant to this screen if the drawer is not
 			// showing. Otherwise, let the drawer decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.locations, menu);
+			getMenuInflater().inflate(R.menu.global, menu);
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
 				SearchManager searchManager =
 						(SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -420,11 +420,13 @@ public class LocationsIndexActivity extends ActionBarActivity
 			mValue = value;
 		}
 
-		public static ViewMode getViewMode(String mode) {
-			if (mode.equals(LIST.toString())) {
-				return LIST;
-			} else {
-				return MAP;
+		public static ViewMode getViewMode(int mode) {
+			switch(mode) {
+				case 1:
+					return LIST;
+				case 0:
+				default:
+					return MAP;
 			}
 		}
 
