@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimaryDark">#bb0000</item>
+        <item name="android:statusBarColor">#bb0000</item>
+    </style>
+
+    <style name="location_index_toolbar">
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:background">#aa0000</item>
+    </style>
+</resources>

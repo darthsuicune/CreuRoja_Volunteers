@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,6 +111,10 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	private void startUi() {
 		setContentView(R.layout.activity_locations);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.location_index_toolbar);
+		setSupportActionBar(toolbar);
+
 		FragmentManager manager = getSupportFragmentManager();
 		mLocationsDrawerFragment =
 				(LocationsDrawerFragment) manager.findFragmentById(R.id.navigation_drawer);
@@ -297,9 +302,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+		// Handle action bar item clicks here. The action bar will automatically handle clicks on
+		// the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 			case R.id.action_view_profile:
 				viewProfile();

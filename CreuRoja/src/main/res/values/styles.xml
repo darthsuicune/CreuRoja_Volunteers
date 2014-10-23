@@ -12,8 +12,7 @@
         <item name="android:padding">16dp</item>
     </style>
 
-    <style name="NoActionBar" parent="android:Theme.NoTitleBar">
-
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 
     <style name="NavigationDrawerSectionHeader">
@@ -32,5 +31,10 @@
     </style>
     <style name="InfoScreenInfo">
         <item name="android:layout_marginLeft">15dp</item>
+    </style>
+
+    <style name="location_index_toolbar">
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:background">#aa0000</item>
     </style>
 </resources>
