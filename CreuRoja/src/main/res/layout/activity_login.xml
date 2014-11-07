@@ -68,7 +68,6 @@
                     android:paddingRight="40dp"
                     android:src="@drawable/logologin"
                     android:layout_gravity="center_horizontal"
-                    android:layout_weight="0.10"
                     android:visibility="visible"/>
 
                 <AutoCompleteTextView
@@ -104,6 +103,12 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"/>
+
+                <TextView
+                    android:text="@string/login_notice"
+                    style="@style/LoginNotice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <Space

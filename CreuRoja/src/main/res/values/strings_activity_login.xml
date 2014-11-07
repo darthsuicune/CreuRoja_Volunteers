@@ -7,4 +7,6 @@
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="login_progress_signing_in">Signin in</string>
+    <string name="login_notice">Warning: Login is currently only available for volunteers at the Red Cross in Barcelona.
+ If you are already a member and want to have access, please get in contact with your nearest office.</string>
 </resources>

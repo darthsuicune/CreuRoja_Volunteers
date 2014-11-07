@@ -37,4 +37,9 @@
         <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="android:background">#aa0000</item>
     </style>
+
+    <style name="LoginNotice">
+        <item name="android:background">@android:color/holo_red_light</item>
+        <item name="android:padding">8dp</item>
+    </style>
 </resources>

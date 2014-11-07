@@ -7,5 +7,6 @@
     <string name="login_sign_in">Sign in</string>
     <string name="login_logo_description">Logo CR</string>
     <string name="login_progress_signing_in">Signing in&#8230;</string>
+    <string name="login_notice">Warning:</string>
 
 </resources>
