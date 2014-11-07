@@ -126,6 +126,7 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	private void drawDirections(Directions directions) {
+		drawMarkers();
 		PolylineOptions directionsOptions = new PolylineOptions();
 		directionsOptions.addAll(directions.getPoints());
 		directionsOptions.color(Color.parseColor("#CC0000"));

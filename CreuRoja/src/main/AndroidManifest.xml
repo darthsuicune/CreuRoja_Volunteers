@@ -62,10 +62,11 @@
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.creuroja.android.view.activities.LocationsIndexActivity" />
+                android:value="net.creuroja.android.activities.locations.LocationsIndexActivity" />
         </activity>
         <activity
             android:name="net.creuroja.android.activities.general.SettingsActivity"
+            android:theme="@style/NoActionBar"
             android:label="@string/action_settings" >
         </activity>
 
@@ -92,10 +93,11 @@
         <activity
             android:name=".activities.locations.LocationDetailsActivity"
             android:label="@string/title_activity_location_details"
+            android:theme="@style/NoActionBar"
             android:parentActivityName=".activities.locations.LocationsIndexActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.creuroja.android.view.activities.LocationsIndexActivity" />
+                android:value="net.creuroja.android.activities.locations.LocationsIndexActivity" />
         </activity>
 
         <service
