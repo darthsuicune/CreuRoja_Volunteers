@@ -3,5 +3,7 @@
 
     <string name="app_name">Creu Roja</string>
     <string name="action_settings">Configuració</string>
+    <string name="title_activity_locations">Locations</string>
+    <string name="title_activity_location_details">Location Details</string>
 
 </resources>
