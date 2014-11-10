@@ -207,18 +207,25 @@ public class LocationsIndexActivity extends ActionBarActivity
 		openLocationDetails(location);
 	}
 
-	@Override public void onDirectionsRequested(Location destination) {
+	@Override public boolean onDirectionsRequested(Location destination) {
 		if (ViewMode.LIST == currentViewMode) {
 			onViewModeChanged(ViewMode.MAP);
 		}
 		android.location.Location origin = getCurrentLocation();
 		if(origin != null) {
 			mMapFragmentHandler.getDirections(origin, destination);
+			return true;
 		}
+		return false;
+	}
+
+	@Override public void onRemoveRouteRequested() {
+		mMapFragmentHandler.removeDirections();
 	}
 
 	@Override public void onCardCloseRequested() {
 		getSupportFragmentManager().beginTransaction().remove(mCardFragment).commit();
+		mCardFragment = null;
 	}
 
 	@Override public void onNavigationLegendItemSelected(LocationType type, boolean newState) {

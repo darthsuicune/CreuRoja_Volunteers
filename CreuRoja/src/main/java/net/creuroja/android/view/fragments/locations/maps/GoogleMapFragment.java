@@ -166,6 +166,10 @@ public class GoogleMapFragment extends SupportMapFragment
 		return this;
 	}
 
+	@Override public void removeDirections() {
+		drawMarkers();
+	}
+
 	private void drawMarker(Location location) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(new LatLng(location.mLatitude, location.mLongitude));

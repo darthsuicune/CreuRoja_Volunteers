@@ -35,6 +35,10 @@ public class LocationCardFragment extends Fragment {
 	private TextView mPhoneView;
 	private TextView mDescriptionView;
 	private TextView mRouteView;
+	private TextView mCloseView;
+	private TextView mDetailsView;
+
+	private boolean hasDirections = false;
 
 	/**
 	 * Use this factory method to create a new instance of
@@ -85,6 +89,9 @@ public class LocationCardFragment extends Fragment {
 	public void setLocation(Location location) {
 		mLocation = location;
 		updateView();
+		if(hasDirections) {
+			removeRoute();
+		}
 	}
 
 	private void updateView() {
@@ -94,6 +101,8 @@ public class LocationCardFragment extends Fragment {
 			mPhoneView = (TextView) cardView.findViewById(R.id.location_card_phone);
 			mNameView = (TextView) cardView.findViewById(R.id.location_card_name);
 			mRouteView = (TextView) cardView.findViewById(R.id.location_card_get_directions);
+			mCloseView = (TextView) cardView.findViewById(R.id.location_card_close);
+			mDetailsView = (TextView) cardView.findViewById(R.id.location_card_details);
 		}
 		if(mAddressView != null && mLocation != null) {
 			mAddressView.setText((mLocation.mAddress == null) ? "" : mLocation.mAddress);
@@ -102,10 +111,45 @@ public class LocationCardFragment extends Fragment {
 			mNameView.setText((mLocation.mName == null) ? "" : mLocation.mName);
 			mRouteView.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
-					mDirectionsListener.onDirectionsRequested(mLocation);
+					if (hasDirections) {
+						removeRoute();
+					} else {
+						drawDirections();
+					}
+				}
+			});
+			mCloseView.setOnClickListener(new View.OnClickListener() {
+				@Override public void onClick(View view) {
+					onCloseRequested();
+				}
+			});
+			mDetailsView.setOnClickListener(new View.OnClickListener() {
+				@Override public void onClick(View view) {
+					onDetailsRequested();
 				}
 			});
 		}
+	}
+
+	private void drawDirections() {
+		if (mDirectionsListener.onDirectionsRequested(mLocation)) {
+			mRouteView.setText(R.string.location_card_remove_directions);
+			hasDirections = true;
+		}
+	}
+
+	private void removeRoute() {
+		mRouteView.setText(R.string.location_card_get_directions);
+		hasDirections = false;
+		mDirectionsListener.onRemoveRouteRequested();
+	}
+
+	private void onCloseRequested() {
+		mListener.onCardCloseRequested();
+	}
+
+	private void onDetailsRequested() {
+		mListener.onCardDetailsRequested(mLocation);
 	}
 
 	/**
