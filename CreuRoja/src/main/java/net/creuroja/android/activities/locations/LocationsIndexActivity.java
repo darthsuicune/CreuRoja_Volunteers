@@ -15,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -73,8 +72,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	private LocationClient mLocationClient;
 
-	// Used to store the last screen title. For use in {@link #restoreActionBar()}.
-	private CharSequence mTitle;
 	private SharedPreferences prefs;
 
 	private ViewMode currentViewMode;
@@ -118,7 +115,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 		FragmentManager manager = getSupportFragmentManager();
 		mLocationsDrawerFragment =
 				(LocationsDrawerFragment) manager.findFragmentById(R.id.navigation_drawer);
-		mTitle = getTitle();
 
 		// Set up the drawer.
 		mLocationsDrawerFragment
@@ -256,13 +252,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 		mCardFragment.setLocation(location);
 	}
 
-	public void restoreActionBar() {
-		ActionBar actionBar = getSupportActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setTitle(mTitle);
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -301,7 +290,6 @@ public class LocationsIndexActivity extends ActionBarActivity
 					}
 				});
 			}
-			restoreActionBar();
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
