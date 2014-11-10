@@ -25,6 +25,8 @@ public interface MapFragmentHandler {
 
 	public abstract Fragment getFragment();
 
+	public void removeDirections();
+
 	public enum MapType {
 		MAP_TYPE_NORMAL(0), MAP_TYPE_TERRAIN(1), MAP_TYPE_SATELLITE(2), MAP_TYPE_HYBRID(3);
 
