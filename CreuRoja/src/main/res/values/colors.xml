@@ -6,5 +6,5 @@
     <color name="navigation_drawer_header">#ccc</color>
     <color name="navigation_drawer_background">#eee</color>
     <color name="location_card_background">#eee</color>
-    <color name="drawer_item_selected">#da291c</color>
+    <color name="drawer_item_selected">#ffff857f</color>
 </resources>
