@@ -2,7 +2,6 @@ package net.creuroja.android.view.fragments.locations.maps;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -23,6 +22,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import net.creuroja.android.R;
 import net.creuroja.android.model.locations.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationList;
@@ -129,7 +129,7 @@ public class GoogleMapFragment extends SupportMapFragment
 		drawMarkers();
 		PolylineOptions directionsOptions = new PolylineOptions();
 		directionsOptions.addAll(directions.getPoints());
-		directionsOptions.color(Color.parseColor("#CC0000"));
+		directionsOptions.color(getResources().getColor(R.color.cruz_roja_main_red));
 		map.addPolyline(directionsOptions);
 	}
 

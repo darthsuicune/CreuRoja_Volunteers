@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context="net.creuroja.android.view.fragments.locations.LocationsDrawerFragment"
-        android:background="#eeee">
+        android:background="@color/navigation_drawer_background"
+        tools:context="net.creuroja.android.view.fragments.locations.LocationsDrawerFragment">
 
         <TextView
             android:layout_width="match_parent"
@@ -23,14 +23,12 @@
             android:id="@+id/navigation_drawer_section_map"
             android:text="@string/navigation_drawer_view_map"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style="@style/NavigationDrawerToggeableButton"/>
 
         <TextView
             android:id="@+id/navigation_drawer_section_list"
             android:text="@string/navigation_drawer_view_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style="@style/NavigationDrawerToggeableButton"/>
 
         <TextView

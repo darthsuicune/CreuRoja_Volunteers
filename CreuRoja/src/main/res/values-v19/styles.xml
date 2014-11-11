@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="NoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorPrimary">@color/cruz_roja_main_red</item>
+        <item name="colorPrimaryDark">@color/cruz_roja_darker_red</item>
     </style>
-
-    <style name="location_index_toolbar">
+    <style name="location_index_toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:paddingTop">16dp</item>
         <item name="android:minHeight">?attr/actionBarSize</item>
-        <item name="android:background">#aa0000</item>
+        <item name="android:background">?attr/colorPrimary</item>
     </style>
 </resources>

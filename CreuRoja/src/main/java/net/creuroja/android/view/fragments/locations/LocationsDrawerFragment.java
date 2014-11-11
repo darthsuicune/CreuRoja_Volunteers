@@ -7,12 +7,13 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,9 +38,6 @@ import java.util.List;
  */
 public class LocationsDrawerFragment extends Fragment
 		implements LocationsHandlerFragment.OnLocationsListUpdated {
-	private static final int selected = Color.CYAN;
-	private static final int unselected = Color.TRANSPARENT;
-
 	private MapNavigationDrawerCallbacks mapDrawerCallbacks;
 
 	// Helper component that ties the action bar to the navigation drawer.
@@ -79,7 +77,7 @@ public class LocationsDrawerFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+		View v = inflater.inflate(R.layout.fragment_locations_drawer, container, false);
 		prepareViewModes(v);
 		prepareMapTypes(v);
 		return v;
@@ -182,7 +180,7 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	private void changeToggleBackground(final View v, boolean newState) {
-		v.setBackgroundColor(newState ? selected : unselected);
+		v.setBackgroundColor(newState ? getResources().getColor(R.color.drawer_item_selected) : Color.TRANSPARENT);
 	}
 
 	private void prepareMapTypes(View v) {
@@ -249,13 +247,10 @@ public class LocationsDrawerFragment extends Fragment
 		// set a custom shadow that overlays the main content when the drawer opens
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-
+		Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.location_index_toolbar);
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the navigation drawer and the action bar app icon.
-		mDrawerToggle = new MyDrawerToggle(getActivity(), mDrawerLayout);
+		mDrawerToggle = new MyDrawerToggle(getActivity(), mDrawerLayout, toolbar);
 
 		// If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
 		// per the navigation drawer design guidelines.
@@ -316,10 +311,10 @@ public class LocationsDrawerFragment extends Fragment
 	private class MyDrawerToggle extends ActionBarDrawerToggle {
 		Activity mActivity;
 
-		public MyDrawerToggle(Activity activity, DrawerLayout layout) {
+		public MyDrawerToggle(Activity activity, DrawerLayout layout, Toolbar toolbar) {
 			super(activity,                    /* host Activity */
 					layout,                    /* DrawerLayout object */
-					R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
+					toolbar,             /* nav drawer image to replace 'Up' caret */
 					R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
 					R.string.navigation_drawer_close);  /* "close drawer" description for accessibility */
 			mActivity = activity;

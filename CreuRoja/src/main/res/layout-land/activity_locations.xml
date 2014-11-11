@@ -20,8 +20,7 @@
             android:id="@+id/location_index_toolbar"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            style="@style/location_index_toolbar"
-            app:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+            style="@style/location_index_toolbar" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -67,6 +66,6 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_gravity="start"
         android:name="net.creuroja.android.view.fragments.locations.LocationsDrawerFragment"
-        tools:layout="@layout/fragment_navigation_drawer"/>
+        tools:layout="@layout/fragment_locations_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>
