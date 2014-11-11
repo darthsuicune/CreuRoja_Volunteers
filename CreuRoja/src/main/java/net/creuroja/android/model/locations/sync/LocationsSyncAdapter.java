@@ -54,8 +54,6 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
 	@Override public void onPerformSync(Account account, Bundle extras, String authority,
 										ContentProviderClient contentProviderClient,
 										SyncResult syncResult) {
-		//TODO: Implement sync time verification and alarm for starting again.
-
 		if (Settings.isConnected(mContext)) {
 			try {
 				RestWebServiceClient restClient =
