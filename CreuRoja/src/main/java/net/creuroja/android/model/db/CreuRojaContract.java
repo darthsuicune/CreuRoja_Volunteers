@@ -33,14 +33,14 @@ public final class CreuRojaContract {
 		public static final String TABLE_NAME = "services";
 		public static final String DEFAULT_ORDER = _ID + " DESC";
 
+		public static final String REMOTE_ID = "remote_id";
 		public static final String NAME = "name";
 		public static final String DESCRIPTION = "description";
-		public static final String ASSEMBLYID = "assemblyid";
 		public static final String BASETIME = "basetime";
 		public static final String STARTTIME = "starttime";
 		public static final String ENDTIME = "endtime";
 		public static final String CODE = "code";
-		public static final String CREATED_AT = "created_at";
+		public static final String ARCHIVED = "archived";
 		public static final String UPDATED_AT = "updated_at";
 	}
 

@@ -119,8 +119,8 @@ public class GoogleMapFragment extends SupportMapFragment
 		Bundle bundle = new Bundle();
 		bundle.putDouble(DirectionsLoader.ARG_ORIG_LAT, origin.getLatitude());
 		bundle.putDouble(DirectionsLoader.ARG_ORIG_LONG, origin.getLongitude());
-		bundle.putDouble(DirectionsLoader.ARG_DEST_LAT, destination.mLatitude);
-		bundle.putDouble(DirectionsLoader.ARG_DEST_LONG, destination.mLongitude);
+		bundle.putDouble(DirectionsLoader.ARG_DEST_LAT, destination.latitude);
+		bundle.putDouble(DirectionsLoader.ARG_DEST_LONG, destination.longitude);
 		getFragment().getLoaderManager()
 				.restartLoader(LOADER_DIRECTIONS, bundle, new DirectionsCallbacks());
 	}
@@ -135,7 +135,7 @@ public class GoogleMapFragment extends SupportMapFragment
 
 	@Override public void toggleLocations(LocationType type, boolean newState) {
 		for (Marker marker : mCurrentMarkers.keySet()) {
-			if (mCurrentMarkers.get(marker).mType == type) {
+			if (mCurrentMarkers.get(marker).type == type) {
 				marker.setVisible(newState);
 			}
 		}
@@ -172,8 +172,8 @@ public class GoogleMapFragment extends SupportMapFragment
 
 	private void drawMarker(Location location) {
 		MarkerOptions options = new MarkerOptions();
-		options.position(new LatLng(location.mLatitude, location.mLongitude));
-		options.icon(BitmapDescriptorFactory.fromResource(location.mType.mIcon));
+		options.position(new LatLng(location.latitude, location.longitude));
+		options.icon(BitmapDescriptorFactory.fromResource(location.type.mIcon));
 		mCurrentMarkers.put(map.addMarker(options), location);
 		map.setInfoWindowAdapter(new OnLocationClickAdapter());
 	}

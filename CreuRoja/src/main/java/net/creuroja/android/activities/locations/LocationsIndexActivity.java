@@ -378,14 +378,14 @@ public class LocationsIndexActivity extends ActionBarActivity
 		if (currentViewMode == ViewMode.MAP ||
 			getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			Intent intent = new Intent(this, LocationDetailsActivity.class);
-			intent.putExtra(LocationDetailsActivity.EXTRA_LOCATION_ID, location.mRemoteId);
+			intent.putExtra(LocationDetailsActivity.EXTRA_LOCATION_ID, location.remoteId);
 			startActivity(intent);
 		} else {
 			FragmentManager manager = getSupportFragmentManager();
 			LocationDetailFragment fragment =
 					(LocationDetailFragment) manager.findFragmentByTag(TAG_DETAILS);
 			if (fragment == null) {
-				fragment = newInstance(location.mRemoteId);
+				fragment = newInstance(location.remoteId);
 				manager.beginTransaction()
 						.add(R.id.location_details_container, fragment, TAG_DETAILS).commit();
 			} else {

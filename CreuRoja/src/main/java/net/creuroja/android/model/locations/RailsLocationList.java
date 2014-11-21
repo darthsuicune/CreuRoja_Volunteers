@@ -3,18 +3,11 @@ package net.creuroja.android.model.locations;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
+import net.creuroja.android.model.factories.LocationFactory;
 
-import org.apache.http.HttpResponse;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,35 +17,14 @@ import java.util.Map;
  * Created by denis on 19.06.14.
  */
 public class RailsLocationList implements LocationList {
-	private List<Location> mLocationList = new ArrayList<>();
-	private List<Integer> mIdList = new ArrayList<>();
+	private List<Location> locationList = new ArrayList<>();
+	private List<Integer> idList = new ArrayList<>();
 	private List<LocationType> mTypeList = new ArrayList<>();
 	private String lastUpdateTime = "";
 	private Map<LocationType, Boolean> mToggledLocations;
 	private SharedPreferences prefs;
 
-	public RailsLocationList(HttpResponse response, SharedPreferences prefs)
-			throws IOException, JSONException {
-		JSONArray array = new JSONArray(RestWebServiceClient.getAsString(response));
-		for (int i = 0; i < array.length(); i++) {
-			JSONObject object = array.getJSONObject(i);
-			Location location = new Location(object);
-			addLocation(location);
-		}
-		init(prefs);
-	}
-
-	public RailsLocationList(Cursor cursor, SharedPreferences prefs) {
-		if (cursor.moveToFirst()) {
-			do {
-				Location location = new Location(cursor);
-				addLocation(location);
-			} while (cursor.moveToNext());
-		}
-		init(prefs);
-	}
-
-	private void init(SharedPreferences prefs) {
+	public RailsLocationList(SharedPreferences prefs) {
 		this.prefs = prefs;
 		mToggledLocations = new HashMap<>();
 		for (LocationType type : LocationType.values()) {
@@ -60,11 +32,11 @@ public class RailsLocationList implements LocationList {
 		}
 	}
 
-	private void addLocation(Location location) {
-		mLocationList.add(location);
-		mIdList.add(location.mRemoteId);
-		if(!mTypeList.contains(location.mType)) {
-			mTypeList.add(location.mType);
+	@Override public void addLocation(Location location) {
+		locationList.add(location);
+		idList.add(location.remoteId);
+		if (!mTypeList.contains(location.type)) {
+			mTypeList.add(location.type);
 		}
 
 	}
@@ -72,8 +44,8 @@ public class RailsLocationList implements LocationList {
 	@Override
 	public List<Location> getLocations() {
 		List<Location> result = new ArrayList<>();
-		for (Location location : mLocationList) {
-			if (mToggledLocations.get(location.mType)) {
+		for (Location location : locationList) {
+			if (mToggledLocations.get(location.type)) {
 				result.add(location);
 			}
 		}
@@ -85,8 +57,8 @@ public class RailsLocationList implements LocationList {
 	}
 
 	@Override public Location getById(long id) {
-		for (Location location : mLocationList) {
-			if (location.mRemoteId == id) {
+		for (Location location : locationList) {
+			if (location.remoteId == id) {
 				return location;
 			}
 		}
@@ -94,24 +66,25 @@ public class RailsLocationList implements LocationList {
 	}
 
 	@Override public Location get(int position) {
-		return mLocationList.get(position);
+		return locationList.get(position);
 	}
 
 	@Override public void save(ContentResolver cr) {
 		Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
 		LocationList currentLocations =
-				new RailsLocationList(cr.query(uri, null, null, null, null), prefs);
+				LocationFactory.fromCursor(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
-		for (Location location : mLocationList) {
+		for (Location location : locationList) {
 			if (location.newerThan(lastUpdateTime)) {
-				lastUpdateTime = location.mUpdatedAt;
+				lastUpdateTime = location.updatedAt;
 			}
-			if (location.mActive) {
+			if (location.active) {
 				if (currentLocations.has(location)) {
 					location.update(cr);
 				} else {
 					forInsert.add(location.getAsValues());
 				}
+				saveServices(cr, location);
 			} else {
 				location.delete(cr);
 			}
@@ -122,8 +95,8 @@ public class RailsLocationList implements LocationList {
 	}
 
 	public boolean has(Location location) {
-		for (Integer current : mIdList) {
-			if (current == location.mRemoteId) {
+		for (Integer current : idList) {
+			if (current == location.remoteId) {
 				return true;
 			}
 		}
@@ -139,6 +112,15 @@ public class RailsLocationList implements LocationList {
 	}
 
 	@Override public boolean isVisible(int position) {
-		return mLocationList.get(position).isVisible(prefs);
+		return locationList.get(position).isVisible(prefs);
+	}
+
+	public void saveServices(ContentResolver cr, Location location) {
+		Uri uri = CreuRojaContract.Services.CONTENT_SERVICES;
+		List<ContentValues> forInsert = new ArrayList<>();
+
+		if (forInsert.size() > 0) {
+			cr.bulkInsert(uri, forInsert.toArray(new ContentValues[forInsert.size()]));
+		}
 	}
 }

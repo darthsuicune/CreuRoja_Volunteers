@@ -105,10 +105,10 @@ public class LocationCardFragment extends Fragment {
 			mDetailsView = (TextView) cardView.findViewById(R.id.location_card_details);
 		}
 		if(mAddressView != null && mLocation != null) {
-			mAddressView.setText((mLocation.mAddress == null) ? "" : mLocation.mAddress);
-			mDescriptionView.setText((mLocation.mDescription == null) ? "" : mLocation.mDescription);
-			mPhoneView.setText((mLocation.mPhone == null) ? "" : mLocation.mPhone);
-			mNameView.setText((mLocation.mName == null) ? "" : mLocation.mName);
+			mAddressView.setText((mLocation.address == null) ? "" : mLocation.address);
+			mDescriptionView.setText((mLocation.description == null) ? "" : mLocation.description);
+			mPhoneView.setText((mLocation.phone == null) ? "" : mLocation.phone);
+			mNameView.setText((mLocation.name == null) ? "" : mLocation.name);
 			mRouteView.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
 					if (hasDirections) {

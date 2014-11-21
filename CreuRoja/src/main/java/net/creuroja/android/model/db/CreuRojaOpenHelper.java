@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 
 	private static final String DB_NAME = "CreuRoja";
-	private static final int DB_VERSION = 2;
+	private static final int DB_VERSION = 3;
 
 	private static final String CREATE = "CREATE TABLE ";
 	private static final String KEY = " INTEGER PRIMARY KEY AUTOINCREMENT, ";
@@ -33,6 +33,9 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 			case 1:
 				removeTable(db, CreuRojaContract.Users.TABLE_NAME);
 				createUsersTable(db, null);
+			case 2:
+				removeTable(db, CreuRojaContract.Services.TABLE_NAME);
+				createServicesTable(db, null);
 				break;
 		}
 
@@ -62,12 +65,10 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE + tableName + " (" +
 				   CreuRojaContract.Services._ID + KEY + CreuRojaContract.Services.NAME +
 				   " TEXT NOT NULL, " + CreuRojaContract.Services.DESCRIPTION + " TEXT NOT NULL, " +
-				   CreuRojaContract.Services.ASSEMBLYID + " INTEGER NOT NULL, " +
 				   CreuRojaContract.Services.BASETIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.STARTTIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.ENDTIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.CODE + " TEXT, " +
-				   CreuRojaContract.Services.CREATED_AT + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.UPDATED_AT + " DATETIME NOT NULL)");
 	}
 

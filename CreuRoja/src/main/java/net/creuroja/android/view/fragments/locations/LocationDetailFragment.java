@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.factories.LocationFactory;
 import net.creuroja.android.model.locations.Location;
 
 
@@ -121,7 +122,7 @@ public class LocationDetailFragment extends Fragment
 
 	@Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 		if (cursor.moveToFirst()) {
-			mLocation = new Location(cursor);
+			mLocation = LocationFactory.fromCursor(cursor);
 			showLocationInfo();
 		}
 	}
@@ -131,14 +132,14 @@ public class LocationDetailFragment extends Fragment
 	}
 
 	private void showLocationInfo() {
-		mNameView.setText(mLocation.mName);
-		mDescriptionView.setText(mLocation.mDescription);
-		mPhoneView.setText(mLocation.mPhone);
-		mAddressView.setText(mLocation.mAddress);
-		mLatitudeView.setText(Double.toString(mLocation.mLatitude));
-		mLongitudeView.setText(Double.toString(mLocation.mLongitude));
-		mTypeView.setText(mLocation.mType.toString());
-		mUpdatedAtView.setText(mLocation.mUpdatedAt);
+		mNameView.setText(mLocation.name);
+		mDescriptionView.setText(mLocation.description);
+		mPhoneView.setText(mLocation.phone);
+		mAddressView.setText(mLocation.address);
+		mLatitudeView.setText(Double.toString(mLocation.latitude));
+		mLongitudeView.setText(Double.toString(mLocation.longitude));
+		mTypeView.setText(mLocation.type.toString());
+		mUpdatedAtView.setText(mLocation.updatedAt);
 
 		//TODO: Replace when button is displayed
 		mLatitudeView.setOnClickListener(new View.OnClickListener() {

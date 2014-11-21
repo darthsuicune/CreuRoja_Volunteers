@@ -12,8 +12,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.factories.LocationFactory;
 import net.creuroja.android.model.locations.LocationList;
-import net.creuroja.android.model.locations.RailsLocationList;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class LocationsHandlerFragment extends Fragment {
 		}
 
 		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-			mLocationList = new RailsLocationList(data, prefs);
+			mLocationList = LocationFactory.fromCursor(data, prefs);
 			notifyListeners();
 		}
 

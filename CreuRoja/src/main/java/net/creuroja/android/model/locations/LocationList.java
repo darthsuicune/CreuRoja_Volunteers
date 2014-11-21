@@ -8,6 +8,7 @@ import java.util.List;
  * Created by denis on 19.06.14.
  */
 public interface LocationList {
+	public void addLocation(Location location);
 	public List<Location> getLocations();
 	public List<LocationType> getLocationTypes();
 	public Location getById(long id);

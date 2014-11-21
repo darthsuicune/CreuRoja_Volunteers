@@ -14,8 +14,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.creuroja.android.model.Settings;
+import net.creuroja.android.model.factories.LocationFactory;
 import net.creuroja.android.model.locations.LocationList;
-import net.creuroja.android.model.locations.RailsLocationList;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
@@ -26,6 +26,7 @@ import org.apache.http.HttpResponse;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * Created by lapuente on 20.06.14.
@@ -82,12 +83,12 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
 	@Override public void onValidResponse(HttpResponse response) {
 		LocationList locationList;
 		try {
-			locationList = new RailsLocationList(response, prefs);
+			locationList = LocationFactory.fromWebResponse(response, prefs);
 			locationList.save(mContext.getContentResolver());
 
 			prefs.edit().putString(Settings.LAST_UPDATE_TIME, locationList.getLastUpdateTime())
 					.apply();
-		} catch (IOException | JSONException e) {
+		} catch (IOException | JSONException | ParseException e) {
 			onServerError();
 			e.printStackTrace();
 		}
