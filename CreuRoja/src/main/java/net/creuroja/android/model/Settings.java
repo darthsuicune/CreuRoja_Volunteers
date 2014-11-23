@@ -41,9 +41,9 @@ public class Settings {
 
 	public static void clean(SharedPreferences prefs, ContentResolver cr) {
 		prefs.edit().clear().apply();
-		cr.delete(CreuRojaContract.Locations.CONTENT_LOCATIONS, null, null);
-		cr.delete(CreuRojaContract.Services.CONTENT_SERVICES, null, null);
-		cr.delete(CreuRojaContract.Vehicles.CONTENT_VEHICLES, null, null);
-		cr.delete(CreuRojaContract.Users.CONTENT_USERS, null, null);
+		cr.delete(CreuRojaContract.Locations.CONTENT_URI, null, null);
+		cr.delete(CreuRojaContract.Services.CONTENT_URI, null, null);
+		cr.delete(CreuRojaContract.Vehicles.CONTENT_URI, null, null);
+		cr.delete(CreuRojaContract.Users.CONTENT_URI, null, null);
 	}
 }

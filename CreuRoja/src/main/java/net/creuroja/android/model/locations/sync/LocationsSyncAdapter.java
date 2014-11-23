@@ -14,7 +14,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.factories.LocationFactory;
+import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;

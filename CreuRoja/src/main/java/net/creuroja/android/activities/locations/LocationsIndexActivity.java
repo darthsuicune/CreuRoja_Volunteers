@@ -24,8 +24,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationClient;
 
 import net.creuroja.android.R;
@@ -46,6 +44,8 @@ import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
 
+import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.OnLocationDetailsInteractionListener;
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.newInstance;
 import static net.creuroja.android.view.fragments.locations.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
@@ -64,11 +64,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private static final String TAG_DETAILS = "CreuRojaDetail";
 
 	// This are the fragments that the activity handles
-	private LocationsDrawerFragment mLocationsDrawerFragment;
-	private MapFragmentHandler mMapFragmentHandler;
-	private LocationListFragment mListFragment;
-	private LocationCardFragment mCardFragment;
-	private LocationsHandlerFragment mLocationsHandlerFragment;
+	private LocationsDrawerFragment locationsDrawerFragment;
+	private MapFragmentHandler mapFragmentHandler;
+	private LocationListFragment listFragment;
+	private LocationCardFragment cardFragment;
+	private LocationsHandlerFragment locationsHandlerFragment;
 
 	private LocationClient mLocationClient;
 
@@ -86,13 +86,13 @@ public class LocationsIndexActivity extends ActionBarActivity
 		}
 
 		mLocationClient =
-				new LocationClient(this, new GooglePlayServicesClient.ConnectionCallbacks() {
+				new LocationClient(this, new ConnectionCallbacks() {
 					@Override public void onConnected(Bundle bundle) {
 					}
 
 					@Override public void onDisconnected() {
 					}
-				}, new GoogleApiClient.OnConnectionFailedListener() {
+				}, new OnConnectionFailedListener() {
 					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
 					}
 				});
@@ -113,20 +113,20 @@ public class LocationsIndexActivity extends ActionBarActivity
 		setSupportActionBar(toolbar);
 
 		FragmentManager manager = getSupportFragmentManager();
-		mLocationsDrawerFragment =
+		locationsDrawerFragment =
 				(LocationsDrawerFragment) manager.findFragmentById(R.id.navigation_drawer);
 
 		// Set up the drawer.
-		mLocationsDrawerFragment
+		locationsDrawerFragment
 				.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-		mLocationsHandlerFragment =
+		locationsHandlerFragment =
 				(LocationsHandlerFragment) manager.findFragmentByTag(TAG_HANDLER);
-		if (mLocationsHandlerFragment == null) {
-			mLocationsHandlerFragment = LocationsHandlerFragment.newInstance();
-			manager.beginTransaction().add(mLocationsHandlerFragment, TAG_HANDLER).commit();
+		if (locationsHandlerFragment == null) {
+			locationsHandlerFragment = LocationsHandlerFragment.newInstance();
+			manager.beginTransaction().add(locationsHandlerFragment, TAG_HANDLER).commit();
 		}
-		mLocationsHandlerFragment.registerListener(mLocationsDrawerFragment);
+		locationsHandlerFragment.registerListener(locationsDrawerFragment);
 
 		setMainFragment();
 	}
@@ -155,36 +155,36 @@ public class LocationsIndexActivity extends ActionBarActivity
 		LocationsHandlerFragment.OnLocationsListUpdated listener;
 		switch (currentViewMode) {
 			case LIST:
-				if (mListFragment == null) {
-					mListFragment =
+				if (listFragment == null) {
+					listFragment =
 							(LocationListFragment) fragmentManager.findFragmentByTag(TAG_LIST);
-					if (mListFragment == null) {
-						mListFragment = LocationListFragment.newInstance();
+					if (listFragment == null) {
+						listFragment = LocationListFragment.newInstance();
 					}
 				}
-				if (mCardFragment != null && mCardFragment.isVisible()) {
-					transaction.remove(mCardFragment);
+				if (cardFragment != null && cardFragment.isVisible()) {
+					transaction.remove(cardFragment);
 				}
-				transaction.replace(R.id.locations_container, mListFragment, TAG_LIST);
-				listener = mListFragment;
+				transaction.replace(R.id.locations_container, listFragment, TAG_LIST);
+				listener = listFragment;
 				break;
 			case MAP:
 			default:
-				if (mMapFragmentHandler == null) {
-					mMapFragmentHandler =
+				if (mapFragmentHandler == null) {
+					mapFragmentHandler =
 							(MapFragmentHandler) fragmentManager.findFragmentByTag(TAG_MAP);
-					if (mMapFragmentHandler == null) {
-						mMapFragmentHandler = MapFragmentHandlerFactory.getHandler();
+					if (mapFragmentHandler == null) {
+						mapFragmentHandler = MapFragmentHandlerFactory.getHandler();
 					}
 				}
-				transaction.replace(R.id.locations_container, mMapFragmentHandler.getFragment(),
+				transaction.replace(R.id.locations_container, mapFragmentHandler.getFragment(),
 						TAG_MAP);
-				listener = mMapFragmentHandler.getOnLocationsListUpdatedListener();
+				listener = mapFragmentHandler.getOnLocationsListUpdatedListener();
 				break;
 		}
 		transaction.commit();
 		fragmentManager.executePendingTransactions();
-		mLocationsHandlerFragment.registerListener(listener);
+		locationsHandlerFragment.registerListener(listener);
 
 		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
 			//Comment required to avoid warning in AS as the value isn't directly passed to
@@ -209,47 +209,47 @@ public class LocationsIndexActivity extends ActionBarActivity
 		}
 		android.location.Location origin = getCurrentLocation();
 		if(origin != null) {
-			mMapFragmentHandler.getDirections(origin, destination);
+			mapFragmentHandler.getDirections(origin, destination);
 			return true;
 		}
 		return false;
 	}
 
 	@Override public void onRemoveRouteRequested() {
-		mMapFragmentHandler.removeDirections();
+		mapFragmentHandler.removeDirections();
 	}
 
 	@Override public void onCardCloseRequested() {
-		getSupportFragmentManager().beginTransaction().remove(mCardFragment).commit();
-		mCardFragment = null;
+		getSupportFragmentManager().beginTransaction().remove(cardFragment).commit();
+		cardFragment = null;
 	}
 
 	@Override public void onNavigationLegendItemSelected(LocationType type, boolean newState) {
 		if (ViewMode.LIST == currentViewMode) {
-			mListFragment.toggleLocations(type, newState);
+			listFragment.toggleLocations(type, newState);
 		} else {
-			mMapFragmentHandler.toggleLocations(type, newState);
+			mapFragmentHandler.toggleLocations(type, newState);
 		}
 
 	}
 
 	@Override public void onNavigationMapTypeSelected(MapFragmentHandler.MapType mapType) {
 		if (ViewMode.MAP == currentViewMode) {
-			mMapFragmentHandler.setMapType(mapType);
+			mapFragmentHandler.setMapType(mapType);
 		}
 	}
 
 	@Override public void onLocationClicked(Location location) {
 		FragmentManager manager = getSupportFragmentManager();
-		if (mCardFragment == null) {
-			mCardFragment = (LocationCardFragment) manager.findFragmentByTag(TAG_CARD);
-			if (mCardFragment == null) {
-				mCardFragment = LocationCardFragment.newInstance(location);
+		if (cardFragment == null) {
+			cardFragment = (LocationCardFragment) manager.findFragmentByTag(TAG_CARD);
+			if (cardFragment == null) {
+				cardFragment = LocationCardFragment.newInstance(location);
 			}
-			manager.beginTransaction().add(R.id.location_card_container, mCardFragment, TAG_CARD)
+			manager.beginTransaction().add(R.id.location_card_container, cardFragment, TAG_CARD)
 					.commit();
 		}
-		mCardFragment.setLocation(location);
+		cardFragment.setLocation(location);
 	}
 
 	@Override
@@ -266,7 +266,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		if (mLocationsDrawerFragment != null && !mLocationsDrawerFragment.isDrawerOpen()) {
+		if (locationsDrawerFragment != null && !locationsDrawerFragment.isDrawerOpen()) {
 			// Only show items in the action bar relevant to this screen if the drawer is not
 			// showing. Otherwise, let the drawer decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.locations, menu);
@@ -329,7 +329,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		android.location.Location location = getCurrentLocation();
 		if (location != null) {
 			if (currentViewMode == ViewMode.MAP) {
-				mMapFragmentHandler.locate(location);
+				mapFragmentHandler.locate(location);
 			}
 		}
 	}
@@ -353,9 +353,10 @@ public class LocationsIndexActivity extends ActionBarActivity
 	}
 
 	private android.location.Location getCurrentLocation() {
+		android.location.Location location = null;
 		if (areLocationServicesEnabled()) {
 			if (mLocationClient.getLastLocation() != null) {
-				return mLocationClient.getLastLocation();
+				location = mLocationClient.getLastLocation();
 			} else {
 				Toast.makeText(getApplicationContext(), R.string.locating, Toast.LENGTH_SHORT)
 						.show();
@@ -363,7 +364,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		} else {
 			showLocationSettings();
 		}
-		return null;
+		return location;
 	}
 
 	private boolean areLocationServicesEnabled() {
@@ -410,7 +411,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 	}
 
 	private void performSearch(String query) {
-		mLocationsHandlerFragment.search(query);
+		locationsHandlerFragment.search(query);
 	}
 
 	public enum ViewMode {

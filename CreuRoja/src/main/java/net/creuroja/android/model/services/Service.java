@@ -2,6 +2,7 @@ package net.creuroja.android.model.services;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 
 import net.creuroja.android.model.db.CreuRojaContract;
@@ -10,7 +11,7 @@ import net.creuroja.android.model.db.CreuRojaContract;
  * id, name, updatedAt, code, description, baseTime, startTime, endTime, archived)
  */
 public class Service {
-	private final int id;
+	public final int id;
 	private final String name;
 	private final String description;
 	private final String code;
@@ -34,6 +35,10 @@ public class Service {
 		this.archived = archived;
 	}
 
+	@Override public boolean equals(Object o) {
+		return ((Service) o).id == id;
+	}
+
 	public boolean archived() {
 		return archived;
 	}
@@ -53,16 +58,26 @@ public class Service {
 	}
 
 	public void update(ContentResolver cr) {
-		Uri uri = CreuRojaContract.Services.CONTENT_SERVICES;
+		Uri uri = CreuRojaContract.Services.CONTENT_URI;
 		String where = CreuRojaContract.Services.REMOTE_ID + "=?";
-		String[] selectionArgs = {Integer.toString(id)};
+		String[] selectionArgs = { Integer.toString(id) };
 		cr.update(uri, this.asValues(), where, selectionArgs);
 	}
 
 	public void delete(ContentResolver cr) {
-		Uri uri = CreuRojaContract.Services.CONTENT_SERVICES;
+		Uri uri = CreuRojaContract.Services.CONTENT_URI;
 		String where = CreuRojaContract.Services.REMOTE_ID + "=?";
 		String[] selectionArgs = {Integer.toString(id)};
 		cr.delete(uri, where, selectionArgs);
+	}
+
+	public static int count(ContentResolver cr, int serviceId) {
+		String where = CreuRojaContract.Services.REMOTE_ID + "=?";
+		String[] whereArgs = {Integer.toString(serviceId)};
+		Cursor services =
+				cr.query(CreuRojaContract.Services.CONTENT_URI, null, where, whereArgs, null);
+		final int count = services.getCount();
+		services.close();
+		return count;
 	}
 }

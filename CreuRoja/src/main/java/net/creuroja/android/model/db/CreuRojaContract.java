@@ -6,10 +6,11 @@ import android.provider.BaseColumns;
 public final class CreuRojaContract {
 
 	public static final class Locations implements BaseColumns {
-		public static final Uri CONTENT_LOCATIONS =
-				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/locations");
 		public static final String TABLE_NAME = "locations";
+		public static final Uri CONTENT_URI =
+				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/" + TABLE_NAME);
 		public static final String DEFAULT_ORDER = _ID + " DESC";
+
 		public static final String NAME = "name";
 		public static final String REMOTE_ID = "remote_id";
 		public static final String DESCRIPTION = "description";
@@ -28,9 +29,9 @@ public final class CreuRojaContract {
 	}
 
 	public static final class Services implements BaseColumns {
-		public static final Uri CONTENT_SERVICES =
-				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/services");
 		public static final String TABLE_NAME = "services";
+		public static final Uri CONTENT_URI =
+				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/" + TABLE_NAME);
 		public static final String DEFAULT_ORDER = _ID + " DESC";
 
 		public static final String REMOTE_ID = "remote_id";
@@ -45,9 +46,9 @@ public final class CreuRojaContract {
 	}
 
 	public static final class Vehicles implements BaseColumns {
-		public static final Uri CONTENT_VEHICLES =
-				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/vehicles");
 		public static final String TABLE_NAME = "vehicles";
+		public static final Uri CONTENT_URI =
+				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/" + TABLE_NAME);
 		public static final String DEFAULT_ORDER = _ID + " DESC";
 
 		public static final String BRAND = "brand";
@@ -63,9 +64,9 @@ public final class CreuRojaContract {
 	}
 
 	public static final class Users implements BaseColumns {
-		public static final Uri CONTENT_USERS =
-				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/users");
 		public static final String TABLE_NAME = "users";
+		public static final Uri CONTENT_URI =
+				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/" + TABLE_NAME);
 		public static final String DEFAULT_ORDER = _ID + " DESC";
 
 		public static final String NAME = "name";
@@ -80,4 +81,13 @@ public final class CreuRojaContract {
 		public static final String ACCESS_TOKEN = "accessToken";
 	}
 
+	public static final class LocationServices implements BaseColumns{
+		public static final String TABLE_NAME = "locationservices";
+		public static final Uri CONTENT_URI =
+				Uri.parse("content://" + CreuRojaProvider.CONTENT_NAME + "/" + TABLE_NAME);
+		public static final String DEFAULT_ORDER = _ID + " DESC";
+
+		public static final String LOCATION_ID = "location_id";
+		public static final String SERVICE_ID = "service_id";
+	}
 }

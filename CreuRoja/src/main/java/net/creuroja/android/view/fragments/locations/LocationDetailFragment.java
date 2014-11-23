@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.factories.LocationFactory;
+import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Location;
 
 
@@ -114,7 +114,7 @@ public class LocationDetailFragment extends Fragment
 	}
 
 	@Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-		Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
+		Uri uri = CreuRojaContract.Locations.CONTENT_URI;
 		String selection = CreuRojaContract.Locations.REMOTE_ID + "=?";
 		String[] selectionArgs = {Integer.toString(bundle.getInt(ARG_LOCATION_ID))};
 		return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);

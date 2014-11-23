@@ -13,9 +13,9 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center_horizontal"
         android:drawableTop="@drawable/ic_action_directions"
-        android:text="@string/location_card_get_directions"/>
+        android:text="@string/location_card_get_directions"
+        style="@style/LocationCard.Icon"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -27,23 +27,32 @@
             android:id="@+id/location_card_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@android:style/TextAppearance.Large"/>
+            style="@style/LocationCard.Title"/>
 
         <TextView
             android:id="@+id/location_card_description"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="@style/LocationCard.Detail"/>
 
         <TextView
             android:id="@+id/location_card_address"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="@style/LocationCard.Detail"/>
 
         <TextView
             android:id="@+id/location_card_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="phone"/>
+            android:autoLink="phone"
+            style="@style/LocationCard.Detail"/>
+
+        <TextView
+            android:id="@+id/location_card_services"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/LocationCard.Detail"/>
 
     </LinearLayout>
 
@@ -58,14 +67,15 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:drawableTop="@android:drawable/ic_menu_close_clear_cancel"
-            android:gravity="center_horizontal"
-            android:text="@string/location_card_close"/>
+            android:text="@string/location_card_close"
+            style="@style/LocationCard.Icon"/>
+
         <TextView
             android:id="@+id/location_card_details"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:drawableTop="@android:drawable/ic_input_get"
-            android:gravity="center_horizontal"
-            android:text="@string/location_card_details"/>
+            android:text="@string/location_card_details"
+            style="@style/LocationCard.Icon"/>
     </LinearLayout>
 </LinearLayout>

@@ -1,13 +1,10 @@
-package net.creuroja.android.model.factories;
+package net.creuroja.android.model.locations;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.locations.Location;
-import net.creuroja.android.model.locations.LocationList;
-import net.creuroja.android.model.locations.LocationType;
-import net.creuroja.android.model.locations.RailsLocationList;
+import net.creuroja.android.model.services.ServiceFactory;
 import net.creuroja.android.model.services.Service;
 import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
 

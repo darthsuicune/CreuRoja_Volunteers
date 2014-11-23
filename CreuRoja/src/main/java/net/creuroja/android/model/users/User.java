@@ -91,7 +91,7 @@ public class User {
 	}
 
 	public Uri save(ContentResolver cr) {
-		return cr.insert(CreuRojaContract.Users.CONTENT_USERS, toValues());
+		return cr.insert(CreuRojaContract.Users.CONTENT_URI, toValues());
 	}
 
 	public void deactivate(SharedPreferences prefs, ContentResolver cr) {

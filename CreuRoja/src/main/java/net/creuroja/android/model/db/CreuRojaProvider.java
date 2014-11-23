@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 public class CreuRojaProvider extends ContentProvider {
 	public static final String CONTENT_NAME = "net.creuroja.android.model.db.Provider";
@@ -19,6 +20,8 @@ public class CreuRojaProvider extends ContentProvider {
 	private static final int USERS = 7;
 	private static final int USERS_ID = 8;
 	private static final int DISTINCT_LOCATIONS = 9;
+	private static final int LOCATION_SERVICES = 10;
+	private static final int LOCATION_SERVICES_ID = 11;
 	static UriMatcher sUriMatcher;
 
 	static {
@@ -32,6 +35,8 @@ public class CreuRojaProvider extends ContentProvider {
 		sUriMatcher.addURI(CONTENT_NAME, CreuRojaContract.Vehicles.TABLE_NAME + "/#", VEHICLES_ID);
 		sUriMatcher.addURI(CONTENT_NAME, CreuRojaContract.Users.TABLE_NAME, USERS);
 		sUriMatcher.addURI(CONTENT_NAME, CreuRojaContract.Users.TABLE_NAME + "/#", USERS_ID);
+		sUriMatcher.addURI(CONTENT_NAME, CreuRojaContract.LocationServices.TABLE_NAME, LOCATION_SERVICES);
+		sUriMatcher.addURI(CONTENT_NAME, CreuRojaContract.Users.TABLE_NAME + "/#", LOCATION_SERVICES_ID);
 		sUriMatcher.addURI(CONTENT_NAME, CreuRojaContract.Locations.DISTINCT_LOCATIONS,
 				DISTINCT_LOCATIONS);
 	}
@@ -41,7 +46,7 @@ public class CreuRojaProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		mDbHelper = new CreuRojaOpenHelper(getContext());
-		return mDbHelper != null;
+		return true;
 	}
 
 	@Override
@@ -53,6 +58,10 @@ public class CreuRojaProvider extends ContentProvider {
 				return dirBase + CreuRojaContract.Locations.TABLE_NAME;
 			case LOCATIONS_ID:
 				return itemBase + CreuRojaContract.Locations.TABLE_NAME;
+			case LOCATION_SERVICES:
+				return dirBase + CreuRojaContract.LocationServices.TABLE_NAME;
+			case LOCATION_SERVICES_ID:
+				return itemBase + CreuRojaContract.LocationServices.TABLE_NAME;
 			case SERVICES:
 				return dirBase + CreuRojaContract.Services.TABLE_NAME;
 			case SERVICES_ID:
@@ -78,6 +87,9 @@ public class CreuRojaProvider extends ContentProvider {
 			case LOCATIONS_ID:
 			case LOCATIONS:
 				return CreuRojaContract.Locations.TABLE_NAME;
+			case LOCATION_SERVICES:
+			case LOCATION_SERVICES_ID:
+				return CreuRojaContract.LocationServices.TABLE_NAME;
 			case SERVICES_ID:
 			case SERVICES:
 				return CreuRojaContract.Services.TABLE_NAME;
@@ -93,7 +105,7 @@ public class CreuRojaProvider extends ContentProvider {
 	}
 
 
-	@Override public int bulkInsert(Uri uri, ContentValues[] values) {
+	@Override public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
 		int count = super.bulkInsert(uri, values);
 		if (count > 0) {
 			getContext().getContentResolver().notifyChange(uri, null, false);

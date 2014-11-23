@@ -12,7 +12,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.factories.LocationFactory;
+import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
@@ -105,7 +105,7 @@ public class LocationsHandlerFragment extends Fragment {
 				selectionArgs[1] = "%" + query + "%";
 				selectionArgs[2] = "%" + query + "%";
 			}
-			Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
+			Uri uri = CreuRojaContract.Locations.CONTENT_URI;
 			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
 		}
 

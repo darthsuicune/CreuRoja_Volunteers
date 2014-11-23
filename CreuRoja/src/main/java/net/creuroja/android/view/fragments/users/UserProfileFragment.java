@@ -120,7 +120,7 @@ public class UserProfileFragment extends Fragment {
 
 	private class UserLoaderHelper implements LoaderManager.LoaderCallbacks<Cursor> {
 		@Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-			return new CursorLoader(getActivity(), CreuRojaContract.Users.CONTENT_USERS, null, null,
+			return new CursorLoader(getActivity(), CreuRojaContract.Users.CONTENT_URI, null, null,
 					null, null);
 		}
 

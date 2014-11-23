@@ -21,10 +21,11 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 		if (db.isReadOnly()) {
 			db = getWritableDatabase();
 		}
-		createLocationsTable(db, null);
-		createServicesTable(db, null);
-		createVehiclesTable(db, null);
-		createUsersTable(db, null);
+		createLocationsTable(db);
+		createServicesTable(db);
+		createVehiclesTable(db);
+		createUsersTable(db);
+		createLocationServicesTable(db);
 	}
 
 	@Override
@@ -32,22 +33,21 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 		switch (oldVersion) {
 			case 1:
 				removeTable(db, CreuRojaContract.Users.TABLE_NAME);
-				createUsersTable(db, null);
+				createUsersTable(db);
 			case 2:
 				removeTable(db, CreuRojaContract.Services.TABLE_NAME);
-				createServicesTable(db, null);
+				createServicesTable(db);
+				createLocationServicesTable(db);
 				break;
 		}
 
 	}
 
-	private void createLocationsTable(SQLiteDatabase db, String tableName) {
-		if (tableName == null) {
-			tableName = CreuRojaContract.Locations.TABLE_NAME;
-		}
-		db.execSQL(CREATE + tableName + " (" +
-				   CreuRojaContract.Locations._ID + KEY + CreuRojaContract.Locations.NAME +
-				   " TEXT NOT NULL, " + CreuRojaContract.Locations.DESCRIPTION + " TEXT, " +
+	private void createLocationsTable(SQLiteDatabase db) {
+		db.execSQL(CREATE + CreuRojaContract.Locations.TABLE_NAME + " (" +
+				   CreuRojaContract.Locations._ID + KEY +
+				   CreuRojaContract.Locations.NAME + " TEXT NOT NULL, " +
+				   CreuRojaContract.Locations.DESCRIPTION + " TEXT, " +
 				   CreuRojaContract.Locations.ADDRESS + " TEXT, " +
 				   CreuRojaContract.Locations.PHONE + " TEXT, " +
 				   CreuRojaContract.Locations.LATITUD + " DOUBLE NOT NULL, " +
@@ -58,27 +58,32 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				   CreuRojaContract.Locations.ACTIVE + " BOOLEAN)");
 	}
 
-	private void createServicesTable(SQLiteDatabase db, String tableName) {
-		if (tableName == null) {
-			tableName = CreuRojaContract.Services.TABLE_NAME;
-		}
-		db.execSQL(CREATE + tableName + " (" +
-				   CreuRojaContract.Services._ID + KEY + CreuRojaContract.Services.NAME +
-				   " TEXT NOT NULL, " + CreuRojaContract.Services.DESCRIPTION + " TEXT NOT NULL, " +
+	private void createServicesTable(SQLiteDatabase db) {
+		db.execSQL(CREATE + CreuRojaContract.Services.TABLE_NAME + " (" +
+				   CreuRojaContract.Services._ID + KEY +
+				   CreuRojaContract.Services.REMOTE_ID + " INTEGER NOT NULL, " +
+				   CreuRojaContract.Services.NAME + " TEXT NOT NULL, " +
+				   CreuRojaContract.Services.DESCRIPTION + " TEXT NOT NULL, " +
 				   CreuRojaContract.Services.BASETIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.STARTTIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.ENDTIME + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Services.CODE + " TEXT, " +
+				   CreuRojaContract.Services.ARCHIVED + " INTEGER," +
 				   CreuRojaContract.Services.UPDATED_AT + " DATETIME NOT NULL)");
 	}
 
-	private void createVehiclesTable(SQLiteDatabase db, String tableName) {
-		if (tableName == null) {
-			tableName = CreuRojaContract.Vehicles.TABLE_NAME;
-		}
-		db.execSQL(CREATE + tableName + " (" +
-				   CreuRojaContract.Vehicles._ID + KEY + CreuRojaContract.Vehicles.BRAND +
-				   " TEXT NOT NULL, " + CreuRojaContract.Vehicles.MODEL + " TEXT NOT NULL, " +
+	private void createLocationServicesTable(SQLiteDatabase db) {
+		db.execSQL(CREATE + CreuRojaContract.LocationServices.TABLE_NAME + " (" +
+				   CreuRojaContract.LocationServices._ID + KEY +
+				   CreuRojaContract.LocationServices.LOCATION_ID + " INTEGER NOT NULL, " +
+				   CreuRojaContract.LocationServices.SERVICE_ID + " INTEGER NOT NULL)");
+	}
+
+	private void createVehiclesTable(SQLiteDatabase db) {
+		db.execSQL(CREATE + CreuRojaContract.Vehicles.TABLE_NAME + " (" +
+				   CreuRojaContract.Vehicles._ID + KEY +
+				   CreuRojaContract.Vehicles.BRAND + " TEXT NOT NULL, " +
+				   CreuRojaContract.Vehicles.MODEL + " TEXT NOT NULL, " +
 				   CreuRojaContract.Vehicles.LICENSE + " TEXT NOT NULL, " +
 				   CreuRojaContract.Vehicles.INDICATIVE + " TEXT NOT NULL, " +
 				   CreuRojaContract.Vehicles.VEHICLE_TYPE + " TEXT NOT NULL, " +
@@ -89,12 +94,10 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				   CreuRojaContract.Vehicles.UPDATED_AT + " DATETIME NOT NULL)");
 	}
 
-	private void createUsersTable(SQLiteDatabase db, String tableName) {
-		if (tableName == null) {
-			tableName = CreuRojaContract.Users.TABLE_NAME;
-		}
-		db.execSQL(CREATE + tableName + " (" + CreuRojaContract.Users._ID +
-				   KEY + CreuRojaContract.Users.NAME + " TEXT NOT NULL, " +
+	private void createUsersTable(SQLiteDatabase db) {
+		db.execSQL(CREATE + CreuRojaContract.Users.TABLE_NAME + " (" +
+				   CreuRojaContract.Users._ID + KEY +
+				   CreuRojaContract.Users.NAME + " TEXT NOT NULL, " +
 				   CreuRojaContract.Users.SURNAME + " TEXT NOT NULL, " +
 				   CreuRojaContract.Users.EMAIL + " TEXT NOT NULL, " +
 				   CreuRojaContract.Users.ROLE + " TEXT NOT NULL, " +

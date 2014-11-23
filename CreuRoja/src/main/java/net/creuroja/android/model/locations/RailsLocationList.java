@@ -5,8 +5,9 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import net.creuroja.android.model.locationservices.LocationService;
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.factories.LocationFactory;
+import net.creuroja.android.model.services.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class RailsLocationList implements LocationList {
 	}
 
 	@Override public void save(ContentResolver cr) {
-		Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
+		Uri uri = CreuRojaContract.Locations.CONTENT_URI;
 		LocationList currentLocations =
 				LocationFactory.fromCursor(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
@@ -116,11 +117,22 @@ public class RailsLocationList implements LocationList {
 	}
 
 	public void saveServices(ContentResolver cr, Location location) {
-		Uri uri = CreuRojaContract.Services.CONTENT_SERVICES;
-		List<ContentValues> forInsert = new ArrayList<>();
+		for (Service service : location.serviceList) {
+			LocationService ls = new LocationService(location, service);
+			if(service.archived()) {
+				service.delete(cr);
+				ls.delete(cr);
+				continue;
+			}
+			if (Service.count(cr, service.id) > 0) {
+				service.update(cr);
+			} else {
+				cr.insert(CreuRojaContract.Services.CONTENT_URI, service.asValues());
+			}
 
-		if (forInsert.size() > 0) {
-			cr.bulkInsert(uri, forInsert.toArray(new ContentValues[forInsert.size()]));
+			if (LocationService.count(cr, service.id, location.remoteId) == 0) {
+				cr.insert(CreuRojaContract.LocationServices.CONTENT_URI, ls.asValues());
+			}
 		}
 	}
 }

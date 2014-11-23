@@ -1,9 +1,8 @@
-package net.creuroja.android.model.factories;
+package net.creuroja.android.model.services;
 
 import android.database.Cursor;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.services.Service;
 
 import org.json.JSONException;
 import org.json.JSONObject;

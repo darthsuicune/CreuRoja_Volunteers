@@ -69,14 +69,14 @@ public class Location {
 	}
 
 	public void update(ContentResolver cr) {
-		Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
+		Uri uri = CreuRojaContract.Locations.CONTENT_URI;
 		String where = CreuRojaContract.Locations.REMOTE_ID + "=?";
 		String[] selectionArgs = {Integer.toString(remoteId)};
 		cr.update(uri, this.getAsValues(), where, selectionArgs);
 	}
 
 	public void delete(ContentResolver cr) {
-		Uri uri = CreuRojaContract.Locations.CONTENT_LOCATIONS;
+		Uri uri = CreuRojaContract.Locations.CONTENT_URI;
 		String where = CreuRojaContract.Locations.REMOTE_ID + "=?";
 		String[] selectionArgs = {Integer.toString(remoteId)};
 		cr.delete(uri, where, selectionArgs);

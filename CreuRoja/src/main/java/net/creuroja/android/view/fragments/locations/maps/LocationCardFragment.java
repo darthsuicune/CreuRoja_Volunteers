@@ -1,16 +1,28 @@
 package net.creuroja.android.view.fragments.locations.maps;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
+import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.Location;
+import net.creuroja.android.model.locationservices.LocationService;
+import net.creuroja.android.model.services.Service;
+import net.creuroja.android.model.services.ServiceFactory;
 import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
+
+import java.util.List;
+
+import static android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,24 +33,28 @@ import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListen
  * create an instance of this fragment.
  */
 public class LocationCardFragment extends Fragment {
+	private static final int LOADER_SERVICES = 1;
+	private static final int LOADER_LOCATION_SERVICES = 2;
+
 	// the fragment initialization parameters
-	private Location mLocation;
+	private Location location;
 
 	//Callback for the Activity
-	private OnLocationCardInteractionListener mListener;
-	private OnDirectionsRequestedListener mDirectionsListener;
+	private OnLocationCardInteractionListener listener;
+	private OnDirectionsRequestedListener directionsListener;
 	//General location card view
 	private View cardView;
 
-	private TextView mNameView;
-	private TextView mAddressView;
-	private TextView mPhoneView;
-	private TextView mDescriptionView;
-	private TextView mRouteView;
-	private TextView mCloseView;
-	private TextView mDetailsView;
+	private TextView nameView;
+	private TextView addressView;
+	private TextView phoneView;
+	private TextView descriptionView;
+	private TextView routeView;
+	private TextView closeView;
+	private TextView detailsView;
 
 	private boolean hasDirections = false;
+	private TextView servicesView;
 
 	/**
 	 * Use this factory method to create a new instance of
@@ -53,7 +69,8 @@ public class LocationCardFragment extends Fragment {
 	}
 
 	// Required empty public constructor
-	public LocationCardFragment() {}
+	public LocationCardFragment() {
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -72,44 +89,55 @@ public class LocationCardFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			mListener = (OnLocationCardInteractionListener) activity;
-			mDirectionsListener = (OnDirectionsRequestedListener) activity;
+			listener = (OnLocationCardInteractionListener) activity;
+			directionsListener = (OnDirectionsRequestedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					activity.toString() + " must implement OnLocationCardInteractionListener");
+		}
+		if (location != null) {
+			loadServices();
 		}
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
+		listener = null;
 	}
 
 	public void setLocation(Location location) {
-		mLocation = location;
+		this.location = location;
 		updateView();
-		if(hasDirections) {
+		if (hasDirections) {
 			removeRoute();
+		}
+		if (isAdded()) {
+			loadServices();
 		}
 	}
 
+	private void loadServices() {
+		getLoaderManager().restartLoader(LOADER_LOCATION_SERVICES, null, new ServicesLoaderHelper());
+	}
+
 	private void updateView() {
-		if (cardView != null && mLocation != null) {
-			mAddressView = (TextView) cardView.findViewById(R.id.location_card_address);
-			mDescriptionView = (TextView) cardView.findViewById(R.id.location_card_description);
-			mPhoneView = (TextView) cardView.findViewById(R.id.location_card_phone);
-			mNameView = (TextView) cardView.findViewById(R.id.location_card_name);
-			mRouteView = (TextView) cardView.findViewById(R.id.location_card_get_directions);
-			mCloseView = (TextView) cardView.findViewById(R.id.location_card_close);
-			mDetailsView = (TextView) cardView.findViewById(R.id.location_card_details);
+		if (cardView != null && location != null && addressView == null) {
+			addressView = (TextView) cardView.findViewById(R.id.location_card_address);
+			descriptionView = (TextView) cardView.findViewById(R.id.location_card_description);
+			phoneView = (TextView) cardView.findViewById(R.id.location_card_phone);
+			nameView = (TextView) cardView.findViewById(R.id.location_card_name);
+			routeView = (TextView) cardView.findViewById(R.id.location_card_get_directions);
+			closeView = (TextView) cardView.findViewById(R.id.location_card_close);
+			detailsView = (TextView) cardView.findViewById(R.id.location_card_details);
+			servicesView = (TextView) cardView.findViewById(R.id.location_card_services);
 		}
-		if(mAddressView != null && mLocation != null) {
-			mAddressView.setText((mLocation.address == null) ? "" : mLocation.address);
-			mDescriptionView.setText((mLocation.description == null) ? "" : mLocation.description);
-			mPhoneView.setText((mLocation.phone == null) ? "" : mLocation.phone);
-			mNameView.setText((mLocation.name == null) ? "" : mLocation.name);
-			mRouteView.setOnClickListener(new View.OnClickListener() {
+		if (addressView != null && location != null) {
+			addressView.setText((location.address == null) ? "" : location.address);
+			descriptionView.setText((location.description == null) ? "" : location.description);
+			phoneView.setText((location.phone == null) ? "" : location.phone);
+			nameView.setText((location.name == null) ? "" : location.name);
+			routeView.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
 					if (hasDirections) {
 						removeRoute();
@@ -118,38 +146,41 @@ public class LocationCardFragment extends Fragment {
 					}
 				}
 			});
-			mCloseView.setOnClickListener(new View.OnClickListener() {
+			closeView.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
 					onCloseRequested();
 				}
 			});
-			mDetailsView.setOnClickListener(new View.OnClickListener() {
+			detailsView.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
 					onDetailsRequested();
 				}
 			});
+			if(location.serviceList.size() > 0) {
+				servicesView.setText("" + location.serviceList.size() + " services available");
+			}
 		}
 	}
 
 	private void drawDirections() {
-		if (mDirectionsListener.onDirectionsRequested(mLocation)) {
-			mRouteView.setText(R.string.location_card_remove_directions);
+		if (directionsListener.onDirectionsRequested(location)) {
+			routeView.setText(R.string.location_card_remove_directions);
 			hasDirections = true;
 		}
 	}
 
 	private void removeRoute() {
-		mRouteView.setText(R.string.location_card_get_directions);
+		routeView.setText(R.string.location_card_get_directions);
 		hasDirections = false;
-		mDirectionsListener.onRemoveRouteRequested();
+		directionsListener.onRemoveRouteRequested();
 	}
 
 	private void onCloseRequested() {
-		mListener.onCardCloseRequested();
+		listener.onCardCloseRequested();
 	}
 
 	private void onDetailsRequested() {
-		mListener.onCardDetailsRequested(mLocation);
+		listener.onCardDetailsRequested(location);
 	}
 
 	/**
@@ -168,4 +199,63 @@ public class LocationCardFragment extends Fragment {
 		public void onCardDetailsRequested(Location location);
 	}
 
+	private class ServicesLoaderHelper implements LoaderCallbacks<Cursor> {
+		private static final String ARG_SERVICE_KEYS = "serviceKeys";
+
+		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			Uri uri;
+			String where;
+			String[] whereArgs;
+			switch (id) {
+				case LOADER_LOCATION_SERVICES:
+					uri = CreuRojaContract.LocationServices.CONTENT_URI;
+					where = CreuRojaContract.LocationServices.LOCATION_ID + "=?";
+					whereArgs = new String[]{Integer.toString(location.remoteId)};
+					break;
+				default:
+					String[] keys = args.getStringArray(ARG_SERVICE_KEYS);
+					uri = CreuRojaContract.Services.CONTENT_URI;
+					where = CreuRojaContract.Services.REMOTE_ID + " IN (" +
+							getKeyQuestionMarks(keys) + ")";
+					whereArgs = keys;
+					break;
+			}
+
+			return new CursorLoader(getActivity(), uri, null, where, whereArgs, null);
+		}
+
+		private String getKeyQuestionMarks(String[] keys) {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < keys.length; i++) {
+				builder.append("?");
+				if (i < keys.length - 1) {
+					builder.append(",");
+				}
+			}
+			return builder.toString();
+		}
+
+		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+			switch (loader.getId()) {
+				case LOADER_LOCATION_SERVICES:
+					Bundle args = new Bundle();
+					String[] serviceIds = LocationService.serviceIds(data);
+					args.putStringArray(ARG_SERVICE_KEYS, serviceIds);
+					getLoaderManager().restartLoader(LOADER_SERVICES, args, this);
+					break;
+				case LOADER_SERVICES:
+					List<Service> serviceList = ServiceFactory.listFromCursor(data);
+					for (Service service : serviceList) {
+						location.addService(service);
+					}
+					updateView();
+					break;
+			}
+
+		}
+
+		@Override public void onLoaderReset(Loader<Cursor> loader) {
+
+		}
+	}
 }
