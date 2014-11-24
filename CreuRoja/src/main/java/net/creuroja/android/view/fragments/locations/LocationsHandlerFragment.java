@@ -2,18 +2,15 @@ package net.creuroja.android.view.fragments.locations;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.LocationList;
+import net.creuroja.android.model.locations.loaders.LocationListLoader;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
 import java.util.ArrayList;
@@ -28,9 +25,9 @@ import java.util.List;
 public class LocationsHandlerFragment extends Fragment {
 
 	private static final int LOADER_LOCATIONS = 1;
-	private List<OnLocationsListUpdated> mListeners = new ArrayList<>();
+	private List<OnLocationsListUpdated> listeners = new ArrayList<>();
 	private SharedPreferences prefs;
-	private LocationList mLocationList;
+	private LocationList locationList;
 
 	public LocationsHandlerFragment() {
 		// Required empty public constructor
@@ -50,13 +47,13 @@ public class LocationsHandlerFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListeners = null;
+		listeners.clear();
 	}
 
 	public void registerListener(OnLocationsListUpdated listener) {
-		mListeners.add(listener);
-		if(mLocationList != null) {
-			listener.onLocationsListUpdated(mLocationList);
+		listeners.add(listener);
+		if (locationList != null) {
+			listener.onLocationsListUpdated(locationList);
 		}
 	}
 
@@ -70,9 +67,9 @@ public class LocationsHandlerFragment extends Fragment {
 	}
 
 	private void notifyListeners() {
-		if (mLocationList != null) {
-			for (OnLocationsListUpdated listener : mListeners) {
-				listener.onLocationsListUpdated(mLocationList);
+		if (locationList != null) {
+			for (OnLocationsListUpdated listener : listeners) {
+				listener.onLocationsListUpdated(locationList);
 			}
 		}
 	}
@@ -91,8 +88,8 @@ public class LocationsHandlerFragment extends Fragment {
 		public void onLocationsListUpdated(LocationList list);
 	}
 
-	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
-		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<LocationList> {
+		@Override public Loader<LocationList> onCreateLoader(int id, Bundle args) {
 			String selection = null;
 			String[] selectionArgs = null;
 			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
@@ -100,21 +97,19 @@ public class LocationsHandlerFragment extends Fragment {
 				selection = CreuRojaContract.Locations.NAME + " LIKE ? OR " +
 							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
 							CreuRojaContract.Locations.ADDRESS + " LIKE ?";
-				selectionArgs = new String[3];
-				selectionArgs[0] = "%" + query + "%";
-				selectionArgs[1] = "%" + query + "%";
-				selectionArgs[2] = "%" + query + "%";
+				selectionArgs =
+						new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"};
 			}
-			Uri uri = CreuRojaContract.Locations.CONTENT_URI;
-			return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
+			return new LocationListLoader(getActivity(), CreuRojaContract.Locations.CONTENT_URI,
+					null, selection, selectionArgs, null, prefs);
 		}
 
-		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-			mLocationList = LocationFactory.fromCursor(data, prefs);
+		@Override public void onLoadFinished(Loader<LocationList> loader, LocationList data) {
+			locationList = data;
 			notifyListeners();
 		}
 
-		@Override public void onLoaderReset(Loader<Cursor> loader) {
+		@Override public void onLoaderReset(Loader<LocationList> loader) {
 			//Nothing to do here
 		}
 	}

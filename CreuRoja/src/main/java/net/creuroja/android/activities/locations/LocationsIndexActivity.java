@@ -80,22 +80,20 @@ public class LocationsIndexActivity extends ActionBarActivity
 	@Override
 	public void successfulLogin() {
 		if (currentViewMode == null) {
-			int preferredMode =
-					prefs.getInt(Settings.VIEW_MODE, ViewMode.MAP.getValue());
+			int preferredMode = prefs.getInt(Settings.VIEW_MODE, ViewMode.MAP.getValue());
 			currentViewMode = ViewMode.getViewMode(preferredMode);
 		}
 
-		mLocationClient =
-				new LocationClient(this, new ConnectionCallbacks() {
-					@Override public void onConnected(Bundle bundle) {
-					}
+		mLocationClient = new LocationClient(this, new ConnectionCallbacks() {
+			@Override public void onConnected(Bundle bundle) {
+			}
 
-					@Override public void onDisconnected() {
-					}
-				}, new OnConnectionFailedListener() {
-					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
-					}
-				});
+			@Override public void onDisconnected() {
+			}
+		}, new OnConnectionFailedListener() {
+			@Override public void onConnectionFailed(ConnectionResult connectionResult) {
+			}
+		});
 		mLocationClient.connect();
 
 		startUi();
@@ -124,10 +122,10 @@ public class LocationsIndexActivity extends ActionBarActivity
 				(LocationsHandlerFragment) manager.findFragmentByTag(TAG_HANDLER);
 		if (locationsHandlerFragment == null) {
 			locationsHandlerFragment = LocationsHandlerFragment.newInstance();
+			locationsHandlerFragment.setRetainInstance(true);
 			manager.beginTransaction().add(locationsHandlerFragment, TAG_HANDLER).commit();
 		}
 		locationsHandlerFragment.registerListener(locationsDrawerFragment);
-
 		setMainFragment();
 	}
 
@@ -183,12 +181,9 @@ public class LocationsIndexActivity extends ActionBarActivity
 				break;
 		}
 		transaction.commit();
-		fragmentManager.executePendingTransactions();
 		locationsHandlerFragment.registerListener(listener);
-
 		if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
-			//Comment required to avoid warning in AS as the value isn't directly passed to
-			// setVisibility
+			//Comment to avoid warning in AS as the value isn't directly passed to setVisibility
 			//noinspection ResourceType
 			findViewById(R.id.location_details_container)
 					.setVisibility(currentViewMode.getDetailsBlockVisibility());
@@ -208,7 +203,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 			onViewModeChanged(ViewMode.MAP);
 		}
 		android.location.Location origin = getCurrentLocation();
-		if(origin != null) {
+		if (origin != null) {
 			mapFragmentHandler.getDirections(origin, destination);
 			return true;
 		}
@@ -256,8 +251,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean alreadyCreated = (savedInstanceState != null);
-		if (alreadyCreated && AccountUtils.getAccount(this) != null) {
+		if (savedInstanceState != null && AccountUtils.getAccount(this) != null) {
 			successfulLogin();
 		} else {
 			AccountUtils.validateLogin(this, this);
@@ -424,7 +418,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		}
 
 		public static ViewMode getViewMode(int mode) {
-			switch(mode) {
+			switch (mode) {
 				case 1:
 					return LIST;
 				case 0:

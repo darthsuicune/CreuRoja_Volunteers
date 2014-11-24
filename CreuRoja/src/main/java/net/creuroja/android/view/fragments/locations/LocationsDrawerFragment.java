@@ -10,8 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -41,16 +39,21 @@ public class LocationsDrawerFragment extends Fragment
 	private MapNavigationDrawerCallbacks mapDrawerCallbacks;
 
 	// Helper component that ties the action bar to the navigation drawer.
-	private ActionBarDrawerToggle mDrawerToggle;
+	private ActionBarDrawerToggle drawerToggle;
 
-	private DrawerLayout mDrawerLayout;
-	private View mFragmentContainerView;
+	private DrawerLayout drawerLayout;
+	private View fragmentContainerView;
 	private LocationsIndexActivity.ViewMode currentViewMode;
 
-	private TextView mListViewTypeToggle;
-	private TextView mMapViewTypeToggle;
+	private TextView listViewTypeToggle;
+	private TextView mapViewTypeToggle;
 
-	private boolean mFromSavedInstanceState;
+	TextView normal;
+	TextView terrain;
+	TextView satellite;
+	TextView hybrid;
+
+	private boolean fromSavedInstanceState;
 
 	private SharedPreferences prefs;
 
@@ -63,7 +66,7 @@ public class LocationsDrawerFragment extends Fragment
 		prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 		if (savedInstanceState != null) {
-			mFromSavedInstanceState = true;
+			fromSavedInstanceState = true;
 		}
 	}
 
@@ -103,23 +106,22 @@ public class LocationsDrawerFragment extends Fragment
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		// Forward the new configuration the drawer toggle component.
-		mDrawerToggle.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// If the drawer is open, show the global app actions in the action bar. See also
 		// showGlobalContextActionBar, which controls the top-left area of the action bar.
-		if (mDrawerLayout != null && isDrawerOpen()) {
+		if (drawerLayout != null && isDrawerOpen()) {
 			inflater.inflate(R.menu.global, menu);
-			showGlobalContextActionBar();
 		}
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
+		if (drawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
 
@@ -130,19 +132,19 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	private void prepareViewModes(View v) {
-		mMapViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_map);
-		mListViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_list);
+		mapViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_map);
+		listViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_list);
 
-		prepareViewMode(mMapViewTypeToggle, LocationsIndexActivity.ViewMode.MAP);
-		prepareViewMode(mListViewTypeToggle, LocationsIndexActivity.ViewMode.LIST);
+		prepareViewMode(mapViewTypeToggle, LocationsIndexActivity.ViewMode.MAP);
+		prepareViewMode(listViewTypeToggle, LocationsIndexActivity.ViewMode.LIST);
 		if (currentViewMode == null) {
 			currentViewMode = LocationsIndexActivity.ViewMode.getViewMode(
 					prefs.getInt(Settings.VIEW_MODE,
 							LocationsIndexActivity.ViewMode.MAP.getValue()));
 		}
 		toggleViewMode(
-				(currentViewMode == LocationsIndexActivity.ViewMode.LIST) ? mListViewTypeToggle :
-						mMapViewTypeToggle);
+				(currentViewMode == LocationsIndexActivity.ViewMode.LIST) ? listViewTypeToggle :
+						mapViewTypeToggle);
 	}
 
 	private void prepareViewMode(final TextView v, final LocationsIndexActivity.ViewMode mode) {
@@ -152,15 +154,15 @@ public class LocationsDrawerFragment extends Fragment
 				mapDrawerCallbacks.onViewModeChanged(mode);
 				currentViewMode = mode;
 				prefs.edit().putInt(Settings.VIEW_MODE, mode.getValue()).apply();
-				mDrawerLayout.closeDrawers();
+				drawerLayout.closeDrawers();
 			}
 		});
 	}
 
 	private void toggleViewMode(View v) {
 		if (v != null) {
-			changeToggleBackground(mMapViewTypeToggle, v == mMapViewTypeToggle);
-			changeToggleBackground(mListViewTypeToggle, v == mListViewTypeToggle);
+			changeToggleBackground(mapViewTypeToggle, v == mapViewTypeToggle);
+			changeToggleBackground(listViewTypeToggle, v == listViewTypeToggle);
 		}
 	}
 
@@ -170,7 +172,7 @@ public class LocationsDrawerFragment extends Fragment
 			v.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
 					boolean newState = !type.getViewable(prefs);
-					prefs.edit().putBoolean(type.mPrefs, newState).apply();
+					prefs.edit().putBoolean(type.prefs, newState).apply();
 					mapDrawerCallbacks.onNavigationLegendItemSelected(type, newState);
 					changeToggleBackground(view, newState);
 				}
@@ -180,14 +182,15 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	private void changeToggleBackground(final View v, boolean newState) {
-		v.setBackgroundColor(newState ? getResources().getColor(R.color.drawer_item_selected) : Color.TRANSPARENT);
+		v.setBackgroundColor(newState ? getResources().getColor(R.color.drawer_item_selected) :
+				Color.TRANSPARENT);
 	}
 
 	private void prepareMapTypes(View v) {
-		TextView normal = (TextView) v.findViewById(R.id.navigation_map_type_normal);
-		TextView terrain = (TextView) v.findViewById(R.id.navigation_map_type_terrain);
-		TextView satellite = (TextView) v.findViewById(R.id.navigation_map_type_satellite);
-		TextView hybrid = (TextView) v.findViewById(R.id.navigation_map_type_hybrid);
+		normal = (TextView) v.findViewById(R.id.navigation_map_type_normal);
+		terrain = (TextView) v.findViewById(R.id.navigation_map_type_terrain);
+		satellite = (TextView) v.findViewById(R.id.navigation_map_type_satellite);
+		hybrid = (TextView) v.findViewById(R.id.navigation_map_type_hybrid);
 
 		prepareMapType(normal, MapFragmentHandler.MapType.MAP_TYPE_NORMAL);
 		prepareMapType(terrain, MapFragmentHandler.MapType.MAP_TYPE_TERRAIN);
@@ -209,15 +212,6 @@ public class LocationsDrawerFragment extends Fragment
 
 	private void toggleMapType() {
 		if (getActivity() != null) {
-			TextView normal =
-					(TextView) getActivity().findViewById(R.id.navigation_map_type_normal);
-			TextView terrain =
-					(TextView) getActivity().findViewById(R.id.navigation_map_type_terrain);
-			TextView satellite =
-					(TextView) getActivity().findViewById(R.id.navigation_map_type_satellite);
-			TextView hybrid =
-					(TextView) getActivity().findViewById(R.id.navigation_map_type_hybrid);
-
 			MapFragmentHandler.MapType type = MapFragmentHandler.MapType.fromValue(
 					prefs.getInt(Settings.MAP_TYPE,
 							MapFragmentHandler.MapType.MAP_TYPE_NORMAL.getValue()));
@@ -231,7 +225,7 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	public boolean isDrawerOpen() {
-		return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
+		return drawerLayout != null && drawerLayout.isDrawerOpen(fragmentContainerView);
 	}
 
 	/**
@@ -241,56 +235,42 @@ public class LocationsDrawerFragment extends Fragment
 	 * @param drawerLayout The DrawerLayout containing this fragment's UI.
 	 */
 	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
-		mFragmentContainerView = getActivity().findViewById(fragmentId);
-		mDrawerLayout = drawerLayout;
+
+		fragmentContainerView = getActivity().findViewById(fragmentId);
+		this.drawerLayout = drawerLayout;
 
 		// set a custom shadow that overlays the main content when the drawer opens
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+		this.drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
 		Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.location_index_toolbar);
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the navigation drawer and the action bar app icon.
-		mDrawerToggle = new MyDrawerToggle(getActivity(), mDrawerLayout, toolbar);
+		drawerToggle = new MyDrawerToggle(getActivity(), this.drawerLayout, toolbar);
 
 		// If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
 		// per the navigation drawer design guidelines.
 
 		boolean userLearnedDrawer = prefs.getBoolean(Settings.PREF_USER_LEARNED_DRAWER, false);
-		if (!userLearnedDrawer && !mFromSavedInstanceState) {
-			mDrawerLayout.openDrawer(mFragmentContainerView);
+		if (!userLearnedDrawer && !fromSavedInstanceState) {
+			this.drawerLayout.openDrawer(fragmentContainerView);
 		}
 
 		// Defer code dependent on restoration of previous instance state.
-		mDrawerLayout.post(new Runnable() {
+		this.drawerLayout.post(new Runnable() {
 			@Override
 			public void run() {
-				mDrawerToggle.syncState();
+				drawerToggle.syncState();
 			}
 		});
 
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		this.drawerLayout.setDrawerListener(drawerToggle);
 		toggleMapType();
-	}
-
-	/**
-	 * Per the navigation drawer design guidelines, updates the action bar to show the global app
-	 * 'context', rather than just what's in the current screen.
-	 */
-	private void showGlobalContextActionBar() {
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setTitle(R.string.app_name);
-	}
-
-	private ActionBar getActionBar() {
-		return ((ActionBarActivity) getActivity()).getSupportActionBar();
 	}
 
 	@Override public void onLocationsListUpdated(LocationList list) {
 		List<LocationType> types = list.getLocationTypes();
 		for (LocationType type : types) {
-			prepareLegendItem((TextView) getActivity().findViewById(type.mLegendViewId), type);
+			prepareLegendItem((TextView) getActivity().findViewById(type.legendViewId), type);
 		}
 	}
 
@@ -309,7 +289,7 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	private class MyDrawerToggle extends ActionBarDrawerToggle {
-		Activity mActivity;
+		Activity activity;
 
 		public MyDrawerToggle(Activity activity, DrawerLayout layout, Toolbar toolbar) {
 			super(activity,                    /* host Activity */
@@ -317,7 +297,7 @@ public class LocationsDrawerFragment extends Fragment
 					toolbar,             /* nav drawer image to replace 'Up' caret */
 					R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
 					R.string.navigation_drawer_close);  /* "close drawer" description for accessibility */
-			mActivity = activity;
+			this.activity = activity;
 		}
 
 		@Override public void onDrawerClosed(View drawerView) {
@@ -326,7 +306,7 @@ public class LocationsDrawerFragment extends Fragment
 				return;
 			}
 			if (Build.VERSION.SDK_INT >= 11) {
-				mActivity.invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+				activity.invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 			}
 		}
 
@@ -337,9 +317,8 @@ public class LocationsDrawerFragment extends Fragment
 			}
 			// The user manually opened the drawer; store this flag to prevent auto-showing
 			// the navigation drawer automatically in the future.
-			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			if (!sp.getBoolean(Settings.PREF_USER_LEARNED_DRAWER, false)) {
-				sp.edit().putBoolean(Settings.PREF_USER_LEARNED_DRAWER, true).apply();
+			if (!prefs.getBoolean(Settings.PREF_USER_LEARNED_DRAWER, false)) {
+				prefs.edit().putBoolean(Settings.PREF_USER_LEARNED_DRAWER, true).apply();
 			}
 
 			if (Build.VERSION.SDK_INT >= 11) {

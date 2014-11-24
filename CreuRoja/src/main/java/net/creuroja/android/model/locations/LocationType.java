@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 public enum LocationType {
-	NONE(0, 0, 0, ""),
+	NONE(0, R.string.marker_type_not_available, 0, ""),
 	ADAPTED(R.id.navigation_legend_adaptadas, R.string.marker_type_adaptadas, R.drawable.adaptadas,
 			Settings.SHOW_ADAPTED),
 	ASSEMBLY(R.id.navigation_legend_asamblea, R.string.marker_type_asamblea, R.drawable.asamblea,
@@ -37,77 +37,67 @@ public enum LocationType {
 	TERRESTRIAL(R.id.navigation_legend_terrestre, R.string.marker_type_terrestre,
 			R.drawable.terrestre, Settings.SHOW_TERRESTRIAL);
 
-	public int mLegendViewId;
-	public int mNameString;
-	public int mIcon;
-	public String mPrefs;
-
-	private static final String sAdapted = "adaptadas";
-	private static final String sAssembly = "asamblea";
-	private static final String sBravo = "bravo";
-	private static final String sCuap = "cuap";
-	private static final String sGasStation = "gasolinera";
-	private static final String sHospital = "hospital";
-	private static final String sSeaService = "maritimo";
-	private static final String sNostrum = "nostrum";
-	private static final String sSeaBase = "salvamento";
-	private static final String sTerrestrial = "terrestre";
+	public int legendViewId;
+	public int nameString;
+	public int icon;
+	public String prefs;
+	public String reference;
 
 	LocationType(int legendId, int nameString, int icon, String prefs) {
-		mLegendViewId = legendId;
-		mNameString = nameString;
-		mIcon = icon;
-		mPrefs = prefs;
+		legendViewId = legendId;
+		this.nameString = nameString;
+		this.icon = icon;
+		this.prefs = prefs;
 	}
 
-	@Override public String toString() {
-		switch (this) {
-			case ADAPTED:
-				return sAdapted;
-			case ASSEMBLY:
-				return sAssembly;
-			case BRAVO:
-				return sBravo;
-			case CUAP:
-				return sCuap;
-			case GAS_STATION:
-				return sGasStation;
-			case HOSPITAL:
-				return sHospital;
-			case SEA_SERVICE:
-				return sSeaService;
-			case NOSTRUM:
-				return sNostrum;
-			case SEA_BASE:
-				return sSeaBase;
-			case TERRESTRIAL:
-				return sTerrestrial;
+	public static LocationType getType(int resId) {
+		switch (resId) {
+			case R.string.marker_type_adaptadas:
+				return ADAPTED;
+			case R.string.marker_type_asamblea:
+				return ASSEMBLY;
+			case R.string.marker_type_bravo:
+				return BRAVO;
+			case R.string.marker_type_cuap:
+				return CUAP;
+			case R.string.marker_type_gasolinera:
+				return GAS_STATION;
+			case R.string.marker_type_hospital:
+				return HOSPITAL;
+			case R.string.marker_type_maritimo:
+				return SEA_SERVICE;
+			case R.string.marker_type_nostrum:
+				return NOSTRUM;
+			case R.string.marker_type_salvamento:
+				return SEA_BASE;
+			case R.string.marker_type_terrestre:
+				return TERRESTRIAL;
 			default:
-				return "N/A";
+				return NONE;
 		}
 	}
 
-	public static LocationType getType(String s) {
-		switch (s.toLowerCase()) {
-			case sAdapted:
+	public static LocationType getType(String string) {
+		switch (string.toLowerCase()) {
+			case LocationFactory.sAdapted:
 				return ADAPTED;
-			case sAssembly:
+			case LocationFactory.sAssembly:
 				return ASSEMBLY;
-			case sBravo:
+			case LocationFactory.sBravo:
 				return BRAVO;
-			case sCuap:
+			case LocationFactory.sCuap:
 				return CUAP;
-			case sGasStation:
+			case LocationFactory.sGasStation:
 				return GAS_STATION;
-			case sHospital:
+			case LocationFactory.sHospital:
 				return HOSPITAL;
-			case sSeaService:
+			case LocationFactory.sSeaService:
 				return SEA_SERVICE;
-			case sNostrum:
+			case LocationFactory.sNostrum:
 				return NOSTRUM;
-			case sSeaBase:
+			case LocationFactory.sSeaBase:
 				return SEA_BASE;
-			case sTerrestrial:
+			case LocationFactory.sTerrestrial:
 				return TERRESTRIAL;
 			default:
 				return NONE;
@@ -119,7 +109,7 @@ public enum LocationType {
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
 				LocationType type = getType(cursor
-						.getString(cursor.getColumnIndex(CreuRojaContract.Locations.TYPE)));
+						.getInt(cursor.getColumnIndex(CreuRojaContract.Locations.TYPE)));
 				if (!currentTypes.contains(type)) {
 					currentTypes.add(type);
 				}
@@ -129,6 +119,6 @@ public enum LocationType {
 	}
 
 	public boolean getViewable(SharedPreferences prefs) {
-		return prefs.getBoolean(mPrefs, true);
+		return prefs.getBoolean(this.prefs, true);
 	}
 }

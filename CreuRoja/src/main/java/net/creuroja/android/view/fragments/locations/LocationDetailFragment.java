@@ -138,7 +138,7 @@ public class LocationDetailFragment extends Fragment
 		mAddressView.setText(mLocation.address);
 		mLatitudeView.setText(Double.toString(mLocation.latitude));
 		mLongitudeView.setText(Double.toString(mLocation.longitude));
-		mTypeView.setText(mLocation.type.toString());
+		mTypeView.setText(getString(mLocation.type.nameString));
 		mUpdatedAtView.setText(mLocation.updatedAt);
 
 		//TODO: Replace when button is displayed

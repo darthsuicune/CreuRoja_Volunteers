@@ -63,7 +63,7 @@ public class Location {
 		values.put(CreuRojaContract.Locations.NAME, name);
 		values.put(CreuRojaContract.Locations.PHONE, phone);
 		values.put(CreuRojaContract.Locations.REMOTE_ID, remoteId);
-		values.put(CreuRojaContract.Locations.TYPE, type.toString());
+		values.put(CreuRojaContract.Locations.TYPE, type.nameString);
 		values.put(CreuRojaContract.Locations.UPDATED_AT, updatedAt);
 		return values;
 	}

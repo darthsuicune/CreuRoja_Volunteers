@@ -32,6 +32,18 @@ public class LocationFactory {
 	private static final String sActive = "active";
 	private static final String sServices = "active_services";
 
+	protected static final String sAdapted = "adaptadas";
+	protected static final String sAssembly = "asamblea";
+	protected static final String sBravo = "bravo";
+	protected static final String sCuap = "cuap";
+	protected static final String sGasStation = "gasolinera";
+	protected static final String sHospital = "hospital";
+	protected static final String sSeaService = "maritimo";
+	protected static final String sNostrum = "nostrum";
+	protected static final String sSeaBase = "salvamento";
+	protected static final String sTerrestrial = "terrestre";
+
+
 	public static Location fromJson(JSONObject json) throws JSONException, ParseException {
 		Location location = new Location(json.getInt(sRemoteId), json.getString(sName),
 				(json.has(sDescription)) ? json.getString(sDescription) : "",
@@ -42,7 +54,7 @@ public class LocationFactory {
 		JSONArray services = json.getJSONArray(sServices);
 		for (int i = 0; i < services.length(); i++) {
 			Service service = ServiceFactory.fromJson(services.getJSONObject(i));
-			if(!service.archived()) {
+			if (!service.archived()) {
 				location.addService(service);
 			}
 		}
@@ -59,7 +71,7 @@ public class LocationFactory {
 				cursor.getDouble(cursor.getColumnIndex(CreuRojaContract.Locations.LATITUD)),
 				cursor.getDouble(cursor.getColumnIndex(CreuRojaContract.Locations.LONGITUD)),
 				LocationType.getType(
-						cursor.getString(cursor.getColumnIndex(CreuRojaContract.Locations.TYPE))),
+						cursor.getInt(cursor.getColumnIndex(CreuRojaContract.Locations.TYPE))),
 				cursor.getString(cursor.getColumnIndex(CreuRojaContract.Locations.UPDATED_AT)),
 				cursor.getInt(cursor.getColumnIndex(CreuRojaContract.Locations.UPDATED_AT)) == 1);
 

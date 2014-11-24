@@ -39,7 +39,6 @@ public class RailsLocationList implements LocationList {
 		if (!mTypeList.contains(location.type)) {
 			mTypeList.add(location.type);
 		}
-
 	}
 
 	@Override

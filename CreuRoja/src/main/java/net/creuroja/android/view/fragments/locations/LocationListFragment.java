@@ -142,7 +142,7 @@ public class LocationListFragment extends ListFragment implements
 
 		private void populateView(ViewHolder holder, Location location) {
 			if (location != null) {
-				holder.icon.setImageResource(location.type.mIcon);
+				holder.icon.setImageResource(location.type.icon);
 				holder.name.setText(location.name);
 				holder.description.setText(location.description);
 				holder.address.setText(location.address);

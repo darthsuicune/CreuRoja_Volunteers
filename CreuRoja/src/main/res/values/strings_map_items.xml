@@ -4,6 +4,7 @@
     <string name="map_style_terrain">Terreny</string>
     <string name="map_style_satellite">Satèl·lit</string>
     <string name="map_style_hybrid">Híbrid</string>
+    <string name="marker_type_not_available">N/A</string>
     <string name="marker_type_adaptadas">Adaptades</string>
     <string name="marker_type_asamblea">Assemblees</string>
     <string name="marker_type_bravo">Bravos</string>

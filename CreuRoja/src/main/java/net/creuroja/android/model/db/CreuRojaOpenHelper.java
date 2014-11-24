@@ -36,6 +36,8 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				createUsersTable(db);
 			case 2:
 				removeTable(db, CreuRojaContract.Services.TABLE_NAME);
+				removeTable(db, CreuRojaContract.Locations.TABLE_NAME);
+				createLocationsTable(db);
 				createServicesTable(db);
 				createLocationServicesTable(db);
 				break;
@@ -52,7 +54,7 @@ public class CreuRojaOpenHelper extends SQLiteOpenHelper {
 				   CreuRojaContract.Locations.PHONE + " TEXT, " +
 				   CreuRojaContract.Locations.LATITUD + " DOUBLE NOT NULL, " +
 				   CreuRojaContract.Locations.LONGITUD + " DOUBLE NOT NULL, " +
-				   CreuRojaContract.Locations.TYPE + " TEXT NOT NULL, " +
+				   CreuRojaContract.Locations.TYPE + " INTEGER NOT NULL, " +
 				   CreuRojaContract.Locations.REMOTE_ID + " INTEGER NOT NULL, " +
 				   CreuRojaContract.Locations.UPDATED_AT + " DATETIME NOT NULL, " +
 				   CreuRojaContract.Locations.ACTIVE + " BOOLEAN)");

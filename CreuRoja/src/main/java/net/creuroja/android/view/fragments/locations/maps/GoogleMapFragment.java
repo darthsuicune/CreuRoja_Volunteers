@@ -38,15 +38,20 @@ import java.util.Map;
  */
 public class GoogleMapFragment extends SupportMapFragment
 		implements MapFragmentHandler, LocationsHandlerFragment.OnLocationsListUpdated {
-	private static final LatLng DEFAULT_POSITION = new LatLng(41.3958, 2.1739);
+	private static final double DEFAULT_LATITUDE = 41.3958;
+	private static final double DEFAULT_LONGITUDE = 2.1739;
+	private static final int DEFAULT_ZOOM = 12;
 	private static final int LOADER_DIRECTIONS = 1;
+	private static final String ARG_ZOOM = "zoom";
+	private static final String ARG_LATITUDE = "latitude";
+	private static final String ARG_LONGITUDE = "longitude";
 
 	GoogleMap map;
 
 	MapInteractionListener listener;
 
-	LocationList mLocationList;
-	Map<Marker, Location> mCurrentMarkers = new HashMap<>();
+	LocationList locationList;
+	Map<Marker, Location> currentMarkers = new HashMap<>();
 	SharedPreferences prefs;
 
 	public GoogleMapFragment() {
@@ -68,6 +73,7 @@ public class GoogleMapFragment extends SupportMapFragment
 									   Bundle savedInstanceState) {
 		View v = super.onCreateView(inflater, container, savedInstanceState);
 		initMap();
+		setCameraPosition(savedInstanceState);
 		return v;
 	}
 
@@ -80,12 +86,27 @@ public class GoogleMapFragment extends SupportMapFragment
 		settings.setZoomGesturesEnabled(true);
 		settings.setScrollGesturesEnabled(true);
 		settings.setTiltGesturesEnabled(true);
-		CameraPosition.Builder cameraBuilder = new CameraPosition.Builder();
-		cameraBuilder.target(DEFAULT_POSITION).zoom(12);
-		map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()));
-		if (mLocationList != null) {
+		if (locationList != null) {
 			drawMarkers();
 		}
+	}
+
+	private void setCameraPosition(Bundle state) {
+		CameraPosition.Builder cameraBuilder = new CameraPosition.Builder();
+		float zoom = (state == null) ? DEFAULT_ZOOM : state.getFloat(ARG_ZOOM);
+		double latitude = (state == null) ? DEFAULT_LATITUDE : state.getDouble(ARG_LATITUDE);
+		double longitude = (state == null) ? DEFAULT_LONGITUDE : state.getDouble(ARG_LONGITUDE);
+		LatLng position = new LatLng(latitude, longitude);
+		cameraBuilder.target(position).zoom(zoom);
+		map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()));
+	}
+
+	@Override public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		CameraPosition position = map.getCameraPosition();
+		outState.putFloat(ARG_ZOOM, position.zoom);
+		outState.putDouble(ARG_LATITUDE, position.target.latitude);
+		outState.putDouble(ARG_LONGITUDE, position.target.longitude);
 	}
 
 	@Override public void setMapType(MapType mapType) {
@@ -107,9 +128,9 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	public void drawMarkers() {
-		if (mLocationList != null) {
+		if (locationList != null) {
 			map.clear();
-			for (Location location : mLocationList.getLocations()) {
+			for (Location location : locationList.getLocations()) {
 				drawMarker(location);
 			}
 		}
@@ -134,8 +155,8 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	@Override public void toggleLocations(LocationType type, boolean newState) {
-		for (Marker marker : mCurrentMarkers.keySet()) {
-			if (mCurrentMarkers.get(marker).type == type) {
+		for (Marker marker : currentMarkers.keySet()) {
+			if (currentMarkers.get(marker).type == type) {
 				marker.setVisible(newState);
 			}
 		}
@@ -156,8 +177,8 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	@Override public void onLocationsListUpdated(LocationList list) {
-		mLocationList = list;
-		if(this.isAdded()) {
+		locationList = list;
+		if (this.isAdded()) {
 			drawMarkers();
 		}
 	}
@@ -173,8 +194,8 @@ public class GoogleMapFragment extends SupportMapFragment
 	private void drawMarker(Location location) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(new LatLng(location.latitude, location.longitude));
-		options.icon(BitmapDescriptorFactory.fromResource(location.type.mIcon));
-		mCurrentMarkers.put(map.addMarker(options), location);
+		options.icon(BitmapDescriptorFactory.fromResource(location.type.icon));
+		currentMarkers.put(map.addMarker(options), location);
 		map.setInfoWindowAdapter(new OnLocationClickAdapter());
 	}
 
@@ -188,7 +209,7 @@ public class GoogleMapFragment extends SupportMapFragment
 		}
 
 		@Override public View getInfoContents(Marker marker) {
-			listener.onLocationClicked(mCurrentMarkers.get(marker));
+			listener.onLocationClicked(currentMarkers.get(marker));
 			return null;
 		}
 	}
