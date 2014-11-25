@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link net.creuroja.android.view.fragments.locations.LocationsHandlerFragment.OnLocationsListUpdated} interface
+ * {@link LocationsHandlerFragment.OnLocationsListUpdated} interface
  * to handle interaction events.
  */
 public class LocationsHandlerFragment extends Fragment {
