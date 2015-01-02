@@ -46,7 +46,7 @@ public class LocationDetailsActivity extends ActionBarActivity
 		}
 	}
 
-	//TODO: Implement when buttons are added.
+	//TODO: Implement
 	@Override public boolean onDirectionsRequested(Location location) {
 		return false;
 	}
@@ -54,5 +54,10 @@ public class LocationDetailsActivity extends ActionBarActivity
 	//TODO: Implement
 	@Override public void onRemoveRouteRequested() {
 
+	}
+
+	//TODO: Implement
+	@Override public boolean hasDirections() {
+		return false;
 	}
 }

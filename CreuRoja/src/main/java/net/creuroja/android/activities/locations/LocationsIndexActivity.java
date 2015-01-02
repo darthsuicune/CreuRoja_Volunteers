@@ -24,13 +24,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import net.creuroja.android.R;
 import net.creuroja.android.activities.general.SettingsActivity;
 import net.creuroja.android.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
+import net.creuroja.android.model.locations.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
@@ -44,11 +46,10 @@ import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
 
-import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.OnLocationDetailsInteractionListener;
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.newInstance;
 import static net.creuroja.android.view.fragments.locations.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
+import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment.DirectionsHandler;
 import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment.MapInteractionListener;
 import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
@@ -56,7 +57,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		implements LoginManager, MapNavigationDrawerCallbacks,
 		LocationListFragment.LocationsListListener, OnLocationCardInteractionListener,
 		MapInteractionListener, OnDirectionsRequestedListener,
-		OnLocationDetailsInteractionListener {
+		OnLocationDetailsInteractionListener, DirectionsHandler {
 	private static final String TAG_MAP = "CreuRojaMap";
 	private static final String TAG_LIST = "CreuRojaLocationList";
 	private static final String TAG_HANDLER = "CreuRojaLocationsHandler";
@@ -70,11 +71,11 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private LocationCardFragment cardFragment;
 	private LocationsHandlerFragment locationsHandlerFragment;
 
-	private LocationClient mLocationClient;
-
 	private SharedPreferences prefs;
 
 	private ViewMode currentViewMode;
+
+	private GoogleApiClient client;
 
 	// Callbacks for when the auth token is returned
 	@Override
@@ -84,17 +85,24 @@ public class LocationsIndexActivity extends ActionBarActivity
 			currentViewMode = ViewMode.getViewMode(preferredMode);
 		}
 
-		mLocationClient = new LocationClient(this, new ConnectionCallbacks() {
-			@Override public void onConnected(Bundle bundle) {
-			}
+		client = new GoogleApiClient.Builder(this)
+				.addApi(LocationServices.API)
+				.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+					@Override public void onConnected(Bundle bundle) {
 
-			@Override public void onDisconnected() {
-			}
-		}, new OnConnectionFailedListener() {
-			@Override public void onConnectionFailed(ConnectionResult connectionResult) {
-			}
-		});
-		mLocationClient.connect();
+					}
+
+					@Override public void onConnectionSuspended(int i) {
+
+					}
+				})
+				.addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
+
+					}
+				})
+				.build();
+		client.connect();
 
 		startUi();
 		bootSync();
@@ -212,6 +220,10 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	@Override public void onRemoveRouteRequested() {
 		mapFragmentHandler.removeDirections();
+	}
+
+	@Override public boolean hasDirections() {
+		return mapFragmentHandler.hasDirections();
 	}
 
 	@Override public void onCardCloseRequested() {
@@ -349,9 +361,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private android.location.Location getCurrentLocation() {
 		android.location.Location location = null;
 		if (areLocationServicesEnabled()) {
-			if (mLocationClient.getLastLocation() != null) {
-				location = mLocationClient.getLastLocation();
-			} else {
+			location = LocationServices.FusedLocationApi.getLastLocation(client);
+			if (location == null) {
 				Toast.makeText(getApplicationContext(), R.string.locating, Toast.LENGTH_SHORT)
 						.show();
 			}
@@ -406,6 +417,10 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	private void performSearch(String query) {
 		locationsHandlerFragment.search(query);
+	}
+
+	@Override public void onDirectionsDrawn(Directions directions) {
+		cardFragment.onDirectionsDrawn(directions);
 	}
 
 	public enum ViewMode {

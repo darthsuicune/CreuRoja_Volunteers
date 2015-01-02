@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Created by denis on 19.06.14.
  */
-public class RailsLocationList implements LocationList {
+public class RailsLocations implements Locations {
 	private List<Location> locationList = new ArrayList<>();
 	private List<Integer> idList = new ArrayList<>();
 	private List<LocationType> mTypeList = new ArrayList<>();
@@ -25,7 +25,7 @@ public class RailsLocationList implements LocationList {
 	private Map<LocationType, Boolean> mToggledLocations;
 	private SharedPreferences prefs;
 
-	public RailsLocationList(SharedPreferences prefs) {
+	public RailsLocations(SharedPreferences prefs) {
 		this.prefs = prefs;
 		mToggledLocations = new HashMap<>();
 		for (LocationType type : LocationType.values()) {
@@ -71,7 +71,7 @@ public class RailsLocationList implements LocationList {
 
 	@Override public void save(ContentResolver cr) {
 		Uri uri = CreuRojaContract.Locations.CONTENT_URI;
-		LocationList currentLocations =
+		Locations currentLocations =
 				LocationFactory.fromCursor(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
 		for (Location location : locationList) {

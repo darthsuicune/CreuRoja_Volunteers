@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.locations.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locationservices.LocationService;
 import net.creuroja.android.model.services.Service;
@@ -163,10 +164,7 @@ public class LocationCardFragment extends Fragment {
 	}
 
 	private void drawDirections() {
-		if (directionsListener.onDirectionsRequested(location)) {
-			routeView.setText(R.string.location_card_remove_directions);
-			hasDirections = true;
-		}
+		directionsListener.onDirectionsRequested(location);
 	}
 
 	private void removeRoute() {
@@ -181,6 +179,13 @@ public class LocationCardFragment extends Fragment {
 
 	private void onDetailsRequested() {
 		listener.onCardDetailsRequested(location);
+	}
+
+	public void onDirectionsDrawn(Directions directions) {
+		if (directionsListener.hasDirections()) {
+			routeView.setText(R.string.location_card_remove_directions);
+			hasDirections = true;
+		}
 	}
 
 	/**

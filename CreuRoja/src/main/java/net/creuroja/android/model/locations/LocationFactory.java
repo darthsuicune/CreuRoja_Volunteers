@@ -78,9 +78,9 @@ public class LocationFactory {
 		return location;
 	}
 
-	public static LocationList fromWebResponse(HttpResponse response, SharedPreferences prefs)
+	public static Locations fromWebResponse(HttpResponse response, SharedPreferences prefs)
 			throws IOException, JSONException, ParseException {
-		LocationList list = new RailsLocationList(prefs);
+		Locations list = new RailsLocations(prefs);
 
 		JSONArray array = new JSONArray(RestWebServiceClient.getAsString(response));
 
@@ -92,8 +92,8 @@ public class LocationFactory {
 		return list;
 	}
 
-	public static LocationList fromCursor(Cursor cursor, SharedPreferences prefs) {
-		LocationList list = new RailsLocationList(prefs);
+	public static Locations fromCursor(Cursor cursor, SharedPreferences prefs) {
+		Locations list = new RailsLocations(prefs);
 		if (cursor.moveToFirst()) {
 			do {
 				list.addLocation(fromCursor(cursor));

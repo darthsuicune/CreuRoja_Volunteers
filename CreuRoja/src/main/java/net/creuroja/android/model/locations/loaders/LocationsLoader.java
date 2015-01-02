@@ -8,12 +8,12 @@ import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
 import net.creuroja.android.model.locations.LocationFactory;
-import net.creuroja.android.model.locations.LocationList;
+import net.creuroja.android.model.locations.Locations;
 
 /**
  * Created by lapuente on 24.11.14.
  */
-public class LocationListLoader extends AsyncTaskLoader<LocationList> {
+public class LocationsLoader extends AsyncTaskLoader<Locations> {
 	ContentResolver cr;
 	Uri uri;
 	String[] projection;
@@ -22,8 +22,8 @@ public class LocationListLoader extends AsyncTaskLoader<LocationList> {
 	String sortOrder;
 	SharedPreferences prefs;
 
-	public LocationListLoader(Context context, Uri uri, String[] projection, String selection,
-							  String[] selectionArgs, String sortOrder, SharedPreferences prefs) {
+	public LocationsLoader(Context context, Uri uri, String[] projection, String selection,
+						   String[] selectionArgs, String sortOrder, SharedPreferences prefs) {
 		super(context);
 		this.uri = uri;
 		this.projection = projection;
@@ -40,7 +40,7 @@ public class LocationListLoader extends AsyncTaskLoader<LocationList> {
 		}
 	}
 
-	@Override public LocationList loadInBackground() {
+	@Override public Locations loadInBackground() {
 		cr = getContext().getContentResolver();
 		Cursor cursor = cr.query(uri, projection, selection, selectionArgs, sortOrder);
 		return LocationFactory.fromCursor(cursor, prefs);

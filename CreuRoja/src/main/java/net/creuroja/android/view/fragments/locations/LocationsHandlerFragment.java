@@ -9,8 +9,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.locations.LocationList;
-import net.creuroja.android.model.locations.loaders.LocationListLoader;
+import net.creuroja.android.model.locations.Locations;
+import net.creuroja.android.model.locations.loaders.LocationsLoader;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class LocationsHandlerFragment extends Fragment {
 	private static final int LOADER_LOCATIONS = 1;
 	private List<OnLocationsListUpdated> listeners = new ArrayList<>();
 	private SharedPreferences prefs;
-	private LocationList locationList;
+	private Locations locations;
 
 	public LocationsHandlerFragment() {
 		// Required empty public constructor
@@ -52,8 +52,8 @@ public class LocationsHandlerFragment extends Fragment {
 
 	public void registerListener(OnLocationsListUpdated listener) {
 		listeners.add(listener);
-		if (locationList != null) {
-			listener.onLocationsListUpdated(locationList);
+		if (locations != null) {
+			listener.onLocationsListUpdated(locations);
 		}
 	}
 
@@ -67,9 +67,9 @@ public class LocationsHandlerFragment extends Fragment {
 	}
 
 	private void notifyListeners() {
-		if (locationList != null) {
+		if (locations != null) {
 			for (OnLocationsListUpdated listener : listeners) {
-				listener.onLocationsListUpdated(locationList);
+				listener.onLocationsListUpdated(locations);
 			}
 		}
 	}
@@ -85,11 +85,11 @@ public class LocationsHandlerFragment extends Fragment {
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnLocationsListUpdated {
-		public void onLocationsListUpdated(LocationList list);
+		public void onLocationsListUpdated(Locations list);
 	}
 
-	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<LocationList> {
-		@Override public Loader<LocationList> onCreateLoader(int id, Bundle args) {
+	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Locations> {
+		@Override public Loader<Locations> onCreateLoader(int id, Bundle args) {
 			String selection = null;
 			String[] selectionArgs = null;
 			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
@@ -100,16 +100,16 @@ public class LocationsHandlerFragment extends Fragment {
 				selectionArgs =
 						new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"};
 			}
-			return new LocationListLoader(getActivity(), CreuRojaContract.Locations.CONTENT_URI,
+			return new LocationsLoader(getActivity(), CreuRojaContract.Locations.CONTENT_URI,
 					null, selection, selectionArgs, null, prefs);
 		}
 
-		@Override public void onLoadFinished(Loader<LocationList> loader, LocationList data) {
-			locationList = data;
+		@Override public void onLoadFinished(Loader<Locations> loader, Locations data) {
+			locations = data;
 			notifyListeners();
 		}
 
-		@Override public void onLoaderReset(Loader<LocationList> loader) {
+		@Override public void onLoaderReset(Loader<Locations> loader) {
 			//Nothing to do here
 		}
 	}

@@ -8,4 +8,6 @@ import net.creuroja.android.model.locations.Location;
 public interface OnDirectionsRequestedListener {
 	public boolean onDirectionsRequested(Location location);
 	public void onRemoveRouteRequested();
+
+	boolean hasDirections();
 }

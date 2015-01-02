@@ -25,8 +25,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import net.creuroja.android.R;
 import net.creuroja.android.model.locations.Directions;
 import net.creuroja.android.model.locations.Location;
-import net.creuroja.android.model.locations.LocationList;
 import net.creuroja.android.model.locations.LocationType;
+import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.locations.loaders.DirectionsLoader;
 import net.creuroja.android.view.fragments.locations.LocationsHandlerFragment;
 
@@ -47,12 +47,13 @@ public class GoogleMapFragment extends SupportMapFragment
 	private static final String ARG_LONGITUDE = "longitude";
 
 	GoogleMap map;
-
+	private Directions directions;
 	MapInteractionListener listener;
 
-	LocationList locationList;
+	Locations locations;
 	Map<Marker, Location> currentMarkers = new HashMap<>();
 	SharedPreferences prefs;
+	private DirectionsHandler directionsListener;
 
 	public GoogleMapFragment() {
 		super();
@@ -62,6 +63,7 @@ public class GoogleMapFragment extends SupportMapFragment
 		super.onAttach(activity);
 		try {
 			listener = (MapInteractionListener) activity;
+			directionsListener = (DirectionsHandler) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					activity.toString() + " must implement MapInteractionListener");
@@ -86,7 +88,7 @@ public class GoogleMapFragment extends SupportMapFragment
 		settings.setZoomGesturesEnabled(true);
 		settings.setScrollGesturesEnabled(true);
 		settings.setTiltGesturesEnabled(true);
-		if (locationList != null) {
+		if (locations != null) {
 			drawMarkers();
 		}
 	}
@@ -128,9 +130,9 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	public void drawMarkers() {
-		if (locationList != null) {
+		if (locations != null) {
 			map.clear();
-			for (Location location : locationList.getLocations()) {
+			for (Location location : locations.getLocations()) {
 				drawMarker(location);
 			}
 		}
@@ -146,12 +148,13 @@ public class GoogleMapFragment extends SupportMapFragment
 				.restartLoader(LOADER_DIRECTIONS, bundle, new DirectionsCallbacks());
 	}
 
-	private void drawDirections(Directions directions) {
+	private void drawDirections() {
 		drawMarkers();
 		PolylineOptions directionsOptions = new PolylineOptions();
-		directionsOptions.addAll(directions.getPoints());
+		directionsOptions.addAll(directions.points());
 		directionsOptions.color(getResources().getColor(R.color.cruz_roja_main_red));
 		map.addPolyline(directionsOptions);
+		directionsListener.onDirectionsDrawn(directions);
 	}
 
 	@Override public void toggleLocations(LocationType type, boolean newState) {
@@ -176,8 +179,8 @@ public class GoogleMapFragment extends SupportMapFragment
 		return this;
 	}
 
-	@Override public void onLocationsListUpdated(LocationList list) {
-		locationList = list;
+	@Override public void onLocationsListUpdated(Locations list) {
+		locations = list;
 		if (this.isAdded()) {
 			drawMarkers();
 		}
@@ -191,6 +194,10 @@ public class GoogleMapFragment extends SupportMapFragment
 		drawMarkers();
 	}
 
+	@Override public boolean hasDirections() {
+		return directions != null && directions.pointCount() > 0;
+	}
+
 	private void drawMarker(Location location) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(new LatLng(location.latitude, location.longitude));
@@ -201,6 +208,10 @@ public class GoogleMapFragment extends SupportMapFragment
 
 	public interface MapInteractionListener {
 		public void onLocationClicked(Location location);
+	}
+
+	public interface DirectionsHandler {
+		public void onDirectionsDrawn(Directions directions);
 	}
 
 	private class OnLocationClickAdapter implements GoogleMap.InfoWindowAdapter {
@@ -222,7 +233,8 @@ public class GoogleMapFragment extends SupportMapFragment
 
 		@Override public void onLoadFinished(Loader<Directions> directionsLoader,
 											 Directions directions) {
-			drawDirections(directions);
+			GoogleMapFragment.this.directions = directions;
+			drawDirections();
 		}
 
 		@Override public void onLoaderReset(Loader<Directions> directionsLoader) {

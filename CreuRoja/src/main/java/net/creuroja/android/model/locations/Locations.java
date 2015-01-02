@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by denis on 19.06.14.
  */
-public interface LocationList {
+public interface Locations {
 	public void addLocation(Location location);
 	public List<Location> getLocations();
 	public List<LocationType> getLocationTypes();

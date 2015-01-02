@@ -15,7 +15,7 @@ import android.util.Log;
 
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.locations.LocationFactory;
-import net.creuroja.android.model.locations.LocationList;
+import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
@@ -81,12 +81,12 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
 	}
 
 	@Override public void onValidResponse(HttpResponse response) {
-		LocationList locationList;
+		Locations locations;
 		try {
-			locationList = LocationFactory.fromWebResponse(response, prefs);
-			locationList.save(mContext.getContentResolver());
+			locations = LocationFactory.fromWebResponse(response, prefs);
+			locations.save(mContext.getContentResolver());
 
-			prefs.edit().putString(Settings.LAST_UPDATE_TIME, locationList.getLastUpdateTime())
+			prefs.edit().putString(Settings.LAST_UPDATE_TIME, locations.getLastUpdateTime())
 					.apply();
 		} catch (IOException | JSONException | ParseException e) {
 			onServerError();

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.locations.Location;
-import net.creuroja.android.model.locations.LocationList;
+import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.locations.LocationType;
 
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class LocationListFragment extends ListFragment implements
 		LocationsHandlerFragment.OnLocationsListUpdated {
-	private LocationList mLocationList;
+	private Locations locations;
 	private LocationsListListener mListener;
 
 	// The Adapter which will be used to populate the ListView/GridView with Views.
@@ -82,17 +82,17 @@ public class LocationListFragment extends ListFragment implements
 		super.onListItemClick(l, v, position, id);
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		mListener.onLocationListItemSelected(mLocationList.get(position));
+		mListener.onLocationListItemSelected(locations.get(position));
 	}
 
 	public void toggleLocations(LocationType type, boolean newState) {
-		mLocationList.toggleLocationType(type, newState);
+		locations.toggleLocationType(type, newState);
 		mAdapter = new LocationListAdapter(getActivity());
 		setListAdapter(mAdapter);
 	}
 
-	@Override public void onLocationsListUpdated(LocationList list) {
-		mLocationList = list;
+	@Override public void onLocationsListUpdated(Locations list) {
+		locations = list;
 		if(this.isAdded()) {
 			mAdapter = new LocationListAdapter(getActivity());
 			setListAdapter(mAdapter);
@@ -111,8 +111,8 @@ public class LocationListFragment extends ListFragment implements
 		List<Location> locationList;
 
 		public LocationListAdapter(Context context) {
-			super(context, R.layout.location_list_entry, mLocationList.getLocations());
-			locationList = mLocationList.getLocations();
+			super(context, R.layout.location_list_entry, locations.getLocations());
+			locationList = locations.getLocations();
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {

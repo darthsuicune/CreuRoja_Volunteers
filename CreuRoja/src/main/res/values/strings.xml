@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="api_key">AIzaSyApRMee00Mk5jRKjbM1azp5OdySR387eFo</string>
     <string name="app_name">Creu Roja</string>
     <string name="action_settings">Configuració</string>
     <string name="title_activity_locations">Locations</string>

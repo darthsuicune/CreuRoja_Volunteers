@@ -23,7 +23,7 @@ import android.widget.TextView;
 import net.creuroja.android.R;
 import net.creuroja.android.activities.locations.LocationsIndexActivity;
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.locations.LocationList;
+import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 
@@ -267,7 +267,7 @@ public class LocationsDrawerFragment extends Fragment
 		toggleMapType();
 	}
 
-	@Override public void onLocationsListUpdated(LocationList list) {
+	@Override public void onLocationsListUpdated(Locations list) {
 		List<LocationType> types = list.getLocationTypes();
 		for (LocationType type : types) {
 			prepareLegendItem((TextView) getActivity().findViewById(type.legendViewId), type);
