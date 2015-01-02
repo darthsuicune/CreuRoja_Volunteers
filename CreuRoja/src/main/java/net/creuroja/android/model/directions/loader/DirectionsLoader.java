@@ -1,10 +1,10 @@
-package net.creuroja.android.model.locations.loaders;
+package net.creuroja.android.model.directions.loader;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 
-import net.creuroja.android.model.locations.Directions;
+import net.creuroja.android.model.directions.Directions;
 
 /**
  * Loader for retrieving directions. Requires
@@ -65,7 +65,7 @@ public class DirectionsLoader extends AsyncTaskLoader<Directions> {
 	}
 
 	@Override public Directions loadInBackground() {
-		directions = new Directions(getContext());
+		directions = new Directions();
 		directions.get(originLat, originLng, destinationLat, destinationLng);
 		return directions;
 	}

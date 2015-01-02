@@ -2,7 +2,7 @@ package net.creuroja.android.test.model.locations;
 
 import android.test.AndroidTestCase;
 
-import net.creuroja.android.model.locations.Directions;
+import net.creuroja.android.model.directions.Directions;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,7 @@ public class DirectionsTest extends AndroidTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		directions = new Directions(getContext());
+		directions = new Directions();
 	}
 
 	@Test

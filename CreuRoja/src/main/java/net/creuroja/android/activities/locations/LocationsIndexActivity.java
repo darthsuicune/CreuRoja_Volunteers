@@ -32,7 +32,7 @@ import net.creuroja.android.activities.general.SettingsActivity;
 import net.creuroja.android.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
-import net.creuroja.android.model.locations.Directions;
+import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;

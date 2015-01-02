@@ -23,11 +23,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import net.creuroja.android.R;
-import net.creuroja.android.model.locations.Directions;
+import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.locations.Locations;
-import net.creuroja.android.model.locations.loaders.DirectionsLoader;
+import net.creuroja.android.model.directions.loader.DirectionsLoader;
 import net.creuroja.android.view.fragments.locations.LocationsHandlerFragment;
 
 import java.util.HashMap;

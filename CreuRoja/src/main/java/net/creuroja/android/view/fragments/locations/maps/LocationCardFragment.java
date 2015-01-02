@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.locations.Directions;
+import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locationservices.LocationService;
 import net.creuroja.android.model.services.Service;
