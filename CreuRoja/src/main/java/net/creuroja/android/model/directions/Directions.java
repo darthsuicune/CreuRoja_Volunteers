@@ -3,6 +3,8 @@ package net.creuroja.android.model.directions;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.creuroja.android.model.directions.loader.DirectionsRequest;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -20,14 +22,14 @@ public class Directions {
 	}
 
 	public Directions get(double originLat, double originLng, double destinationLat,
-							double destinationLng) {
-		String origin = originLat + "," + originLng;
-		String destination = destinationLat + "," + destinationLng;
+						  double destinationLng) {
 		try {
-			List<DirectionsRoute> routes = getRoutes(origin, destination);
+			List<DirectionsRoute> routes =
+					getRoutes(originLat, originLng, destinationLat, destinationLng);
 			parseRoutes(routes);
-		} catch (Exception e) {
+		} catch (IOException | JSONException e) {
 			e.printStackTrace();
+			cantRetrieve(e);
 		}
 		return this;
 	}
@@ -40,43 +42,19 @@ public class Directions {
 		return points.size();
 	}
 
-	private List<DirectionsRoute> getRoutes(String origin, String destination) {
-		List<DirectionsRoute> routes = new ArrayList<>();
-		try {
-			
-		} catch (IOException | JSONException e) {
-
-		}
-		return routes;
+	private List<DirectionsRoute> getRoutes(double originLat, double originLng,
+											double destinationLat, double destinationLng) {
+		DirectionsRequest request = new DirectionsRequest();
+		return request.make(originLat, originLng, destinationLat, destinationLng);
 	}
 
-	private void parseRoutes(List<DirectionsRoute> routes) {
+	private void parseRoutes(List<DirectionsRoute> routes) throws IOException, JSONException {
 		for (DirectionsRoute route : routes) {
-			for (DirectionsLeg leg : route.legs) {
-				addLeg(leg);
-			}
+			points.addAll(route.path());
 		}
 	}
 
-	private void addLeg(DirectionsLeg leg) {
-		points.add(new LatLng(leg.startLocation.latitude, leg.startLocation.longitude));
-		for (DirectionsStep step : leg.steps) {
-			addStep(step);
-		}
-		points.add(new LatLng(leg.endLocation.latitude, leg.endLocation.longitude));
+	private void cantRetrieve(Exception e) {
 
 	}
-
-	private void addStep(DirectionsStep step) {
-		points.add(new LatLng(step.startLocation.latitude, step.startLocation.longitude));
-		for(LatLng latlng : step.decodePath()) {
-			points.add(new LatLng(latlng.latitude, latlng.longitude));
-		}
-		for (DirectionsStep subStep : step.subSteps) {
-			addStep(subStep);
-		}
-		points.add(new LatLng(step.endLocation.latitude, step.endLocation.longitude));
-
-	}
-
 }

@@ -1,5 +1,8 @@
 package net.creuroja.android.model.directions;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,4 +10,12 @@ import java.util.List;
  */
 public class DirectionsRoute {
 	public List<DirectionsLeg> legs;
+
+	public List<LatLng> path() {
+		List<LatLng> points = new ArrayList<>();
+		for (DirectionsLeg leg : legs) {
+			points.addAll(leg.path());
+		}
+		return points;
+	}
 }
