@@ -1,13 +1,19 @@
 package net.creuroja.android.model.directions;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import junit.framework.TestCase;
 
 public class DirectionsRequestTest extends TestCase {
-	Directions directions;
+    private LatLng origin;
+    private LatLng destination;
+    DirectionsRequest request;
 
 	public void setUp() throws Exception {
-		super.setUp();
-		directions = new Directions();
+        super.setUp();
+        origin = new LatLng(0.0, 0.0);
+        destination = new LatLng(1.0, 1.0);
+        request = new DirectionsRequest(origin, destination);
 
 	}
 
