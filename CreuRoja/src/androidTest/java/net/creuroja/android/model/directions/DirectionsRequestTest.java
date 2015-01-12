@@ -11,7 +11,6 @@ public class DirectionsRequestTest extends TestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		request = new DirectionsRequest();
-
 	}
 
 	public void testMake() throws Exception {

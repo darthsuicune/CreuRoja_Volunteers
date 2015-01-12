@@ -10,12 +10,16 @@ import java.util.List;
  * Created by lapuente on 30.09.14.
  */
 public class Directions {
+    LatLng origin;
+    LatLng destination;
 	private List<LatLng> points;
 	private List<DirectionsRoute> routes;
 
-	public Directions() {
-		points = new ArrayList<>();
-	}
+	public Directions(LatLng origin, LatLng destination) {
+        points = new ArrayList<>();
+        this.origin = origin;
+        this.destination = destination;
+    }
 
 	public Directions get(double originLat, double originLng, double destinationLat,
 						  double destinationLng) {
@@ -39,6 +43,6 @@ public class Directions {
 	private void getRoutes(double originLat, double originLng, double destinationLat,
 						   double destinationLng) {
 		DirectionsRequest request = new DirectionsRequest();
-		routes = request.make(originLat, originLng, destinationLat, destinationLng);
+		request.make(originLat, originLng, destinationLat, destinationLng);
 	}
 }
