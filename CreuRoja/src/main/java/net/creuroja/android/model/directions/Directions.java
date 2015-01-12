@@ -3,11 +3,6 @@ package net.creuroja.android.model.directions;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.creuroja.android.model.directions.loader.DirectionsRequest;
-
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +11,7 @@ import java.util.List;
  */
 public class Directions {
 	private List<LatLng> points;
+	private List<DirectionsRoute> routes;
 
 	public Directions() {
 		points = new ArrayList<>();
@@ -23,14 +19,8 @@ public class Directions {
 
 	public Directions get(double originLat, double originLng, double destinationLat,
 						  double destinationLng) {
-		try {
-			List<DirectionsRoute> routes =
-					getRoutes(originLat, originLng, destinationLat, destinationLng);
-			parseRoutes(routes);
-		} catch (IOException | JSONException e) {
-			e.printStackTrace();
-			cantRetrieve(e);
-		}
+		getRoutes(originLat, originLng, destinationLat, destinationLng);
+		createPointList();
 		return this;
 	}
 
@@ -38,23 +28,17 @@ public class Directions {
 		return this.points;
 	}
 
+	private void createPointList() {
+		points.addAll(routes.get(0).path());
+	}
+
 	public int pointCount() {
 		return points.size();
 	}
 
-	private List<DirectionsRoute> getRoutes(double originLat, double originLng,
-											double destinationLat, double destinationLng) {
+	private void getRoutes(double originLat, double originLng, double destinationLat,
+						   double destinationLng) {
 		DirectionsRequest request = new DirectionsRequest();
-		return request.make(originLat, originLng, destinationLat, destinationLng);
-	}
-
-	private void parseRoutes(List<DirectionsRoute> routes) throws IOException, JSONException {
-		for (DirectionsRoute route : routes) {
-			points.addAll(route.path());
-		}
-	}
-
-	private void cantRetrieve(Exception e) {
-
+		routes = request.make(originLat, originLng, destinationLat, destinationLng);
 	}
 }

@@ -2,16 +2,38 @@ package net.creuroja.android.model.directions;
 
 import junit.framework.TestCase;
 
+/**
+ * This test basically validates the Google Directions API
+ */
 public class DirectionsRequestTest extends TestCase {
-	Directions directions;
+	DirectionsRequest request;
 
 	public void setUp() throws Exception {
 		super.setUp();
-		directions = new Directions();
+		request = new DirectionsRequest();
 
 	}
 
 	public void testMake() throws Exception {
-		assertNotNull(directions);
+		try {
+			makeRequest();
+			expectResponseToBeValid();
+		} catch (DirectionsException e) {
+			orThrowAnException(e);
+		}
+		assertNotNull(request);
+	}
+
+	private void makeRequest() {
+		request.make(35.4675602, -97.5164276, 34.0522342, -118.2436849);
+	}
+
+	private void expectResponseToBeValid() {
+		assertNotNull(request.routes());
+		assertFalse(request.routes().isEmpty());
+	}
+
+	private void orThrowAnException(DirectionsException e) {
+		assertNotNull(e);
 	}
 }
