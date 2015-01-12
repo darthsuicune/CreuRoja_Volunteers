@@ -57,6 +57,6 @@ public class DirectionsLoader extends AsyncTaskLoader<Directions> {
     @Override
     public Directions loadInBackground() {
         directions = new Directions(origin, destination);
-        return directions;
+        return directions.get();
     }
 }

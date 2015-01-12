@@ -6,15 +6,10 @@ import com.google.android.gms.maps.model.LatLng;
 import junit.framework.TestCase;
 
 public class DirectionsTest extends TestCase {
-    private LatLng origin;
-    private LatLng destination;
+	private LatLng origin;
+	private LatLng destination;
 	Directions directions;
 
-	public void setUp() throws Exception {
-		origin = new LatLng(0.0, 0.0);
-        destination = new LatLng(1.0, 1.0);
-        directions = new Directions(origin, destination);
-	}
 
 	public void testGet() throws Exception {
 		whenWeAskForValidDirections();
@@ -30,11 +25,20 @@ public class DirectionsTest extends TestCase {
 	}
 
 	private void whenWeAskForValidDirections() {
-		directions.get(35.4675602, -97.5164276, 34.0522342, -118.2436849);
+		loadDirections(35.4675602, -97.5164276, 34.0522342, -118.2436849);
+		directions.get();
 	}
 
 	private void whenWeAskForInvalidDirections() {
-		directions.get(0.0, 0.0, 1.0, 1.0);
+		loadDirections(0.0, 0.0, 1.0, 1.0);
+		directions.get();
+	}
+
+	private void loadDirections(double originLat, double originLng, double destinationLat,
+								double destinationLng) {
+		origin = new LatLng(originLat, originLng);
+		destination = new LatLng(destinationLat, destinationLng);
+		directions = new Directions(origin, destination);
 	}
 
 	private void expectTheObjectToBePopulated() {

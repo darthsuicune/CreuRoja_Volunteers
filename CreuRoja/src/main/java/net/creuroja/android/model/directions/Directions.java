@@ -21,9 +21,8 @@ public class Directions {
         this.destination = destination;
     }
 
-	public Directions get(double originLat, double originLng, double destinationLat,
-						  double destinationLng) {
-		getRoutes(originLat, originLng, destinationLat, destinationLng);
+	public Directions get() {
+		getRoutes(origin.latitude, origin.longitude, destination.latitude, destination.longitude);
 		createPointList();
 		return this;
 	}
@@ -43,6 +42,6 @@ public class Directions {
 	private void getRoutes(double originLat, double originLng, double destinationLat,
 						   double destinationLng) {
 		DirectionsRequest request = new DirectionsRequest();
-		request.make(originLat, originLng, destinationLat, destinationLng);
+		routes = request.make(originLat, originLng, destinationLat, destinationLng);
 	}
 }
