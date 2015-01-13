@@ -10,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,10 +25,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.directions.Directions;
+import net.creuroja.android.model.directions.loader.DirectionsLoader;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.locations.Locations;
-import net.creuroja.android.model.directions.loader.DirectionsLoader;
 import net.creuroja.android.view.fragments.locations.LocationsHandlerFragment;
 
 import java.util.HashMap;
@@ -149,12 +150,17 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	private void drawDirections() {
-		drawMarkers();
-		PolylineOptions directionsOptions = new PolylineOptions();
-		directionsOptions.addAll(directions.points());
-		directionsOptions.color(getResources().getColor(R.color.cruz_roja_main_red));
-		map.addPolyline(directionsOptions);
-		directionsListener.onDirectionsDrawn(directions);
+		if (directions.areValid()) {
+			drawMarkers();
+			PolylineOptions directionsOptions = new PolylineOptions();
+			directionsOptions.addAll(directions.points());
+			directionsOptions.color(getResources().getColor(R.color.cruz_roja_main_red));
+			map.addPolyline(directionsOptions);
+			directionsListener.onDirectionsDrawn(directions);
+		} else {
+			Toast.makeText(getActivity(), R.string.error_invalid_directions, Toast.LENGTH_LONG)
+					.show();
+		}
 	}
 
 	@Override public void toggleLocations(LocationType type, boolean newState) {
@@ -195,7 +201,7 @@ public class GoogleMapFragment extends SupportMapFragment
 	}
 
 	@Override public boolean hasDirections() {
-		return directions != null && directions.pointCount() > 0;
+		return directions != null && directions.areValid();
 	}
 
 	private void drawMarker(Location location) {
