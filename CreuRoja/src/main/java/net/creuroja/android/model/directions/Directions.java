@@ -32,7 +32,9 @@ public class Directions {
 	}
 
 	private void createPointList() {
-		points.addAll(routes.get(0).path());
+		if(!routes.isEmpty()) {
+			points.addAll(routes.get(0).path());
+		}
 	}
 
 	public int pointCount() {
@@ -41,7 +43,16 @@ public class Directions {
 
 	private void getRoutes(double originLat, double originLng, double destinationLat,
 						   double destinationLng) {
-		DirectionsRequest request = new DirectionsRequest();
-		routes = request.make(originLat, originLng, destinationLat, destinationLng);
+		try {
+			DirectionsRequest request = new DirectionsRequest();
+			routes = request.make(originLat, originLng, destinationLat, destinationLng);
+		} catch (DirectionsException e) {
+			e.printStackTrace();
+			routes = new ArrayList<>();
+		}
+	}
+
+	public boolean areValid() {
+		return pointCount() > 0;
 	}
 }
