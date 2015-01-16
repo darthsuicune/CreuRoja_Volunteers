@@ -8,8 +8,8 @@
         <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-2.2.1" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/CreuRoja" />
+            <option value="$USER_HOME$/almacen/workspace/CreuRoja/android/volunteers" />
+            <option value="$USER_HOME$/almacen/workspace/CreuRoja/android/volunteers/CreuRoja" />
           </set>
         </option>
       </GradleProjectSettings>
