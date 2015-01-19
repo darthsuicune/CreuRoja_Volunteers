@@ -2,7 +2,6 @@ package net.creuroja.android.model.services;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.net.Uri;
 
 import net.creuroja.android.model.db.CreuRojaContract;
@@ -36,7 +35,7 @@ public class Service {
 	}
 
 	@Override public boolean equals(Object o) {
-		return ((Service) o).id == id;
+		return (o instanceof Service && ((Service) o).id == id);
 	}
 
 	public boolean archived() {
@@ -69,15 +68,5 @@ public class Service {
 		String where = CreuRojaContract.Services.REMOTE_ID + "=?";
 		String[] selectionArgs = {Integer.toString(id)};
 		cr.delete(uri, where, selectionArgs);
-	}
-
-	public static int count(ContentResolver cr, int serviceId) {
-		String where = CreuRojaContract.Services.REMOTE_ID + "=?";
-		String[] whereArgs = {Integer.toString(serviceId)};
-		Cursor services =
-				cr.query(CreuRojaContract.Services.CONTENT_URI, null, where, whereArgs, null);
-		final int count = services.getCount();
-		services.close();
-		return count;
 	}
 }

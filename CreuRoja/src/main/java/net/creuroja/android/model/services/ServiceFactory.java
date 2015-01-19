@@ -25,6 +25,13 @@ public class ServiceFactory {
 	private static final String sUpdatedAt = "updated_at";
 	private static final String sArchived = "archived";
 
+	public static Service fromValues(int id, String name, String description, String baseTime,
+									 String startTime, String endTime, String code,
+									 String updatedAt, boolean archived) {
+		return new Service(id, name, description, baseTime, startTime, endTime, code, updatedAt,
+				archived);
+	}
+
 	public static Service fromJson(JSONObject object) throws JSONException, ParseException {
 		return new Service(object.getInt(sId), object.getString(sName),
 				object.getString(sDescription), object.getString(sBaseTime),

@@ -8,6 +8,7 @@ import android.net.Uri;
 import net.creuroja.android.model.locationservices.LocationService;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.services.Service;
+import net.creuroja.android.model.services.Services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,7 +124,7 @@ public class RailsLocations implements Locations {
 				ls.delete(cr);
 				continue;
 			}
-			if (Service.count(cr, service.id) > 0) {
+			if (Services.count(cr, service.id) > 0) {
 				service.update(cr);
 			} else {
 				cr.insert(CreuRojaContract.Services.CONTENT_URI, service.asValues());

@@ -15,15 +15,14 @@ public class DirectionsRequestTest extends TestCase {
 
 	public void testMake() throws Exception {
 		try {
-			makeRequest();
+			whenWeMakeARequest();
 			expectResponseToBeValid();
 		} catch (DirectionsException e) {
 			orThrowAnException(e);
 		}
-		assertNotNull(request);
 	}
 
-	private void makeRequest() {
+	private void whenWeMakeARequest() {
 		request.make(35.4675602, -97.5164276, 34.0522342, -118.2436849);
 	}
 
