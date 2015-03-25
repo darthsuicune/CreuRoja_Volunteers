@@ -7,7 +7,7 @@ import android.net.Uri;
 import net.creuroja.android.model.db.CreuRojaContract;
 
 /**
- * id, name, updatedAt, code, description, baseTime, startTime, endTime, archived)
+ * id, name, updatedAt, code, description, baseTime, startTime, endTime, archived
  */
 public class Service {
 	public final int id;

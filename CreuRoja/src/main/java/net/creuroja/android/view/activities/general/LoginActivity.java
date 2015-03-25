@@ -1,4 +1,4 @@
-package net.creuroja.android.activities.general;
+package net.creuroja.android.view.activities.general;
 
 
 import android.accounts.Account;
@@ -37,7 +37,7 @@ import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
 
-import org.apache.http.HttpResponse;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +56,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 	// UI references.
 	private AutoCompleteTextView mEmailView;
-	private EditText mPasswordView;
+	private EditText passwordView;
 	private View mProgressView;
 	private View mLoginFormView;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
@@ -69,10 +68,9 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 		populateAutoComplete();
 
-		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+		passwordView = (EditText) findViewById(R.id.password);
+		passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
 				if (id == R.id.login || id == EditorInfo.IME_NULL) {
 					attemptLogin();
 					return true;
@@ -83,8 +81,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 		Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 		mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
+			@Override public void onClick(View view) {
 				attemptLogin();
 			}
 		});
@@ -112,11 +109,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 		// Reset errors.
 		mEmailView.setError(null);
-		mPasswordView.setError(null);
+		passwordView.setError(null);
 
 		// Store values at the time of the login attempt.
 		String email = mEmailView.getText().toString();
-		String password = mPasswordView.getText().toString();
+		String password = passwordView.getText().toString();
 
 		boolean cancel = false;
 		View focusView = null;
@@ -124,8 +121,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 		// Check for a valid password, if the user entered one.
 		if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
+			passwordView.setError(getString(R.string.error_invalid_password));
+			focusView = passwordView;
 			cancel = true;
 		}
 
@@ -164,8 +161,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 	/**
 	 * Shows the progress UI and hides the login form.
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	public void showProgress(final boolean show) {
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2) public void showProgress(final boolean show) {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
@@ -175,8 +171,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 			mLoginFormView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1)
 					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
+						@Override public void onAnimationEnd(Animator animation) {
 							mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 						}
 					});
@@ -184,8 +179,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
 			mProgressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0)
 					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
+						@Override public void onAnimationEnd(Animator animation) {
 							mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
 						}
 					});
@@ -206,18 +200,16 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		mEmailView.setAdapter(adapter);
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private interface ProfileQuery {
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) private interface ProfileQuery {
 		String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS,
 							   ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
 
 		int ADDRESS = 0;
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private class AutoCompleteLoaderHelper implements LoaderManager.LoaderCallbacks<Cursor> {
-		@Override
-		public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) private class AutoCompleteLoaderHelper
+			implements LoaderManager.LoaderCallbacks<Cursor> {
+		@Override public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
 			Uri uri = null;
 			String[] projection = null;
 			String selection = null;
@@ -244,8 +236,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 					sortOrder);
 		}
 
-		@Override
-		public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+		@Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 			switch (cursorLoader.getId()) {
 				case E_MAIL_AUTO_COMPLETE_LOADER:
 					List<String> emails = new ArrayList<>();
@@ -262,8 +253,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			}
 		}
 
-		@Override
-		public void onLoaderReset(Loader<Cursor> cursorLoader) {
+		@Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
 		}
 	}
@@ -275,45 +265,42 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 	public class UserLoginTask extends AsyncTask<Void, Void, Void>
 			implements ClientConnectionListener {
 
-		private final CRWebServiceClient mClient;
-		private final String mEmail;
-		private final String mPassword;
+		private final CRWebServiceClient client;
+		private final String email;
+		private final String password;
 		private Intent intent;
 
 		UserLoginTask(String email, String password) {
-			mClient = new RailsWebServiceClient(
+			client = new RailsWebServiceClient(
 					new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
 							RailsWebServiceClient.URL), this);
-			mEmail = email;
-			mPassword = password;
+			this.email = email;
+			this.password = password;
 			intent = new Intent();
 		}
 
-		@Override
-		protected Void doInBackground(Void... params) {
-			mClient.signInUser(mEmail, mPassword);
+		@Override protected Void doInBackground(Void... params) {
+			client.signInUser(email, password);
 			return null;
 		}
 
-		@Override
-		protected void onPostExecute(final Void result) {
+		@Override protected void onPostExecute(final Void result) {
 			mAuthTask = null;
 			showProgress(false);
 
 			if (intent.getBooleanExtra(LoginResponse.IS_VALID, false)) {
 				successfulLogin(intent);
 			} else {
-				mPasswordView.setError(getString(R.string.error_invalid_password));
-				mPasswordView.setText("");
-				mPasswordView.requestFocus();
+				passwordView.setError(getString(R.string.error_invalid_password));
+				passwordView.setText("");
+				passwordView.requestFocus();
 				Toast.makeText(getApplicationContext(),
-						intent.getStringExtra(LoginResponse.ERROR_MESSAGE), Toast.LENGTH_LONG)
-						.show();
+						intent.getIntExtra(LoginResponse.ERROR_MESSAGE, R.string.error_connecting),
+						Toast.LENGTH_LONG).show();
 			}
 		}
 
-		@Override
-		protected void onCancelled() {
+		@Override protected void onCancelled() {
 			mAuthTask = null;
 			showProgress(false);
 		}
@@ -340,30 +327,29 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			finish();
 		}
 
-		@Override public void onValidResponse(HttpResponse httpResponse) {
-			LoginResponse response = new RailsLoginResponse(httpResponse);
-			intent.putExtra(LoginResponse.IS_VALID, response.isValid());
-			intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mEmail);
-			intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountUtils.ACCOUNT_TYPE);
-			intent.putExtra(AccountManager.KEY_AUTHTOKEN, response.authToken());
-			intent.putExtra(AccountManager.KEY_PASSWORD, mPassword);
-			if (response.isValid() && response.user() != null) {
-				response.user().save(getContentResolver());
+		@Override public void onValidResponse(String response) {
+			try {
+				LoginResponse loginResponse = new RailsLoginResponse(response);
+				intent.putExtra(LoginResponse.IS_VALID, loginResponse.isValid());
+				if(loginResponse.errorCode() == 401) {
+					onErrorResponse(401, R.string.error_user_removed);
+				}
+				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, email);
+				intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountUtils.ACCOUNT_TYPE);
+				intent.putExtra(AccountManager.KEY_AUTHTOKEN, loginResponse.authToken());
+				intent.putExtra(AccountManager.KEY_PASSWORD, password);
+				if (loginResponse.isValid() && loginResponse.user() != null) {
+					loginResponse.user().save(getContentResolver());
+				}
+			} catch (JSONException e) {
+				onErrorResponse(406, R.string.error_invalid_response);
 			}
 		}
 
-
-		@Override public void onUnauthorized() {
+		@Override public void onErrorResponse(int code, int errorResId) {
 			intent.putExtra(LoginResponse.IS_VALID, false);
-			intent.putExtra(LoginResponse.ERROR_CODE, 401);
-			intent.putExtra(LoginResponse.ERROR_MESSAGE, R.string.error_invalid_user);
-
-		}
-
-		@Override public void onServerError() {
-			intent.putExtra(LoginResponse.IS_VALID, false);
-			intent.putExtra(LoginResponse.ERROR_CODE, 500);
-			intent.putExtra(LoginResponse.ERROR_MESSAGE, R.string.error_invalid_response);
+			intent.putExtra(LoginResponse.ERROR_CODE, code);
+			intent.putExtra(LoginResponse.ERROR_MESSAGE, errorResId);
 		}
 	}
 }

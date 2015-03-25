@@ -1,18 +1,23 @@
 package net.creuroja.android.model.services;
 
 import android.content.ContentResolver;
-import android.test.AndroidTestCase;
+import android.test.ProviderTestCase2;
 
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.db.CreuRojaProvider;
 
-public class ServicesTest extends AndroidTestCase {
+public class ServicesTest extends ProviderTestCase2<CreuRojaProvider> {
 	Service s1, s2;
 	ContentResolver cr;
 	int id, initialCount;
 
+	public ServicesTest() {
+		super(CreuRojaProvider.class, CreuRojaProvider.CONTENT_NAME);
+	}
+
 	public void setUp() throws Exception {
 		super.setUp();
-		cr = getContext().getContentResolver();
+		cr = getMockContentResolver();
 	}
 
 	public void testCount() throws Exception {

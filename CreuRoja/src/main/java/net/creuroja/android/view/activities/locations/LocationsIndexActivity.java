@@ -1,4 +1,4 @@
-package net.creuroja.android.activities.locations;
+package net.creuroja.android.view.activities.locations;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -28,8 +28,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import net.creuroja.android.R;
-import net.creuroja.android.activities.general.SettingsActivity;
-import net.creuroja.android.activities.users.UserProfileActivity;
+import net.creuroja.android.view.activities.general.SettingsActivity;
+import net.creuroja.android.view.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.directions.Directions;

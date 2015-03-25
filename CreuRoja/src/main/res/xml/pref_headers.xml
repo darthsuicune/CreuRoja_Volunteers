@@ -3,7 +3,7 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="net.creuroja.android.activities.general.SettingsActivity$DataSyncPreferenceFragment"
+        android:fragment="net.creuroja.android.view.activities.general.SettingsActivity$DataSyncPreferenceFragment"
         android:title="@string/pref_header_data_sync" />
 
 </preference-headers>

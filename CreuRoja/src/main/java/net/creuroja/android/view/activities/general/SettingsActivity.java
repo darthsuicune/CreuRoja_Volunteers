@@ -1,4 +1,4 @@
-package net.creuroja.android.activities.general;
+package net.creuroja.android.view.activities.general;
 
 import android.annotation.TargetApi;
 import android.content.Context;

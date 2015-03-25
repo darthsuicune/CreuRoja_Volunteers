@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 
-/**
- * Created by lapuente on 18.06.14.
- */
 public class AccountUtils {
 	public static final String ACCOUNT_TYPE = "Creu Roja";
 	public static final String AUTH_TOKEN_TYPE = "";
@@ -33,21 +30,21 @@ public class AccountUtils {
 	}
 
 	public interface LoginManager {
-		public void successfulLogin();
+		void successfulLogin();
 
-		public void failedLogin();
+		void failedLogin();
 	}
 
 	public static class MyAccountCallback implements AccountManagerCallback<Bundle> {
-		private LoginManager mEntryPoint;
+		private LoginManager entryPoint;
 
 		public MyAccountCallback(LoginManager entryPoint) {
-			mEntryPoint = entryPoint;
+			this.entryPoint = entryPoint;
 		}
 
 		@Override
 		public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
-			LoginResponseTask response = new LoginResponseTask(accountManagerFuture, mEntryPoint);
+			LoginResponseTask response = new LoginResponseTask(accountManagerFuture, entryPoint);
 			response.execute();
 		}
 	}
@@ -56,13 +53,13 @@ public class AccountUtils {
 	}
 
 	public static class LoginResponseTask extends AsyncTask<Void, Void, String> {
-		private LoginManager mEntryPoint;
-		private AccountManagerFuture<Bundle> mAccountManagerFuture;
+		private LoginManager entryPoint;
+		private AccountManagerFuture<Bundle> accountManagerFuture;
 
 		public LoginResponseTask(AccountManagerFuture<Bundle> accountManagerFuture,
 								 LoginManager entryPoint) {
-			mEntryPoint = entryPoint;
-			mAccountManagerFuture = accountManagerFuture;
+			this.entryPoint = entryPoint;
+			this.accountManagerFuture = accountManagerFuture;
 		}
 
 		@Override
@@ -70,7 +67,7 @@ public class AccountUtils {
 			Bundle bundle;
 			String authToken = null;
 			try {
-				bundle = mAccountManagerFuture.getResult();
+				bundle = accountManagerFuture.getResult();
 				authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -82,9 +79,9 @@ public class AccountUtils {
 		protected void onPostExecute(String authToken) {
 			super.onPostExecute(authToken);
 			if (TextUtils.isEmpty(authToken)) {
-				mEntryPoint.failedLogin();
+				entryPoint.failedLogin();
 			} else {
-				mEntryPoint.successfulLogin();
+				entryPoint.successfulLogin();
 			}
 		}
 	}

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.creuroja.android.R;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Locations;
@@ -22,26 +23,22 @@ import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
 
-import org.apache.http.HttpResponse;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.text.ParseException;
 
-/**
- * Created by lapuente on 20.06.14.
- */
 public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
 		implements ClientConnectionListener {
 	private static final String SYNC_ADAPTER_TAG = "CreuRoja SyncAdapter";
-	private final AccountManager mAccountManager;
-	Context mContext;
+	private final AccountManager accountManager;
+	Context context;
 	SharedPreferences prefs;
 
 	public LocationsSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
-		mContext = context;
-		mAccountManager = AccountManager.get(context);
+		this.context = context;
+		accountManager = AccountManager.get(context);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
@@ -55,14 +52,14 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
 	@Override public void onPerformSync(Account account, Bundle extras, String authority,
 										ContentProviderClient contentProviderClient,
 										SyncResult syncResult) {
-		if (Settings.isConnected(mContext)) {
+		if (Settings.isConnected(context)) {
 			try {
 				RestWebServiceClient restClient =
 						new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
 								RailsWebServiceClient.URL);
 				CRWebServiceClient client = new RailsWebServiceClient(restClient, this);
 
-				String accessToken = mAccountManager
+				String accessToken = accountManager
 						.blockingGetAuthToken(account, AccountUtils.AUTH_TOKEN_TYPE, true);
 
 				String lastUpdateTime = prefs.getString(Settings.LAST_UPDATE_TIME, "0");
@@ -80,26 +77,24 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
 		}
 	}
 
-	@Override public void onValidResponse(HttpResponse response) {
+	@Override public void onValidResponse(String response) {
 		Locations locations;
 		try {
 			locations = LocationFactory.fromWebResponse(response, prefs);
-			locations.save(mContext.getContentResolver());
+			locations.save(context.getContentResolver());
 
 			prefs.edit().putString(Settings.LAST_UPDATE_TIME, locations.getLastUpdateTime())
 					.apply();
 		} catch (IOException | JSONException | ParseException e) {
-			onServerError();
+			onErrorResponse(500, R.string.error_invalid_response);
 			e.printStackTrace();
 		}
 	}
 
-	@Override public void onUnauthorized() {
-		Log.d(SYNC_ADAPTER_TAG, "You are unauthorized.");
-		Settings.clean(prefs, mContext.getContentResolver());
-	}
-
-	@Override public void onServerError() {
-		Log.d(SYNC_ADAPTER_TAG, "Server error");
+	@Override public void onErrorResponse(int code, int errorResId) {
+		Log.d(SYNC_ADAPTER_TAG, getContext().getString(errorResId));
+		if(code == 401) {
+			Settings.clean(prefs, context.getContentResolver());
+		}
 	}
 }

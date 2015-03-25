@@ -4,11 +4,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.services.ServiceFactory;
 import net.creuroja.android.model.services.Service;
-import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
+import net.creuroja.android.model.services.ServiceFactory;
 
-import org.apache.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,11 +76,11 @@ public class LocationFactory {
 		return location;
 	}
 
-	public static Locations fromWebResponse(HttpResponse response, SharedPreferences prefs)
+	public static Locations fromWebResponse(String response, SharedPreferences prefs)
 			throws IOException, JSONException, ParseException {
 		Locations list = new RailsLocations(prefs);
 
-		JSONArray array = new JSONArray(RestWebServiceClient.getAsString(response));
+		JSONArray array = new JSONArray(response);
 
 		for (int i = 0; i < array.length(); i++) {
 			JSONObject object = array.getJSONObject(i);

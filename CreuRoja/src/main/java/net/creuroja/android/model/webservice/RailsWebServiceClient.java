@@ -1,18 +1,15 @@
 package net.creuroja.android.model.webservice;
 
-import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
-import net.creuroja.android.model.webservice.lib.WebServiceFormat;
-import net.creuroja.android.model.webservice.lib.WebServiceOption;
+import android.text.TextUtils;
 
-import org.apache.http.HttpResponse;
+import net.creuroja.android.R;
+import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
+import net.creuroja.android.model.webservice.lib.WebServiceOption;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by lapuente on 06.08.14.
- */
 public class RailsWebServiceClient implements CRWebServiceClient {
 	public static final String PROTOCOL = "https";
 	public static final String URL = "creuroja.net";
@@ -22,16 +19,16 @@ public class RailsWebServiceClient implements CRWebServiceClient {
 	private static final String ARG_ACCESS_TOKEN = "Authorization: Token ";
 	private static final String ARG_LAST_UPDATE = "updated_at";
 	private static final String RESOURCE_SESSIONS = "sessions";
-	private static final String RESOURCE_LOCATIONS = "locations";
+	private static final String RESOURCE_LOCATIONS = "/locations";
 
-	private RestWebServiceClient mClient;
+	private RestWebServiceClient client;
 	private ClientConnectionListener listener;
 
 	public RailsWebServiceClient(RestWebServiceClient client, ClientConnectionListener listener) {
 		if (client == null) {
-			mClient = new RestWebServiceClient(PROTOCOL, URL);
+			this.client = new RestWebServiceClient(PROTOCOL, URL);
 		} else {
-			mClient = client;
+			this.client = client;
 		}
 		this.listener = listener;
 	}
@@ -39,40 +36,30 @@ public class RailsWebServiceClient implements CRWebServiceClient {
 	@Override public void signInUser(String email, String password) {
 		try {
 			List<WebServiceOption> options = getLoginOptions(email, password);
-			HttpResponse response = mClient.post(RESOURCE_SESSIONS, WebServiceFormat.JSON, options);
+			String response = client.post(RESOURCE_SESSIONS, options);
 			sendResponse(response);
 		} catch (IOException e) {
 			e.printStackTrace();
-			listener.onServerError();
+			listener.onErrorResponse(500, R.string.error_connecting);
 		}
-	}
-
-	@Override public void getLocations(String accessToken) {
-		getLocations(accessToken, "0");
 	}
 
 	@Override public void getLocations(String accessToken, String lastUpdateTime) {
 		try {
 			List<WebServiceOption> options = getLocationOptions(accessToken, lastUpdateTime);
-			HttpResponse response = mClient.get(RESOURCE_LOCATIONS, WebServiceFormat.JSON, options);
+			String response = client.get(RESOURCE_LOCATIONS, options);
 			sendResponse(response);
 		} catch (IOException e) {
 			e.printStackTrace();
-			listener.onServerError();
+			listener.onErrorResponse(500, R.string.error_connecting);
 		}
 	}
 
-	private void sendResponse(HttpResponse response) {
-		switch(response.getStatusLine().getStatusCode()) {
-			case 200:
-				listener.onValidResponse(response);
-				break;
-			case 401:
-				listener.onUnauthorized();
-				break;
-			case 500:
-				listener.onServerError();
-				break;
+	private void sendResponse(String response) {
+		if(TextUtils.isEmpty(response)) {
+			listener.onErrorResponse(500, R.string.error_connecting);
+		} else {
+			listener.onValidResponse(response);
 		}
 	}
 
