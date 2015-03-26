@@ -45,8 +45,7 @@ public class RailsWebServiceClient implements CRWebServiceClient {
 
     private List<WebServiceOption> acceptAsOptions() {
         List<WebServiceOption> options = new ArrayList<>();
-        options.add(new WebServiceOption("Accept", "application/json"));
-        options.add(new WebServiceOption("Accept-encoding", "gzip,identity"));
+        //Include here headers as needed.
         return options;
     }
 

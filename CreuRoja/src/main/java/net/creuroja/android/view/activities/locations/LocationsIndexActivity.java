@@ -28,8 +28,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import net.creuroja.android.R;
-import net.creuroja.android.view.activities.general.SettingsActivity;
-import net.creuroja.android.view.activities.users.UserProfileActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.directions.Directions;
@@ -37,11 +35,14 @@ import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
+import net.creuroja.android.view.activities.general.SettingsActivity;
+import net.creuroja.android.view.activities.users.UserProfileActivity;
 import net.creuroja.android.view.fragments.locations.LocationDetailFragment;
 import net.creuroja.android.view.fragments.locations.LocationListFragment;
 import net.creuroja.android.view.fragments.locations.LocationsDrawerFragment;
 import net.creuroja.android.view.fragments.locations.LocationsHandlerFragment;
 import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
+import net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment;
 import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
 import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
@@ -49,15 +50,14 @@ import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFact
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.OnLocationDetailsInteractionListener;
 import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.newInstance;
 import static net.creuroja.android.view.fragments.locations.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
-import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment.DirectionsHandler;
 import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment.MapInteractionListener;
 import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity
 		implements LoginManager, MapNavigationDrawerCallbacks,
 		LocationListFragment.LocationsListListener, OnLocationCardInteractionListener,
-		MapInteractionListener, OnDirectionsRequestedListener,
-		OnLocationDetailsInteractionListener, DirectionsHandler {
+		MapInteractionListener, OnDirectionsRequestedListener, OnLocationDetailsInteractionListener,
+		GoogleMapFragment.DirectionsDrawnHandler {
 	private static final String TAG_MAP = "CreuRojaMap";
 	private static final String TAG_LIST = "CreuRojaLocationList";
 	private static final String TAG_HANDLER = "CreuRojaLocationsHandler";
@@ -78,15 +78,13 @@ public class LocationsIndexActivity extends ActionBarActivity
 	private GoogleApiClient client;
 
 	// Callbacks for when the auth token is returned
-	@Override
-	public void successfulLogin() {
+	@Override public void successfulLogin() {
 		if (currentViewMode == null) {
 			int preferredMode = prefs.getInt(Settings.VIEW_MODE, ViewMode.MAP.getValue());
 			currentViewMode = ViewMode.getViewMode(preferredMode);
 		}
 
-		client = new GoogleApiClient.Builder(this)
-				.addApi(LocationServices.API)
+		client = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
 				.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
 					@Override public void onConnected(Bundle bundle) {
 
@@ -95,21 +93,18 @@ public class LocationsIndexActivity extends ActionBarActivity
 					@Override public void onConnectionSuspended(int i) {
 
 					}
-				})
-				.addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+				}).addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
 					@Override public void onConnectionFailed(ConnectionResult connectionResult) {
 
 					}
-				})
-				.build();
+				}).build();
 		client.connect();
 
 		startUi();
 		bootSync();
 	}
 
-	@Override
-	public void failedLogin() {
+	@Override public void failedLogin() {
 	}
 
 	private void startUi() {
@@ -141,17 +136,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		if (newViewMode == currentViewMode) {
 			return;
 		}
-		switch (newViewMode) {
-			case LIST:
-				currentViewMode = ViewMode.LIST;
-				break;
-			case MAP:
-				currentViewMode = ViewMode.MAP;
-				break;
-			default:
-				//Nothing to do here
-				break;
-		}
+		currentViewMode = newViewMode;
 		setMainFragment();
 	}
 
@@ -259,8 +244,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		cardFragment.setLocation(location);
 	}
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		if (savedInstanceState != null && AccountUtils.getAccount(this) != null) {
@@ -270,8 +254,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
 		if (locationsDrawerFragment != null && !locationsDrawerFragment.isDrawerOpen()) {
 			// Only show items in the action bar relevant to this screen if the drawer is not
 			// showing. Otherwise, let the drawer decide what to show in the action bar.
@@ -301,8 +284,7 @@ public class LocationsIndexActivity extends ActionBarActivity
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will automatically handle clicks on
 		// the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
@@ -333,10 +315,8 @@ public class LocationsIndexActivity extends ActionBarActivity
 
 	private void locate() {
 		android.location.Location location = getCurrentLocation();
-		if (location != null) {
-			if (currentViewMode == ViewMode.MAP) {
-				mapFragmentHandler.locate(location);
-			}
+		if (location != null && currentViewMode == ViewMode.MAP) {
+			mapFragmentHandler.locate(location);
 		}
 	}
 

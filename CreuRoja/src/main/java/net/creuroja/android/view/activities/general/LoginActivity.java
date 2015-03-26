@@ -39,7 +39,6 @@ import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
 
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,8 +70,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 		passwordView = (EditText) findViewById(R.id.password);
 		passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+			@Override public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
 				if (id == R.id.login || id == EditorInfo.IME_NULL) {
 					attemptLogin();
 					return true;
@@ -90,10 +88,6 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 		loginFormView = findViewById(R.id.login_form);
 		progressView = findViewById(R.id.login_progress);
-
-		emailView.setText("darthsuicune@gmail.com");
-		passwordView.setText("prueba");
-		emailSignInButton.performClick();
 	}
 
 	private void populateAutoComplete() {
@@ -277,14 +271,9 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		Intent intent;
 
 		UserLoginTask(String email, String password) {
-			try {
-				client = new RailsWebServiceClient(
-                        new RestWebServiceClient(getAssets().open("server.crt"),
-                                RailsWebServiceClient.PROTOCOL,
-                                RailsWebServiceClient.URL), this);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			client = new RailsWebServiceClient(
+					new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
+							RailsWebServiceClient.URL), this);
 			this.email = email;
 			this.password = password;
 			intent = new Intent();
@@ -342,7 +331,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			try {
 				LoginResponse loginResponse = new RailsLoginResponse(response);
 				intent.putExtra(LoginResponse.IS_VALID, loginResponse.isValid());
-				if(loginResponse.errorCode() == 401) {
+				if (loginResponse.errorCode() == 401) {
 					onErrorResponse(401, R.string.error_user_removed);
 				}
 				intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, email);

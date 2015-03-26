@@ -51,7 +51,7 @@ public class GoogleMapFragment extends SupportMapFragment
     Locations locations;
     Map<Marker, Location> currentMarkers = new HashMap<>();
     SharedPreferences prefs;
-    private DirectionsHandler directionsListener;
+    DirectionsDrawnHandler directionsListener;
 
     public GoogleMapFragment() {
         super();
@@ -62,7 +62,7 @@ public class GoogleMapFragment extends SupportMapFragment
         super.onAttach(activity);
         try {
             listener = (MapInteractionListener) activity;
-            directionsListener = (DirectionsHandler) activity;
+            directionsListener = (DirectionsDrawnHandler) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(
                     activity.toString() + " must implement MapInteractionListener");
@@ -224,7 +224,7 @@ public class GoogleMapFragment extends SupportMapFragment
         void onLocationClicked(Location location);
     }
 
-    public interface DirectionsHandler {
+    public interface DirectionsDrawnHandler {
         void onDirectionsDrawn(Directions directions);
     }
 
@@ -249,8 +249,7 @@ public class GoogleMapFragment extends SupportMapFragment
         }
 
         @Override
-        public void onLoadFinished(Loader<Directions> directionsLoader,
-                                   Directions directions) {
+        public void onLoadFinished(Loader<Directions> directionsLoader, Directions directions) {
             GoogleMapFragment.this.directions = directions;
             drawDirections();
         }

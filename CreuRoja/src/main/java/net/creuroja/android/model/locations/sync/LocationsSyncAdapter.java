@@ -56,8 +56,7 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
         if (Settings.isConnected(context)) {
             try {
                 RestWebServiceClient restClient =
-                        new RestWebServiceClient(getContext().getAssets().open("server.crt"),
-                                RailsWebServiceClient.PROTOCOL,
+                        new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
                                 RailsWebServiceClient.URL);
                 CRWebServiceClient client = new RailsWebServiceClient(restClient, this);
 
