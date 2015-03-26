@@ -1,4 +1,6 @@
-package net.creuroja.android.model.webservice.responses;
+package net.creuroja.android.model.locations;
+
+import net.creuroja.android.model.webservice.responses.Response;
 
 /**
  * Created by denis on 26.03.15.

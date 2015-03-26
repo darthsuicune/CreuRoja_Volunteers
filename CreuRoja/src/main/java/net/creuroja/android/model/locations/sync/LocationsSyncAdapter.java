@@ -19,7 +19,7 @@ import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
-import net.creuroja.android.model.webservice.responses.RailsLocationsResponseFactory;
+import net.creuroja.android.model.locations.RailsLocationsResponseFactory;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.responses.Response;

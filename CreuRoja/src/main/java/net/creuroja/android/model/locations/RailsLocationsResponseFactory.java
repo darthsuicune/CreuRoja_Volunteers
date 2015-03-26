@@ -1,6 +1,9 @@
-package net.creuroja.android.model.webservice.responses;
+package net.creuroja.android.model.locations;
 
 import android.content.ContentResolver;
+
+import net.creuroja.android.model.webservice.responses.Response;
+import net.creuroja.android.model.webservice.responses.ResponseFactory;
 
 public class RailsLocationsResponseFactory extends ResponseFactory {
     ContentResolver cr;
