@@ -134,7 +134,7 @@ public class GoogleMapFragment extends SupportMapFragment
     public void drawMarkers() {
         if (locations != null) {
             map.clear();
-            for (Location location : locations.getLocations()) {
+            for (Location location : locations.locations()) {
                 drawMarker(location);
             }
         }

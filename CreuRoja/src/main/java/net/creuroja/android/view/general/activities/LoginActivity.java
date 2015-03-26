@@ -34,7 +34,7 @@ import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.users.RailsLoginResponseFactory;
-import net.creuroja.android.model.webservice.responses.Response;
+import net.creuroja.android.model.webservice.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
 import java.util.ArrayList;

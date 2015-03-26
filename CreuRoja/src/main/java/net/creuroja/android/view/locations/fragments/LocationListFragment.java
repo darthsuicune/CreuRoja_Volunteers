@@ -111,8 +111,8 @@ public class LocationListFragment extends ListFragment implements
 		List<Location> locationList;
 
 		public LocationListAdapter(Context context) {
-			super(context, R.layout.location_list_entry, locations.getLocations());
-			locationList = locations.getLocations();
+			super(context, R.layout.location_list_entry, locations.locations());
+			locationList = locations.locations();
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {

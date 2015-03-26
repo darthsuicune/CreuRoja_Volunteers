@@ -43,7 +43,7 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override
-	public List<Location> getLocations() {
+	public List<Location> locations() {
 		List<Location> result = new ArrayList<>();
 		for (Location location : locationList) {
 			if (mToggledLocations.get(location.type)) {
@@ -53,11 +53,11 @@ public class RailsLocations implements Locations {
 		return result;
 	}
 
-	@Override public List<LocationType> getLocationTypes() {
+	@Override public List<LocationType> locationTypes() {
 		return mTypeList;
 	}
 
-	@Override public Location getById(long id) {
+	@Override public Location byId(long id) {
 		for (Location location : locationList) {
 			if (location.remoteId == id) {
 				return location;
@@ -104,7 +104,7 @@ public class RailsLocations implements Locations {
 		return false;
 	}
 
-	@Override public String getLastUpdateTime() {
+	@Override public String lastUpdateTime() {
 		return lastUpdateTime;
 	}
 

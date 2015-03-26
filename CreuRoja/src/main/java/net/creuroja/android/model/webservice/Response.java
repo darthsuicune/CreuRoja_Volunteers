@@ -1,4 +1,4 @@
-package net.creuroja.android.model.webservice.responses;
+package net.creuroja.android.model.webservice;
 
 /**
  * Created by denis on 26.03.15.

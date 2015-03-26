@@ -22,7 +22,7 @@ import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.locations.RailsLocationsResponseFactory;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
-import net.creuroja.android.model.webservice.responses.Response;
+import net.creuroja.android.model.webservice.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
 import org.json.JSONException;
@@ -89,7 +89,7 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
             locations = LocationFactory.fromWebResponse(response.content(), prefs);
             locations.save(context.getContentResolver());
 
-            prefs.edit().putString(Settings.LAST_UPDATE_TIME, locations.getLastUpdateTime())
+            prefs.edit().putString(Settings.LAST_UPDATE_TIME, locations.lastUpdateTime())
                     .apply();
         } catch (IOException | JSONException | ParseException e) {
             onErrorResponse(500, R.string.error_invalid_response);

@@ -8,14 +8,14 @@ import java.util.List;
  * Created by denis on 19.06.14.
  */
 public interface Locations {
-	public void addLocation(Location location);
-	public List<Location> getLocations();
-	public List<LocationType> getLocationTypes();
-	public Location getById(long id);
-	public Location get(int position);
-	public void save(ContentResolver cr);
-	public boolean has(Location location);
-	public String getLastUpdateTime();
-	public void toggleLocationType(LocationType type, boolean newState);
-	public boolean isVisible(int position);
+	void addLocation(Location location);
+	List<Location> locations();
+	List<LocationType> locationTypes();
+	Location byId(long id);
+	Location get(int position);
+	void save(ContentResolver cr);
+	boolean has(Location location);
+	String lastUpdateTime();
+	void toggleLocationType(LocationType type, boolean newState);
+	boolean isVisible(int position);
 }

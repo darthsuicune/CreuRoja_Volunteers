@@ -1,7 +1,7 @@
 package net.creuroja.android.model.webservice.util;
 
-import net.creuroja.android.model.webservice.responses.Response;
-import net.creuroja.android.model.webservice.responses.ResponseFactory;
+import net.creuroja.android.model.webservice.Response;
+import net.creuroja.android.model.webservice.ResponseFactory;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;

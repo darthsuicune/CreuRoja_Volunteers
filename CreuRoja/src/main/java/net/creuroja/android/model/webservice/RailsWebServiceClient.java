@@ -1,7 +1,6 @@
 package net.creuroja.android.model.webservice;
 
 import net.creuroja.android.R;
-import net.creuroja.android.model.webservice.responses.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 import net.creuroja.android.model.webservice.util.WebServiceOption;
 

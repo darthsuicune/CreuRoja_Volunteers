@@ -1,4 +1,4 @@
-package net.creuroja.android.model.webservice.responses;
+package net.creuroja.android.model.webservice;
 
 import java.io.BufferedReader;
 import java.io.IOException;

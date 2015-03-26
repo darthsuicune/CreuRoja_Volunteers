@@ -268,7 +268,7 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	@Override public void onLocationsListUpdated(Locations list) {
-		List<LocationType> types = list.getLocationTypes();
+		List<LocationType> types = list.locationTypes();
 		for (LocationType type : types) {
 			prepareLegendItem((TextView) getActivity().findViewById(type.legendViewId), type);
 		}

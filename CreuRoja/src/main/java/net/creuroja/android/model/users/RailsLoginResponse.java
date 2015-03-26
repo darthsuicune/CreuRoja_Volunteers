@@ -1,6 +1,6 @@
 package net.creuroja.android.model.users;
 
-import net.creuroja.android.model.webservice.responses.Response;
+import net.creuroja.android.model.webservice.Response;
 
 public class RailsLoginResponse extends Response {
 
