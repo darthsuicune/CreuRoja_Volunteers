@@ -19,9 +19,11 @@ import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
+import net.creuroja.android.model.webservice.responses.RailsLocationsResponseFactory;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
-import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
+import net.creuroja.android.model.webservice.responses.Response;
+import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
 import org.json.JSONException;
 
@@ -56,7 +58,9 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
         if (Settings.isConnected(context)) {
             try {
                 RestWebServiceClient restClient =
-                        new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
+                        new RestWebServiceClient(
+                                new RailsLocationsResponseFactory(getContext().getContentResolver()),
+                                RailsWebServiceClient.PROTOCOL,
                                 RailsWebServiceClient.URL);
                 CRWebServiceClient client = new RailsWebServiceClient(restClient, this);
 
@@ -79,10 +83,10 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
     }
 
     @Override
-    public void onValidResponse(String response) {
+    public void onValidResponse(Response response) {
         Locations locations;
         try {
-            locations = LocationFactory.fromWebResponse(response, prefs);
+            locations = LocationFactory.fromWebResponse(response.content(), prefs);
             locations.save(context.getContentResolver());
 
             prefs.edit().putString(Settings.LAST_UPDATE_TIME, locations.getLastUpdateTime())

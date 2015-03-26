@@ -1,10 +1,8 @@
 package net.creuroja.android.model.webservice;
 
-/**
- * Created by lapuente on 08.08.14.
- */
+import net.creuroja.android.model.webservice.responses.Response;
 
 public interface ClientConnectionListener {
-	void onValidResponse(String response);
+	void onValidResponse(Response response);
 	void onErrorResponse(int code, int errorResId);
 }

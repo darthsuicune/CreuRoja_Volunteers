@@ -1,10 +1,9 @@
 package net.creuroja.android.model.webservice;
 
-import android.text.TextUtils;
-
 import net.creuroja.android.R;
-import net.creuroja.android.model.webservice.lib.RestWebServiceClient;
-import net.creuroja.android.model.webservice.lib.WebServiceOption;
+import net.creuroja.android.model.webservice.responses.Response;
+import net.creuroja.android.model.webservice.util.RestWebServiceClient;
+import net.creuroja.android.model.webservice.util.WebServiceOption;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.List;
 public class RailsWebServiceClient implements CRWebServiceClient {
     public static final String PROTOCOL = "https";
     public static final String URL = "creuroja.net";
-    public static final String TEST_URL = "suicune-pc:3000";
     private static final String WS_CR_TAG = "CreuRoja Rails webservice";
     private static final String ARG_EMAIL = "email";
     private static final String ARG_PASSWORD = "password";
@@ -22,8 +20,8 @@ public class RailsWebServiceClient implements CRWebServiceClient {
     private static final String RESOURCE_SESSIONS = "sessions.json";
     private static final String RESOURCE_LOCATIONS = "locations.json";
 
-    private RestWebServiceClient client;
-    private ClientConnectionListener listener;
+    RestWebServiceClient client;
+    ClientConnectionListener listener;
 
     public RailsWebServiceClient(RestWebServiceClient client, ClientConnectionListener listener) {
         this.client = client;
@@ -34,7 +32,7 @@ public class RailsWebServiceClient implements CRWebServiceClient {
     public void signInUser(String email, String password) {
         try {
             List<WebServiceOption> options = loginAsOptions(email, password);
-            String response = client.post(RESOURCE_SESSIONS, acceptAsOptions(),
+            Response response = client.post(RESOURCE_SESSIONS, acceptAsOptions(),
                     WebServiceOption.noOptions(), options);
             sendResponse(response);
         } catch (IOException e) {
@@ -52,7 +50,7 @@ public class RailsWebServiceClient implements CRWebServiceClient {
     @Override
     public void getLocations(String accessToken, String lastUpdateTime) {
         try {
-            String response = client.get(RESOURCE_LOCATIONS, authAsOptions(accessToken),
+            Response response = client.get(RESOURCE_LOCATIONS, authAsOptions(accessToken),
                     lastUpdateAsOptions(lastUpdateTime));
             sendResponse(response);
         } catch (IOException e) {
@@ -61,11 +59,11 @@ public class RailsWebServiceClient implements CRWebServiceClient {
         }
     }
 
-    private void sendResponse(String response) {
-        if (TextUtils.isEmpty(response)) {
-            listener.onErrorResponse(500, R.string.error_connecting);
-        } else {
+    private void sendResponse(Response response) {
+        if (response.isValid()) {
             listener.onValidResponse(response);
+        } else {
+            listener.onErrorResponse(response.responseCode(), response.errorMessageResId());
         }
     }
 

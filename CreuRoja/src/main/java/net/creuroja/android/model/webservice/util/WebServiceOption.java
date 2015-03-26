@@ -1,4 +1,4 @@
-package net.creuroja.android.model.webservice.lib;
+package net.creuroja.android.model.webservice.util;
 
 import java.util.ArrayList;
 import java.util.List;
