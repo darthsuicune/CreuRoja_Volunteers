@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.users;
+package net.creuroja.android.view.users.fragments;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -19,7 +19,7 @@ import net.creuroja.android.model.users.User;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link net.creuroja.android.view.fragments.users.UserProfileFragment.OnUserProfileChangedListener} interface
+ * {@link UserProfileFragment.OnUserProfileChangedListener} interface
  * to handle interaction events.
  * Use the {@link UserProfileFragment#newInstance} factory method to
  * create an instance of this fragment.

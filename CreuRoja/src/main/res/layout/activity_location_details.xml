@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="net.creuroja.android.view.activities.locations.LocationDetailsActivity">
+              tools:context="net.creuroja.android.view.locations.activities.LocationDetailsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/location_detail_toolbar"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/location_details_fragment"
-        android:name="net.creuroja.android.view.fragments.locations.LocationDetailFragment"
+        android:name="net.creuroja.android.view.locations.fragments.LocationDetailFragment"
         tools:layout="@layout/fragment_location_detail"/>
 
 </LinearLayout>

@@ -1,11 +1,11 @@
-package net.creuroja.android.view.fragments.locations.maps;
+package net.creuroja.android.view.locations.fragments.maps;
 
 import android.support.v4.app.Fragment;
 
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 
-import static net.creuroja.android.view.fragments.locations.LocationsHandlerFragment.OnLocationsListUpdated;
+import static net.creuroja.android.view.locations.fragments.LocationsHandlerFragment.OnLocationsListUpdated;
 
 /**
  * Created by denis on 10.08.14.

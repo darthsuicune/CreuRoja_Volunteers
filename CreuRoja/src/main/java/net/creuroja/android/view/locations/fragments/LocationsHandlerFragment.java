@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.locations.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -11,7 +11,7 @@ import android.support.v4.content.Loader;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.locations.loaders.LocationsLoader;
-import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
+import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
 
 import java.util.ArrayList;
 import java.util.List;

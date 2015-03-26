@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.locations.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -21,11 +21,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
-import net.creuroja.android.view.activities.locations.LocationsIndexActivity;
+import net.creuroja.android.view.locations.activities.LocationsIndexActivity;
 import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.locations.LocationType;
-import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
+import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package net.creuroja.android.view.activities.users;
+package net.creuroja.android.view.users.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.creuroja.android.R;
-import net.creuroja.android.view.activities.general.SettingsActivity;
+import net.creuroja.android.view.general.activities.SettingsActivity;
 import net.creuroja.android.model.users.User;
-import net.creuroja.android.view.fragments.users.UserProfileFragment;
+import net.creuroja.android.view.users.fragments.UserProfileFragment;
 
 public class UserProfileActivity extends ActionBarActivity
 		implements UserProfileFragment.OnUserProfileChangedListener {

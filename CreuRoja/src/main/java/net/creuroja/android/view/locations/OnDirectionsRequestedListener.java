@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.locations;
 
 import net.creuroja.android.model.locations.Location;
 

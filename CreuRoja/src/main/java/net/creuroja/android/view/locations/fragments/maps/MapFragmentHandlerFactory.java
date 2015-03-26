@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations.maps;
+package net.creuroja.android.view.locations.fragments.maps;
 
 /**
  * Created by lapuente on 03.09.14.

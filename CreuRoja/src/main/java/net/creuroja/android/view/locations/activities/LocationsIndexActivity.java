@@ -1,4 +1,4 @@
-package net.creuroja.android.view.activities.locations;
+package net.creuroja.android.view.locations.activities;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -35,23 +35,23 @@ import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
-import net.creuroja.android.view.activities.general.SettingsActivity;
-import net.creuroja.android.view.activities.users.UserProfileActivity;
-import net.creuroja.android.view.fragments.locations.LocationDetailFragment;
-import net.creuroja.android.view.fragments.locations.LocationListFragment;
-import net.creuroja.android.view.fragments.locations.LocationsDrawerFragment;
-import net.creuroja.android.view.fragments.locations.LocationsHandlerFragment;
-import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
-import net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment;
-import net.creuroja.android.view.fragments.locations.maps.LocationCardFragment;
-import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandler;
-import net.creuroja.android.view.fragments.locations.maps.MapFragmentHandlerFactory;
+import net.creuroja.android.view.general.activities.SettingsActivity;
+import net.creuroja.android.view.users.activities.UserProfileActivity;
+import net.creuroja.android.view.locations.fragments.LocationDetailFragment;
+import net.creuroja.android.view.locations.fragments.LocationListFragment;
+import net.creuroja.android.view.locations.fragments.LocationsDrawerFragment;
+import net.creuroja.android.view.locations.fragments.LocationsHandlerFragment;
+import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
+import net.creuroja.android.view.locations.fragments.maps.GoogleMapFragment;
+import net.creuroja.android.view.locations.fragments.maps.LocationCardFragment;
+import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
+import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandlerFactory;
 
-import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.OnLocationDetailsInteractionListener;
-import static net.creuroja.android.view.fragments.locations.LocationDetailFragment.newInstance;
-import static net.creuroja.android.view.fragments.locations.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
-import static net.creuroja.android.view.fragments.locations.maps.GoogleMapFragment.MapInteractionListener;
-import static net.creuroja.android.view.fragments.locations.maps.LocationCardFragment.OnLocationCardInteractionListener;
+import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.OnLocationDetailsInteractionListener;
+import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.newInstance;
+import static net.creuroja.android.view.locations.fragments.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
+import static net.creuroja.android.view.locations.fragments.maps.GoogleMapFragment.MapInteractionListener;
+import static net.creuroja.android.view.locations.fragments.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity
 		implements LoginManager, MapNavigationDrawerCallbacks,

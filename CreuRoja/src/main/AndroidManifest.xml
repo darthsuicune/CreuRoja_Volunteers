@@ -37,7 +37,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".view.activities.locations.LocationsIndexActivity"
+            android:name=".view.locations.activities.LocationsIndexActivity"
             android:label="@string/app_name"
             android:theme="@style/NoActionBar"
             android:launchMode="singleTop" >
@@ -55,17 +55,17 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".view.activities.general.LoginActivity"
+            android:name=".view.general.activities.LoginActivity"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".view.activities.locations.LocationsIndexActivity"
+            android:parentActivityName=".view.locations.activities.LocationsIndexActivity"
             android:theme="@style/NoActionBar"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.locations.LocationsIndexActivity" />
+                android:value=".view.locations.activities.LocationsIndexActivity" />
         </activity>
         <activity
-            android:name=".view.activities.general.SettingsActivity"
+            android:name=".view.general.activities.SettingsActivity"
             android:theme="@style/NoActionBar"
             android:label="@string/action_settings" >
         </activity>
@@ -91,13 +91,13 @@
         </provider>
 
         <activity
-            android:name=".view.activities.locations.LocationDetailsActivity"
+            android:name=".view.locations.activities.LocationDetailsActivity"
             android:label="@string/title_activity_location_details"
             android:theme="@style/NoActionBar"
-            android:parentActivityName=".view.activities.locations.LocationsIndexActivity" >
+            android:parentActivityName=".view.locations.activities.LocationsIndexActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activities.locations.LocationsIndexActivity" />
+                android:value=".view.locations.activities.LocationsIndexActivity" />
         </activity>
 
         <service
@@ -114,7 +114,7 @@
         </service>
 
         <activity
-            android:name=".view.activities.users.UserProfileActivity"
+            android:name=".view.users.activities.UserProfileActivity"
             android:label="@string/title_activity_user_profile" >
         </activity>
     </application>

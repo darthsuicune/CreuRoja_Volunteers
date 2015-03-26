@@ -1,4 +1,4 @@
-package net.creuroja.android.view.activities.general;
+package net.creuroja.android.view.general.activities;
 
 
 import android.accounts.Account;

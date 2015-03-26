@@ -1,4 +1,4 @@
-package net.creuroja.android.view.activities.locations;
+package net.creuroja.android.view.locations.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,8 +8,8 @@ import android.view.MenuItem;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.locations.Location;
-import net.creuroja.android.view.fragments.locations.LocationDetailFragment;
-import net.creuroja.android.view.fragments.locations.OnDirectionsRequestedListener;
+import net.creuroja.android.view.locations.fragments.LocationDetailFragment;
+import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
 
 public class LocationDetailsActivity extends ActionBarActivity
 		implements LocationDetailFragment.OnLocationDetailsInteractionListener,

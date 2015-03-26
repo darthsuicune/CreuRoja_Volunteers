@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/navigation_drawer_background"
-        tools:context="net.creuroja.android.view.fragments.locations.LocationsDrawerFragment">
+        tools:context="net.creuroja.android.view.locations.fragments.LocationsDrawerFragment">
 
         <TextView
             android:layout_width="match_parent"

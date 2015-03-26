@@ -1,4 +1,4 @@
-package net.creuroja.android.view.fragments.locations;
+package net.creuroja.android.view.locations.fragments;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -17,6 +17,7 @@ import net.creuroja.android.R;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Location;
+import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
 
 
 /**
