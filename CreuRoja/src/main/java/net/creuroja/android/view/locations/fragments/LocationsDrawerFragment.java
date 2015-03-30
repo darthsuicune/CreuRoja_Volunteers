@@ -173,7 +173,11 @@ public class LocationsDrawerFragment extends Fragment
 				@Override public void onClick(View view) {
 					boolean newState = !type.getViewable(prefs);
 					prefs.edit().putBoolean(type.prefs, newState).apply();
-					mapDrawerCallbacks.onNavigationLegendItemSelected(type, newState);
+					if (newState) {
+						mapDrawerCallbacks.onNavigationLegendItemActivated(type);
+					} else {
+						mapDrawerCallbacks.onNavigationLegendItemDeactivated(type);
+					}
 					changeToggleBackground(view, newState);
 				}
 			});
@@ -235,7 +239,6 @@ public class LocationsDrawerFragment extends Fragment
 	 * @param drawerLayout The DrawerLayout containing this fragment's UI.
 	 */
 	public void setUp(int fragmentId, DrawerLayout drawerLayout) {
-
 		fragmentContainerView = getActivity().findViewById(fragmentId);
 		this.drawerLayout = drawerLayout;
 
@@ -277,13 +280,14 @@ public class LocationsDrawerFragment extends Fragment
 	/**
 	 * Callbacks interface that all activities using this fragment must implement.
 	 */
-	public static interface MapNavigationDrawerCallbacks {
+	public interface MapNavigationDrawerCallbacks {
 		/**
 		 * Called when an item in the navigation drawer is selected.
 		 */
 		void onViewModeChanged(LocationsIndexActivity.ViewMode newMode);
 
-		void onNavigationLegendItemSelected(final LocationType type, final boolean newState);
+		void onNavigationLegendItemActivated(final LocationType type);
+		void onNavigationLegendItemDeactivated(final LocationType type);
 
 		void onNavigationMapTypeSelected(final MapFragmentHandler.MapType mapType);
 	}

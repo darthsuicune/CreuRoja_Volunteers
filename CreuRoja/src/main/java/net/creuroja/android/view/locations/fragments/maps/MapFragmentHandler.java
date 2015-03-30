@@ -2,14 +2,12 @@ package net.creuroja.android.view.locations.fragments.maps;
 
 import android.support.v4.app.Fragment;
 
+import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 
 import static net.creuroja.android.view.locations.fragments.LocationsHandlerFragment.OnLocationsListUpdated;
 
-/**
- * Created by denis on 10.08.14.
- */
 public interface MapFragmentHandler {
 	String ARG_SEARCH_QUERY = "searchQuery";
 
@@ -17,7 +15,8 @@ public interface MapFragmentHandler {
 
 	void getDirections(android.location.Location origin, Location destination);
 
-	void toggleLocations(LocationType type, boolean active);
+	void activateLocationsOfType(LocationType type);
+	void deactivateLocationsOfType(LocationType type);
 
 	boolean locate(android.location.Location location);
 
@@ -28,6 +27,8 @@ public interface MapFragmentHandler {
 	void removeDirections();
 
 	boolean hasDirections();
+
+	void setMapInteractionListener(MapInteractionListener mapInteractionListener);
 
 	enum MapType {
 		MAP_TYPE_NORMAL(0), MAP_TYPE_TERRAIN(1), MAP_TYPE_SATELLITE(2), MAP_TYPE_HYBRID(3);
@@ -55,5 +56,13 @@ public interface MapFragmentHandler {
 		public int getValue() {
 			return value;
 		}
+	}
+
+	interface MapInteractionListener {
+		void onLocationClicked(Location location);
+	}
+
+	interface DirectionsDrawnListener {
+		void onDirectionsDrawn(Directions directions);
 	}
 }

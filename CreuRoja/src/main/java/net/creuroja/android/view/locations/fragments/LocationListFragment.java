@@ -85,8 +85,14 @@ public class LocationListFragment extends ListFragment implements
 		mListener.onLocationListItemSelected(locations.get(position));
 	}
 
-	public void toggleLocations(LocationType type, boolean newState) {
-		locations.toggleLocationType(type, newState);
+	public void activateLocations(LocationType type) {
+		locations.toggleLocationType(type, true);
+		mAdapter = new LocationListAdapter(getActivity());
+		setListAdapter(mAdapter);
+	}
+
+	public void deactivateLocations(LocationType type) {
+		locations.toggleLocationType(type, false);
 		mAdapter = new LocationListAdapter(getActivity());
 		setListAdapter(mAdapter);
 	}
@@ -151,6 +157,6 @@ public class LocationListFragment extends ListFragment implements
 		}
 	}
 	public interface LocationsListListener {
-		public void onLocationListItemSelected(Location location);
+		void onLocationListItemSelected(Location location);
 	}
 }

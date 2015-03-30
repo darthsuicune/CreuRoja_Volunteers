@@ -19,9 +19,13 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.directions.Directions;
@@ -29,13 +33,16 @@ import net.creuroja.android.model.directions.loader.DirectionsLoader;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.locations.Locations;
-import net.creuroja.android.view.locations.fragments.LocationsHandlerFragment;
+import net.creuroja.android.view.locations.fragments.LocationsHandlerFragment.OnLocationsListUpdated;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GoogleMapFragment extends SupportMapFragment
-        implements MapFragmentHandler, LocationsHandlerFragment.OnLocationsListUpdated {
+        implements MapFragmentHandler, OnLocationsListUpdated {
     private static final double DEFAULT_LATITUDE = 41.3958;
     private static final double DEFAULT_LONGITUDE = 2.1739;
     private static final int DEFAULT_ZOOM = 12;
@@ -45,24 +52,26 @@ public class GoogleMapFragment extends SupportMapFragment
     private static final String ARG_LONGITUDE = "longitude";
 
     GoogleMap map;
-    private Directions directions;
+    Directions directions;
     MapInteractionListener listener;
 
     Locations locations;
-    Map<Marker, Location> currentMarkers = new HashMap<>();
+    Map<Location, ClusterMarker> currentMarkers = new HashMap<>();
     SharedPreferences prefs;
-    DirectionsDrawnHandler directionsListener;
+    DirectionsDrawnListener directionsListener;
+    ClusterManager<ClusterMarker> cluster;
+
+    int currentZoom;
 
     public GoogleMapFragment() {
         super();
     }
 
-    @Override
-    public void onAttach(Activity activity) {
+    @Override public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             listener = (MapInteractionListener) activity;
-            directionsListener = (DirectionsDrawnHandler) activity;
+            directionsListener = (DirectionsDrawnListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(
                     activity.toString() + " must implement MapInteractionListener");
@@ -70,17 +79,66 @@ public class GoogleMapFragment extends SupportMapFragment
         prefs = PreferenceManager.getDefaultSharedPreferences(activity);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                       Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         initMap();
         setCameraPosition(savedInstanceState);
+        if (locations != null) {
+            drawMarkers();
+        }
         return v;
     }
 
     public void initMap() {
+        if (map != null) {
+            return;
+        }
         map = getMap();
+        setClusterOptions();
+        setMapOptions();
+        map.setOnCameraChangeListener(cluster);
+        map.setOnMarkerClickListener(cluster);
+    }
+
+    private void setClusterOptions() {
+        cluster = new ClusterManager<>(getActivity(), map);
+        cluster.setAlgorithm(
+                new PreCachingAlgorithmDecorator<>(
+                        new DistanceAlgorithmWithRemoval<ClusterMarker>()));
+        cluster.setOnClusterItemClickListener(
+                new ClusterManager.OnClusterItemClickListener<ClusterMarker>() {
+                    @Override public boolean onClusterItemClick(ClusterMarker marker) {
+                        moveCameraTo(marker.getPosition());
+                        listener.onLocationClicked(marker.location);
+                        return true;
+                    }
+                });
+
+        cluster.setOnClusterClickListener(
+                new ClusterManager.OnClusterClickListener<ClusterMarker>() {
+                    @Override public boolean onClusterClick(Cluster<ClusterMarker> cluster) {
+                        currentZoom += 2;
+                        moveCameraTo(cluster.getPosition());
+                        return true;
+                    }
+                });
+        cluster.setRenderer(new DefaultClusterRenderer<ClusterMarker>(getActivity(), map, cluster) {
+            @Override protected void onBeforeClusterItemRendered(ClusterMarker item,
+                                                                 MarkerOptions markerOptions) {
+                super.onBeforeClusterItemRendered(item, markerOptions);
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(item.icon()));
+            }
+        });
+    }
+
+    private void moveCameraTo(LatLng location) {
+        CameraPosition.Builder cameraBuilder = new CameraPosition.Builder();
+        cameraBuilder.target(location).zoom(currentZoom);
+        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()));
+    }
+
+    private void setMapOptions() {
         UiSettings settings = map.getUiSettings();
         settings.setCompassEnabled(false);
         settings.setRotateGesturesEnabled(true);
@@ -88,36 +146,45 @@ public class GoogleMapFragment extends SupportMapFragment
         settings.setZoomGesturesEnabled(true);
         settings.setScrollGesturesEnabled(true);
         settings.setTiltGesturesEnabled(true);
+    }
+
+    public void drawMarkers() {
         if (locations != null) {
-            drawMarkers();
+            cluster.addItems(createCollectionForCluster());
         }
     }
 
+    private Collection<ClusterMarker> createCollectionForCluster() {
+        Collection<ClusterMarker> markers = new ArrayList<>();
+        for (Location location : locations) {
+            if (locations.isTypeVisible(location.type)) {
+                markers.add(new ClusterMarker(location));
+            }
+        }
+        return markers;
+    }
+
     private void setCameraPosition(Bundle state) {
-        CameraPosition.Builder cameraBuilder = new CameraPosition.Builder();
-        float zoom = (state == null) ? DEFAULT_ZOOM : state.getFloat(ARG_ZOOM);
+        currentZoom = (state == null) ? DEFAULT_ZOOM : state.getInt(ARG_ZOOM);
         double latitude = (state == null) ? DEFAULT_LATITUDE : state.getDouble(ARG_LATITUDE);
         double longitude = (state == null) ? DEFAULT_LONGITUDE : state.getDouble(ARG_LONGITUDE);
         LatLng position = new LatLng(latitude, longitude);
-        cameraBuilder.target(position).zoom(zoom);
-        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()));
+        moveCameraTo(position);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    @Override public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         CameraPosition position = map.getCameraPosition();
-        outState.putFloat(ARG_ZOOM, position.zoom);
+        outState.putInt(ARG_ZOOM, Math.round(position.zoom));
         outState.putDouble(ARG_LATITUDE, position.target.latitude);
         outState.putDouble(ARG_LONGITUDE, position.target.longitude);
     }
 
-    @Override
-    public void setMapType(MapType mapType) {
-        map.setMapType(getMapType(mapType));
+    @Override public void setMapType(MapType mapType) {
+        map.setMapType(convertToGoogleMapType(mapType));
     }
 
-    private int getMapType(MapType mapType) {
+    private int convertToGoogleMapType(MapType mapType) {
         switch (mapType) {
             case MAP_TYPE_TERRAIN:
                 return GoogleMap.MAP_TYPE_TERRAIN;
@@ -128,15 +195,6 @@ public class GoogleMapFragment extends SupportMapFragment
             case MAP_TYPE_NORMAL:
             default:
                 return GoogleMap.MAP_TYPE_NORMAL;
-        }
-    }
-
-    public void drawMarkers() {
-        if (locations != null) {
-            map.clear();
-            for (Location location : locations.locations()) {
-                drawMarker(location);
-            }
         }
     }
 
@@ -151,13 +209,90 @@ public class GoogleMapFragment extends SupportMapFragment
                 .restartLoader(LOADER_DIRECTIONS, bundle, new DirectionsCallbacks());
     }
 
+    @Override public void activateLocationsOfType(LocationType type) {
+        addMarkersOfType(type);
+        cluster.cluster();
+    }
+
+    @Override public void deactivateLocationsOfType(LocationType type) {
+        removeMarkersOfType(type);
+        cluster.cluster();
+    }
+
+    private void addMarkersOfType(LocationType type) {
+        List<ClusterMarker> markers = new ArrayList<>();
+        for (Location location : locations.ofType(type)) {
+            ClusterMarker marker;
+            if (currentMarkers.containsKey(location)) {
+                marker = currentMarkers.get(location);
+            } else {
+                marker = new ClusterMarker(location);
+                currentMarkers.put(location, marker);
+            }
+            markers.add(marker);
+        }
+        cluster.addItems(markers);
+    }
+
+    private void removeMarkersOfType(LocationType type) {
+        for (ClusterMarker marker : currentMarkers.values()) {
+            if (marker.isOneOf(type)) {
+                cluster.removeItem(marker);
+            }
+        }
+    }
+
+    @Override public boolean locate(android.location.Location location) {
+        if (map != null) {
+            moveCameraTo(new LatLng(location.getLatitude(), location.getLongitude()));
+            return true;
+        }
+        return false;
+    }
+
+    @Override public OnLocationsListUpdated getOnLocationsListUpdatedListener() {
+        return this;
+    }
+
+    @Override public void onLocationsListUpdated(Locations list) {
+        if (cluster == null) {
+            initMap();
+        }
+        cluster.clearItems();
+        this.locations = list;
+        for (Location location : list.locations()) {
+            ClusterMarker marker = new ClusterMarker(location);
+            cluster.addItem(marker);
+            currentMarkers.put(location, marker);
+        }
+        if (this.isAdded()) {
+            drawMarkers();
+        }
+    }
+
+    @Override public Fragment getFragment() {
+        return this;
+    }
+
+    @Override public void removeDirections() {
+        if (hasDirections()) {
+            map.clear();
+            drawMarkers();
+        }
+    }
+
+    @Override public boolean hasDirections() {
+        return directions != null && directions.areValid();
+    }
+
+    @Override public void setMapInteractionListener(MapInteractionListener listener) {
+        this.listener = listener;
+    }
+
     private void drawDirections() {
         if (directions.areValid()) {
             drawMarkers();
-            PolylineOptions directionsOptions = new PolylineOptions();
-            directionsOptions.addAll(directions.points());
-            directionsOptions.color(getResources().getColor(R.color.cruz_roja_main_red));
-            map.addPolyline(directionsOptions);
+            drawLine();
             directionsListener.onDirectionsDrawn(directions);
         } else {
             Toast.makeText(getActivity(), R.string.error_invalid_directions, Toast.LENGTH_LONG)
@@ -165,98 +300,48 @@ public class GoogleMapFragment extends SupportMapFragment
         }
     }
 
-    @Override
-    public void toggleLocations(LocationType type, boolean newState) {
-        for (Marker marker : currentMarkers.keySet()) {
-            if (currentMarkers.get(marker).type == type) {
-                marker.setVisible(newState);
-            }
-        }
-    }
-
-    @Override
-    public boolean locate(android.location.Location location) {
-        if (map != null) {
-            map.animateCamera(CameraUpdateFactory
-                    .newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public LocationsHandlerFragment.OnLocationsListUpdated getOnLocationsListUpdatedListener() {
-        return this;
-    }
-
-    @Override
-    public void onLocationsListUpdated(Locations list) {
-        locations = list;
-        if (this.isAdded()) {
-            drawMarkers();
-        }
-    }
-
-    @Override
-    public Fragment getFragment() {
-        return this;
-    }
-
-    @Override
-    public void removeDirections() {
-        drawMarkers();
-    }
-
-    @Override
-    public boolean hasDirections() {
-        return directions != null && directions.areValid();
-    }
-
-    private void drawMarker(Location location) {
-        MarkerOptions options = new MarkerOptions();
-        options.position(new LatLng(location.latitude, location.longitude));
-        options.icon(BitmapDescriptorFactory.fromResource(location.type.icon));
-        currentMarkers.put(map.addMarker(options), location);
-        map.setInfoWindowAdapter(new OnLocationClickAdapter());
-    }
-
-    public interface MapInteractionListener {
-        void onLocationClicked(Location location);
-    }
-
-    public interface DirectionsDrawnHandler {
-        void onDirectionsDrawn(Directions directions);
-    }
-
-    private class OnLocationClickAdapter implements GoogleMap.InfoWindowAdapter {
-        @Override
-        public View getInfoWindow(Marker marker) {
-            return null;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            listener.onLocationClicked(currentMarkers.get(marker));
-            return null;
+    private void drawLine() {
+        if (directions != null) {
+            PolylineOptions directionsOptions = new PolylineOptions();
+            directionsOptions.addAll(directions.points());
+            directionsOptions.color(getResources().getColor(R.color.cruz_roja_main_red));
+            map.addPolyline(directionsOptions);
         }
     }
 
     private class DirectionsCallbacks implements LoaderManager.LoaderCallbacks<Directions> {
 
-        @Override
-        public Loader<Directions> onCreateLoader(int id, Bundle args) {
+        @Override public Loader<Directions> onCreateLoader(int id, Bundle args) {
             return new DirectionsLoader(getFragment().getActivity(), args);
         }
 
-        @Override
-        public void onLoadFinished(Loader<Directions> directionsLoader, Directions directions) {
+        @Override public void onLoadFinished(Loader<Directions> loader, Directions directions) {
             GoogleMapFragment.this.directions = directions;
             drawDirections();
         }
 
-        @Override
-        public void onLoaderReset(Loader<Directions> directionsLoader) {
+        @Override public void onLoaderReset(Loader<Directions> directionsLoader) {
 
+        }
+    }
+
+    private class ClusterMarker implements ClusterItem {
+        Location location;
+
+        public ClusterMarker(Location location) {
+            this.location = location;
+        }
+
+        @Override public LatLng getPosition() {
+            return new LatLng(location.latitude, location.longitude);
+        }
+
+        public boolean isOneOf(LocationType type) {
+            return location.type == type;
+        }
+
+        public int icon() {
+            return location.type.icon;
         }
     }
 }

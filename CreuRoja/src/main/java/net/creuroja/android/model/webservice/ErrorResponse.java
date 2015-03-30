@@ -1,8 +1,7 @@
 package net.creuroja.android.model.webservice;
 
-/**
- * Created by denis on 27.03.15.
- */
+import net.creuroja.android.R;
+
 public class ErrorResponse extends Response {
     private final String content;
     private final int responseCode;
@@ -21,7 +20,7 @@ public class ErrorResponse extends Response {
     }
 
     @Override public int errorMessageResId() {
-        return 0;
+        return R.string.error_unknown;
     }
 
     @Override public int responseCode() {

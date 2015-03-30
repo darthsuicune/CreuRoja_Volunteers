@@ -2,15 +2,17 @@ package net.creuroja.android.view.locations.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Locations;
-import net.creuroja.android.model.locations.loaders.LocationsLoader;
 import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
 
 import java.util.ArrayList;
@@ -78,8 +80,8 @@ public class LocationsHandlerFragment extends Fragment {
 		void onLocationsListUpdated(Locations list);
 	}
 
-	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Locations> {
-		@Override public Loader<Locations> onCreateLoader(int id, Bundle args) {
+	private class LocationListCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 			String selection = null;
 			String[] selectionArgs = null;
 			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
@@ -90,16 +92,16 @@ public class LocationsHandlerFragment extends Fragment {
 				selectionArgs =
 						new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"};
 			}
-			return new LocationsLoader(getActivity(), CreuRojaContract.Locations.CONTENT_URI,
-					null, selection, selectionArgs, null, prefs);
+			return new CursorLoader(getActivity(), CreuRojaContract.Locations.CONTENT_URI,
+					null, selection, selectionArgs, null);
 		}
 
-		@Override public void onLoadFinished(Loader<Locations> loader, Locations data) {
-			locations = data;
+		@Override public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+			locations = LocationFactory.fromCursor(data, prefs);
 			notifyListeners();
 		}
 
-		@Override public void onLoaderReset(Loader<Locations> loader) {
+		@Override public void onLoaderReset(Loader<Cursor> loader) {
 			//Nothing to do here
 		}
 	}

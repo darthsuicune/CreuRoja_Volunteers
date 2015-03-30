@@ -12,41 +12,38 @@ import net.creuroja.android.model.services.Services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by denis on 19.06.14.
- */
 public class RailsLocations implements Locations {
-	private List<Location> locationList = new ArrayList<>();
-	private List<Integer> idList = new ArrayList<>();
-	private List<LocationType> mTypeList = new ArrayList<>();
-	private String lastUpdateTime = "";
-	private Map<LocationType, Boolean> mToggledLocations;
-	private SharedPreferences prefs;
+	List<Location> locationList = new ArrayList<>();
+	List<Integer> idList = new ArrayList<>();
+	List<LocationType> typeList = new ArrayList<>();
+	String lastUpdateTime = "";
+	Map<LocationType, Boolean> toggledLocations;
+	SharedPreferences prefs;
 
 	public RailsLocations(SharedPreferences prefs) {
 		this.prefs = prefs;
-		mToggledLocations = new HashMap<>();
+		toggledLocations = new HashMap<>();
 		for (LocationType type : LocationType.values()) {
-			mToggledLocations.put(type, type.getViewable(prefs));
+			toggledLocations.put(type, type.getViewable(prefs));
 		}
 	}
 
 	@Override public void addLocation(Location location) {
 		locationList.add(location);
 		idList.add(location.remoteId);
-		if (!mTypeList.contains(location.type)) {
-			mTypeList.add(location.type);
+		if (!typeList.contains(location.type)) {
+			typeList.add(location.type);
 		}
 	}
 
-	@Override
-	public List<Location> locations() {
+	@Override public List<Location> locations() {
 		List<Location> result = new ArrayList<>();
 		for (Location location : locationList) {
-			if (mToggledLocations.get(location.type)) {
+			if (toggledLocations.get(location.type)) {
 				result.add(location);
 			}
 		}
@@ -54,7 +51,7 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override public List<LocationType> locationTypes() {
-		return mTypeList;
+		return typeList;
 	}
 
 	@Override public Location byId(long id) {
@@ -109,11 +106,25 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override public void toggleLocationType(LocationType type, boolean newState) {
-		mToggledLocations.put(type, newState);
+		toggledLocations.put(type, newState);
 	}
 
 	@Override public boolean isVisible(int position) {
 		return locationList.get(position).isVisible(prefs);
+	}
+
+	@Override public List<Location> ofType(LocationType type) {
+		List<Location> list = new ArrayList<>();
+		for(Location location : locationList) {
+			if(location.type == type) {
+				list.add(location);
+			}
+		}
+		return list;
+	}
+
+	@Override public boolean isTypeVisible(LocationType type) {
+		return toggledLocations.get(type);
 	}
 
 	public void saveServices(ContentResolver cr, Location location) {
@@ -134,5 +145,23 @@ public class RailsLocations implements Locations {
 				cr.insert(CreuRojaContract.LocationServices.CONTENT_URI, ls.asValues());
 			}
 		}
+	}
+
+	@Override public Iterator<Location> iterator() {
+		return new Iterator<Location>() {
+			int i = 0;
+			int count = locationList.size();
+			@Override public boolean hasNext() {
+				return i + 1 < count;
+			}
+
+			@Override public Location next() {
+				return locationList.get(i++);
+			}
+
+			@Override public void remove() {
+				locationList.remove(i);
+			}
+		};
 	}
 }

@@ -1,5 +1,7 @@
 package net.creuroja.android.model.webservice;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,15 +18,16 @@ public abstract class ResponseFactory {
         try {
             response = readData(connection);
         } catch (IOException e) {
-            response = new ErrorResponse(connection.getResponseMessage(),
+            response = new ErrorResponse(asString(connection.getErrorStream()),
                     connection.getResponseCode());
         }
         return response;
     }
 
     protected Response readData(HttpURLConnection connection) throws IOException {
+        InputStream result = connection.getInputStream();
         if (connection.getResponseCode() == 200) {
-            response = fillResponseData(asString(connection.getInputStream()));
+            response = fillResponseData(asString(result));
         } else {
             response = new ErrorResponse(asString(connection.getErrorStream()),
                     connection.getResponseCode());
