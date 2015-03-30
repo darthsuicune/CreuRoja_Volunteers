@@ -55,7 +55,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".view.general.activities.LoginActivity"
+            android:name=".view.users.activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:parentActivityName=".view.locations.activities.LocationsIndexActivity"
             android:theme="@style/NoActionBar"

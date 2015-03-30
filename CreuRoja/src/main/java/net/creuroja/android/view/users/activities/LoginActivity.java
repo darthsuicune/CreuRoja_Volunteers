@@ -1,4 +1,4 @@
-package net.creuroja.android.view.general.activities;
+package net.creuroja.android.view.users.activities;
 
 
 import android.accounts.Account;
@@ -29,12 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.creuroja.android.R;
+import net.creuroja.android.model.users.RailsLoginResponseFactory;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
-import net.creuroja.android.model.webservice.auth.AccountUtils;
-import net.creuroja.android.model.users.RailsLoginResponseFactory;
 import net.creuroja.android.model.webservice.Response;
+import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
 import java.util.ArrayList;
@@ -259,8 +259,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     }
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
+     * Represents an asynchronous login/registration task used to authenticate the user.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Void>
             implements ClientConnectionListener {
@@ -292,12 +291,17 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             if (intent.getBooleanExtra(Response.IS_VALID, false)) {
                 successfulLogin(intent);
             } else {
-                passwordView.setError(getString(R.string.error_invalid_password));
-                passwordView.setText("");
+                int responseCode = intent.getIntExtra(Response.ERROR_CODE, 401);
+                if (responseCode == 401) {
+                    passwordView.setText("");
+                    passwordView.setError(getString(R.string.error_invalid_password));
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            intent.getIntExtra(Response.ERROR_MESSAGE, R.string.error_connecting),
+                            Toast.LENGTH_LONG).show();
+                }
+
                 passwordView.requestFocus();
-                Toast.makeText(getApplicationContext(),
-                        intent.getIntExtra(Response.ERROR_MESSAGE, R.string.error_connecting),
-                        Toast.LENGTH_LONG).show();
             }
         }
 

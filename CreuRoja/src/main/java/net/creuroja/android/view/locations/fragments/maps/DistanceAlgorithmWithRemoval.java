@@ -36,17 +36,17 @@ import java.util.Set;
  * but implementing the removal methods
  */
 public class DistanceAlgorithmWithRemoval<T extends ClusterItem> implements Algorithm<T> {
-    public static final int MAX_DISTANCE_AT_ZOOM = 100; // essentially 100 dp.
-    /**
-     * Any modifications should be synchronized on mQuadTree.
-     */
+    public int distanceInDp;
+    // Any modifications should be synchronized on mQuadTree.
     private final Collection<QuadItem<T>> mItems = new ArrayList<>();
-    /**
-     * Any modifications should be synchronized on mQuadTree.
-     */
+    // Any modifications should be synchronized on mQuadTree.
     private final PointQuadTree<QuadItem<T>> mQuadTree = new PointQuadTree<>(0, 1, 0, 1);
     private static final SphericalMercatorProjection PROJECTION =
             new SphericalMercatorProjection(1);
+
+    public DistanceAlgorithmWithRemoval(int distanceInDp) {
+        this.distanceInDp = distanceInDp;
+    }
 
     @Override public void addItem(T item) {
         final QuadItem<T> quadItem = new QuadItem<>(item);
@@ -79,7 +79,7 @@ public class DistanceAlgorithmWithRemoval<T extends ClusterItem> implements Algo
 
     @Override public Set<? extends Cluster<T>> getClusters(double zoom) {
         final int discreteZoom = (int) zoom;
-        final double zoomSpecificSpan = MAX_DISTANCE_AT_ZOOM / Math.pow(2, discreteZoom) / 256;
+        final double zoomSpecificSpan = distanceInDp / Math.pow(2, discreteZoom) / 256;
         final Set<QuadItem<T>> visitedCandidates = new HashSet<>();
         final Set<Cluster<T>> results = new HashSet<>();
         final Map<QuadItem<T>, Double> distanceToCluster = new HashMap<>();

@@ -2,11 +2,15 @@ package net.creuroja.android.view.locations.fragments.maps;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,9 +107,10 @@ public class GoogleMapFragment extends SupportMapFragment
 
     private void setClusterOptions() {
         cluster = new ClusterManager<>(getActivity(), map);
+        int distanceForClusters = 0;
         cluster.setAlgorithm(
                 new PreCachingAlgorithmDecorator<>(
-                        new DistanceAlgorithmWithRemoval<ClusterMarker>()));
+                        new DistanceAlgorithmWithRemoval<ClusterMarker>(distanceForClusters)));
         cluster.setOnClusterItemClickListener(
                 new ClusterManager.OnClusterItemClickListener<ClusterMarker>() {
                     @Override public boolean onClusterItemClick(ClusterMarker marker) {
@@ -118,7 +123,7 @@ public class GoogleMapFragment extends SupportMapFragment
         cluster.setOnClusterClickListener(
                 new ClusterManager.OnClusterClickListener<ClusterMarker>() {
                     @Override public boolean onClusterClick(Cluster<ClusterMarker> cluster) {
-                        currentZoom += 2;
+                        currentZoom += 1;
                         moveCameraTo(cluster.getPosition());
                         return true;
                     }
@@ -127,7 +132,14 @@ public class GoogleMapFragment extends SupportMapFragment
             @Override protected void onBeforeClusterItemRendered(ClusterMarker item,
                                                                  MarkerOptions markerOptions) {
                 super.onBeforeClusterItemRendered(item, markerOptions);
+                if(itsMyPhone()) {
+                    markerOptions.anchor(0.1f, 0.1f);
+                }
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(item.icon()));
+            }
+
+            private boolean itsMyPhone() {
+                return getResources().getDisplayMetrics().densityDpi == 538;
             }
         });
     }
@@ -135,7 +147,7 @@ public class GoogleMapFragment extends SupportMapFragment
     private void moveCameraTo(LatLng location) {
         CameraPosition.Builder cameraBuilder = new CameraPosition.Builder();
         cameraBuilder.target(location).zoom(currentZoom);
-        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()));
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()));
     }
 
     private void setMapOptions() {
@@ -152,6 +164,7 @@ public class GoogleMapFragment extends SupportMapFragment
         if (locations != null) {
             cluster.addItems(createCollectionForCluster());
         }
+        cluster.cluster();
     }
 
     private Collection<ClusterMarker> createCollectionForCluster() {

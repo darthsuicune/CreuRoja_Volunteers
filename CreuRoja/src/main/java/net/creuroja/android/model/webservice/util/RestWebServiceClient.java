@@ -17,6 +17,7 @@ public class RestWebServiceClient {
     HttpURLConnection connection;
     ResponseFactory responseFactory;
     Response response;
+    URL url;
 
     public RestWebServiceClient(ResponseFactory factory, String protocol, String serverUrl) {
         this.responseFactory = factory;
@@ -37,7 +38,7 @@ public class RestWebServiceClient {
 
     private void setUpConnection(String resource, List<WebServiceOption> headerOptions,
                                  List<WebServiceOption> urlOptions) throws IOException {
-        URL url = new URL(protocol, host, resourceWithOptions(resource, urlOptions));
+        url = new URL(protocol + "://" + host + "/" + resourceWithOptions(resource, urlOptions));
         connection = (HttpURLConnection) url.openConnection();
         addHeaders(headerOptions);
     }

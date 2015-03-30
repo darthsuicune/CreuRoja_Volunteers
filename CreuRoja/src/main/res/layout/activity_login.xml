@@ -9,7 +9,7 @@
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
-              tools:context="net.creuroja.android.view.general.activities.LoginActivity">
+              tools:context="net.creuroja.android.view.users.activities.LoginActivity">
 
     <!-- Login progress -->
     <LinearLayout
@@ -44,78 +44,63 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            style="@style/LoginFormContainer">
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"/>
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="253dp"
+                android:layout_height="207dp"
+                android:contentDescription="@string/login_logo_description"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:src="@drawable/logologin"
+                android:layout_gravity="center_horizontal"
+                android:visibility="visible"/>
 
-            <LinearLayout
-                android:id="@+id/email_login_form"
-                android:layout_width="0dp"
-                android:layout_weight="6"
+            <AutoCompleteTextView
+                android:id="@+id/email"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:textColor="@android:color/black">
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="253dp"
-                    android:layout_height="207dp"
-                    android:contentDescription="@string/login_logo_description"
-                    android:paddingLeft="40dp"
-                    android:paddingRight="40dp"
-                    android:src="@drawable/logologin"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="visible"/>
+                <requestFocus/>
+            </AutoCompleteTextView>
 
-                <AutoCompleteTextView
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:imeOptions="actionNext"
-                    android:textColor="@android:color/black">
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_password"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionSend"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@android:color/black"/>
 
-                    <requestFocus/>
-                </AutoCompleteTextView>
+            <Button
+                android:id="@+id/email_sign_in_button"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_sign_in"
+                android:textStyle="bold"/>
 
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionSend"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@android:color/black"/>
-
-                <Button
-                    android:id="@+id/email_sign_in_button"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/action_sign_in"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:text="@string/login_notice"
-                    style="@style/LoginNotice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"/>
+            <TextView
+                android:text="@string/login_notice"
+                style="@style/LoginNotice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
