@@ -1,6 +1,7 @@
 package net.creuroja.android.view.locations.fragments;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,9 +12,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Locations;
-import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
+import net.creuroja.android.model.webservice.auth.AccountUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.List;
  * to handle interaction events.
  */
 public class LocationsHandlerFragment extends Fragment {
-
+	String ARG_SEARCH_QUERY = "searchQuery";
 	private static final int LOADER_LOCATIONS = 1;
 	private List<OnLocationsListUpdated> listeners = new ArrayList<>();
 	private SharedPreferences prefs;
@@ -44,6 +46,7 @@ public class LocationsHandlerFragment extends Fragment {
 		super.onAttach(activity);
 		prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 		getLoaderManager().restartLoader(LOADER_LOCATIONS, null, new LocationListCallbacks());
+		performSync();
 	}
 
 	@Override
@@ -59,11 +62,20 @@ public class LocationsHandlerFragment extends Fragment {
 		}
 	}
 
+	public void performSync() {
+		//TODO: Check for sync preferences
+		Bundle bundle = new Bundle();
+		bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		ContentResolver.requestSync(AccountUtils.getAccount(getActivity()),
+				CreuRojaProvider.CONTENT_NAME, bundle);
+	}
+
 	public void search(String query) {
 		Bundle args = null;
 		if (query != null) {
 			args = new Bundle();
-			args.putString(MapFragmentHandler.ARG_SEARCH_QUERY, query);
+			args.putString(ARG_SEARCH_QUERY, query);
 		}
 		getLoaderManager().restartLoader(LOADER_LOCATIONS, args, new LocationListCallbacks());
 	}
@@ -84,8 +96,8 @@ public class LocationsHandlerFragment extends Fragment {
 		@Override public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 			String selection = null;
 			String[] selectionArgs = null;
-			if (args != null && args.containsKey(MapFragmentHandler.ARG_SEARCH_QUERY)) {
-				String query = args.getString(MapFragmentHandler.ARG_SEARCH_QUERY);
+			if (args != null && args.containsKey(ARG_SEARCH_QUERY)) {
+				String query = args.getString(ARG_SEARCH_QUERY);
 				selection = CreuRojaContract.Locations.NAME + " LIKE ? OR " +
 							CreuRojaContract.Locations.DESCRIPTION + " LIKE ? OR " +
 							CreuRojaContract.Locations.ADDRESS + " LIKE ?";

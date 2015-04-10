@@ -8,9 +8,7 @@ import net.creuroja.android.model.locations.LocationType;
 
 import static net.creuroja.android.view.locations.fragments.LocationsHandlerFragment.OnLocationsListUpdated;
 
-public interface MapFragmentHandler {
-	String ARG_SEARCH_QUERY = "searchQuery";
-
+public interface MapFragmentHandler extends OnLocationsListUpdated{
 	void setMapType(MapType mapType);
 
 	void getDirections(android.location.Location origin, Location destination);
@@ -20,9 +18,7 @@ public interface MapFragmentHandler {
 
 	boolean locate(android.location.Location location);
 
-	OnLocationsListUpdated getOnLocationsListUpdatedListener();
-
-	Fragment getFragment();
+	Fragment fragment();
 
 	void removeDirections();
 

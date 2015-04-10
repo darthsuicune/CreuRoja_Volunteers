@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RailsLocations implements Locations {
-	List<Location> locationList = new ArrayList<>();
-	List<Integer> idList = new ArrayList<>();
+	Map<Integer, Location> locationList = new HashMap<>();
 	List<LocationType> typeList = new ArrayList<>();
 	String lastUpdateTime = "";
 	Map<LocationType, Boolean> toggledLocations;
@@ -33,8 +32,7 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override public void addLocation(Location location) {
-		locationList.add(location);
-		idList.add(location.remoteId);
+		locationList.put(location.remoteId, location);
 		if (!typeList.contains(location.type)) {
 			typeList.add(location.type);
 		}
@@ -42,7 +40,7 @@ public class RailsLocations implements Locations {
 
 	@Override public List<Location> locations() {
 		List<Location> result = new ArrayList<>();
-		for (Location location : locationList) {
+		for (Location location : locationList.values()) {
 			if (toggledLocations.get(location.type)) {
 				result.add(location);
 			}
@@ -54,51 +52,48 @@ public class RailsLocations implements Locations {
 		return typeList;
 	}
 
-	@Override public Location byId(long id) {
-		for (Location location : locationList) {
-			if (location.remoteId == id) {
-				return location;
-			}
-		}
-		return null;
-	}
-
-	@Override public Location get(int position) {
-		return locationList.get(position);
-	}
-
 	@Override public void save(ContentResolver cr) {
 		Uri uri = CreuRojaContract.Locations.CONTENT_URI;
 		Locations currentLocations =
 				LocationFactory.fromCursor(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
-		for (Location location : locationList) {
-			if (location.newerThan(lastUpdateTime)) {
-				lastUpdateTime = location.updatedAt;
-			}
-			if (location.active) {
-				if (currentLocations.has(location)) {
-					location.update(cr);
-				} else {
-					forInsert.add(location.getAsValues());
-				}
-				saveServices(cr, location);
-			} else {
-				location.delete(cr);
-			}
+		for (Location location : locationList.values()) {
+			updateLastUpdateTime(location);
+			decideLocationAction(location, currentLocations, forInsert, cr);
 		}
 		if (forInsert.size() > 0) {
 			cr.bulkInsert(uri, forInsert.toArray(new ContentValues[forInsert.size()]));
 		}
 	}
 
-	public boolean has(Location location) {
-		for (Integer current : idList) {
-			if (current == location.remoteId) {
-				return true;
-			}
+	public void updateLastUpdateTime(Location location) {
+		if (location.newerThan(lastUpdateTime)) {
+			lastUpdateTime = location.updatedAt;
 		}
-		return false;
+	}
+
+	private void decideLocationAction(Location location, Locations currentLocations,
+									  List<ContentValues> forInsert, ContentResolver cr) {
+		if (location.active) {
+			if (currentLocations.has(location)) {
+				if(currentLocations.wasUpdated(location)) {
+					location.update(cr);
+				}
+			} else {
+				forInsert.add(location.getAsValues());
+			}
+			saveServices(cr, location);
+		} else {
+			location.delete(cr);
+		}
+	}
+
+	public boolean has(Location location) {
+		return locationList.containsKey(location.remoteId);
+	}
+
+	@Override public boolean wasUpdated(Location location) {
+		return locationList.get(location.remoteId).newerThan(location.updatedAt);
 	}
 
 	@Override public String lastUpdateTime() {
@@ -115,8 +110,8 @@ public class RailsLocations implements Locations {
 
 	@Override public List<Location> ofType(LocationType type) {
 		List<Location> list = new ArrayList<>();
-		for(Location location : locationList) {
-			if(location.type == type) {
+		for (Location location : locationList.values()) {
+			if (location.type == type) {
 				list.add(location);
 			}
 		}
@@ -130,7 +125,7 @@ public class RailsLocations implements Locations {
 	public void saveServices(ContentResolver cr, Location location) {
 		for (Service service : location.serviceList) {
 			LocationService ls = new LocationService(location, service);
-			if(service.archived()) {
+			if (service.archived()) {
 				service.delete(cr);
 				ls.delete(cr);
 				continue;
@@ -148,20 +143,6 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override public Iterator<Location> iterator() {
-		return new Iterator<Location>() {
-			int i = 0;
-			int count = locationList.size();
-			@Override public boolean hasNext() {
-				return i + 1 < count;
-			}
-
-			@Override public Location next() {
-				return locationList.get(i++);
-			}
-
-			@Override public void remove() {
-				locationList.remove(i);
-			}
-		};
+		return locationList.values().iterator();
 	}
 }

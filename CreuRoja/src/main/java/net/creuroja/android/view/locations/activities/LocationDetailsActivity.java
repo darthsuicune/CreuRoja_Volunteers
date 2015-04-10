@@ -12,7 +12,7 @@ import net.creuroja.android.view.locations.fragments.LocationDetailFragment;
 import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
 
 public class LocationDetailsActivity extends ActionBarActivity
-		implements LocationDetailFragment.OnLocationDetailsInteractionListener,
+		implements LocationDetailFragment.OnLocationDetailsListener,
 		OnDirectionsRequestedListener {
 	public final static String EXTRA_LOCATION_ID = "locationId";
 

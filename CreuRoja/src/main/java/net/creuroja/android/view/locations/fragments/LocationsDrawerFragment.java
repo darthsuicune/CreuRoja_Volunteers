@@ -21,10 +21,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.creuroja.android.R;
-import net.creuroja.android.view.locations.activities.LocationsIndexActivity;
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.locations.LocationType;
+import net.creuroja.android.model.locations.Locations;
+import net.creuroja.android.view.locations.ViewMode;
 import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class LocationsDrawerFragment extends Fragment
 
 	private DrawerLayout drawerLayout;
 	private View fragmentContainerView;
-	private LocationsIndexActivity.ViewMode currentViewMode;
+	private ViewMode currentViewMode;
 
 	private TextView listViewTypeToggle;
 	private TextView mapViewTypeToggle;
@@ -132,22 +132,22 @@ public class LocationsDrawerFragment extends Fragment
 	}
 
 	private void prepareViewModes(View v) {
-		mapViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_map);
-		listViewTypeToggle = (TextView) v.findViewById(R.id.navigation_drawer_section_list);
+		mapViewTypeToggle = (TextView) v.findViewById(R.id.locations_drawer_see_as_map);
+		listViewTypeToggle = (TextView) v.findViewById(R.id.locations_drawer_see_as_list);
 
-		prepareViewMode(mapViewTypeToggle, LocationsIndexActivity.ViewMode.MAP);
-		prepareViewMode(listViewTypeToggle, LocationsIndexActivity.ViewMode.LIST);
+		prepareViewMode(mapViewTypeToggle, ViewMode.MAP);
+		prepareViewMode(listViewTypeToggle, ViewMode.LIST);
 		if (currentViewMode == null) {
-			currentViewMode = LocationsIndexActivity.ViewMode.getViewMode(
+			currentViewMode = ViewMode.getViewMode(
 					prefs.getInt(Settings.VIEW_MODE,
-							LocationsIndexActivity.ViewMode.MAP.getValue()));
+							ViewMode.MAP.getValue()));
 		}
 		toggleViewMode(
-				(currentViewMode == LocationsIndexActivity.ViewMode.LIST) ? listViewTypeToggle :
+				(currentViewMode == ViewMode.LIST) ? listViewTypeToggle :
 						mapViewTypeToggle);
 	}
 
-	private void prepareViewMode(final TextView v, final LocationsIndexActivity.ViewMode mode) {
+	private void prepareViewMode(final TextView v, final ViewMode mode) {
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View view) {
 				toggleViewMode(view);
@@ -284,7 +284,7 @@ public class LocationsDrawerFragment extends Fragment
 		/**
 		 * Called when an item in the navigation drawer is selected.
 		 */
-		void onViewModeChanged(LocationsIndexActivity.ViewMode newMode);
+		void onViewModeChanged(ViewMode newMode);
 
 		void onNavigationLegendItemActivated(final LocationType type);
 		void onNavigationLegendItemDeactivated(final LocationType type);

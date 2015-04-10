@@ -2,7 +2,6 @@ package net.creuroja.android.view.locations.activities;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,7 +29,6 @@ import com.google.android.gms.location.LocationServices;
 
 import net.creuroja.android.R;
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.db.CreuRojaProvider;
 import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
@@ -39,27 +36,27 @@ import net.creuroja.android.model.webservice.auth.AccountUtils;
 import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
 import net.creuroja.android.view.general.activities.SettingsActivity;
 import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
+import net.creuroja.android.view.locations.ViewMode;
 import net.creuroja.android.view.locations.fragments.LocationDetailFragment;
 import net.creuroja.android.view.locations.fragments.LocationListFragment;
+import net.creuroja.android.view.locations.fragments.LocationListFragment.LocationsListListener;
 import net.creuroja.android.view.locations.fragments.LocationsDrawerFragment;
 import net.creuroja.android.view.locations.fragments.LocationsHandlerFragment;
-import net.creuroja.android.view.locations.fragments.maps.GoogleMapFragment;
 import net.creuroja.android.view.locations.fragments.maps.LocationCardFragment;
 import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
+import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler.DirectionsDrawnListener;
 import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandlerFactory;
 import net.creuroja.android.view.users.activities.UserProfileActivity;
 
-import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.OnLocationDetailsInteractionListener;
+import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.OnLocationDetailsListener;
 import static net.creuroja.android.view.locations.fragments.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
 import static net.creuroja.android.view.locations.fragments.maps.GoogleMapFragment.MapInteractionListener;
 import static net.creuroja.android.view.locations.fragments.maps.LocationCardFragment.OnLocationCardInteractionListener;
 
-public class LocationsIndexActivity extends ActionBarActivity
-        implements LoginManager, MapNavigationDrawerCallbacks,
-        LocationListFragment.LocationsListListener, OnLocationCardInteractionListener,
-        MapInteractionListener, OnDirectionsRequestedListener, OnLocationDetailsInteractionListener,
-        GoogleMapFragment.DirectionsDrawnListener, ConnectionCallbacks,
-        OnConnectionFailedListener {
+public class LocationsIndexActivity extends ActionBarActivity implements LoginManager,
+        MapNavigationDrawerCallbacks, LocationsListListener, OnLocationCardInteractionListener,
+        MapInteractionListener, OnDirectionsRequestedListener, OnLocationDetailsListener,
+        DirectionsDrawnListener, ConnectionCallbacks, OnConnectionFailedListener {
     private static final String TAG_MAP = "CreuRojaMap";
     private static final String TAG_LIST = "CreuRojaLocationList";
     private static final String TAG_HANDLER = "CreuRojaLocationsHandler";
@@ -67,17 +64,17 @@ public class LocationsIndexActivity extends ActionBarActivity
     private static final String TAG_DETAILS = "CreuRojaDetail";
 
     // This are the fragments that the activity handles
-    private LocationsDrawerFragment locationsDrawerFragment;
-    private MapFragmentHandler mapFragmentHandler;
-    private LocationListFragment listFragment;
-    private LocationCardFragment cardFragment;
-    private LocationsHandlerFragment locationsHandlerFragment;
+    LocationsDrawerFragment locationsDrawerFragment;
+    MapFragmentHandler mapFragmentHandler;
+    LocationListFragment listFragment;
+    LocationCardFragment cardFragment;
+    LocationsHandlerFragment locationsHandlerFragment;
 
-    private SharedPreferences prefs;
+    SharedPreferences prefs;
 
-    private ViewMode currentViewMode;
+    ViewMode currentViewMode;
 
-    private GoogleApiClient client;
+    GoogleApiClient client;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +98,6 @@ public class LocationsIndexActivity extends ActionBarActivity
         client.connect();
 
         startUi();
-        bootSync();
     }
 
     @Override public void failedLogin() {
@@ -124,8 +120,7 @@ public class LocationsIndexActivity extends ActionBarActivity
         locationsDrawerFragment =
                 (LocationsDrawerFragment) manager.findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.
-        locationsDrawerFragment
-                .setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+        locationsDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     private void setupLocationDataHandler(FragmentManager manager) {
@@ -139,6 +134,10 @@ public class LocationsIndexActivity extends ActionBarActivity
         locationsHandlerFragment.registerListener(locationsDrawerFragment);
     }
 
+    private void performSync() {
+        locationsHandlerFragment.performSync();
+    }
+
     @Override public void onViewModeChanged(ViewMode newViewMode) {
         if (newViewMode == currentViewMode) {
             return;
@@ -150,22 +149,19 @@ public class LocationsIndexActivity extends ActionBarActivity
     private void setMainFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        LocationsHandlerFragment.OnLocationsListUpdated listener;
         switch (currentViewMode) {
             case LIST:
                 loadListFragment(fragmentManager, transaction);
-                listener = listFragment;
+                locationsHandlerFragment.registerListener(listFragment);
                 break;
             case MAP:
             default:
                 loadMapFragment(fragmentManager, transaction);
-                listener = mapFragmentHandler.getOnLocationsListUpdatedListener();
+                locationsHandlerFragment.registerListener(mapFragmentHandler);
                 break;
         }
         transaction.commit();
-        locationsHandlerFragment.registerListener(listener);
         if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
-            //Comment to avoid warning in AS as the value isn't directly passed to setVisibility
             //noinspection ResourceType
             findViewById(R.id.location_details_container)
                     .setVisibility(currentViewMode.getDetailsBlockVisibility());
@@ -191,9 +187,9 @@ public class LocationsIndexActivity extends ActionBarActivity
             if (mapFragmentHandler == null) {
                 mapFragmentHandler = MapFragmentHandlerFactory.getHandler();
             }
+            mapFragmentHandler.setMapInteractionListener(this);
         }
-        mapFragmentHandler.setMapInteractionListener(this);
-        transaction.replace(R.id.locations_container, mapFragmentHandler.getFragment(), TAG_MAP);
+        transaction.replace(R.id.locations_container, mapFragmentHandler.fragment(), TAG_MAP);
     }
 
     @Override public void onLocationListItemSelected(Location location) {
@@ -367,19 +363,6 @@ public class LocationsIndexActivity extends ActionBarActivity
         }
     }
 
-    private void bootSync() {
-        //TODO: Check for sync preferences
-        performSync();
-    }
-
-    private void performSync() {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(AccountUtils.getAccount(getApplicationContext()),
-                CreuRojaProvider.CONTENT_NAME, bundle);
-    }
-
     private void openSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
@@ -429,7 +412,6 @@ public class LocationsIndexActivity extends ActionBarActivity
         cardFragment.onDirectionsDrawn(directions);
     }
 
-
     @Override public void onConnected(Bundle bundle) {
         //Nothing to do here
     }
@@ -440,39 +422,5 @@ public class LocationsIndexActivity extends ActionBarActivity
 
     @Override public void onConnectionFailed(ConnectionResult connectionResult) {
         //Nothing to do here
-    }
-
-    public enum ViewMode {
-        MAP(0), LIST(1);
-
-        final int mValue;
-
-        ViewMode(final int value) {
-            mValue = value;
-        }
-
-        public static ViewMode getViewMode(int mode) {
-            switch (mode) {
-                case 1:
-                    return LIST;
-                case 0:
-                default:
-                    return MAP;
-            }
-        }
-
-        public int getValue() {
-            return mValue;
-        }
-
-        public int getDetailsBlockVisibility() {
-            switch (this) {
-                case LIST:
-                    return View.VISIBLE;
-                case MAP:
-                default:
-                    return View.GONE;
-            }
-        }
     }
 }

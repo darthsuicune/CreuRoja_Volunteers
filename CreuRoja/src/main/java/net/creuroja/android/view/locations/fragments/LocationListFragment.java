@@ -32,10 +32,10 @@ import java.util.List;
 public class LocationListFragment extends ListFragment implements
 		LocationsHandlerFragment.OnLocationsListUpdated {
 	private Locations locations;
-	private LocationsListListener mListener;
+	private LocationsListListener listener;
 
 	// The Adapter which will be used to populate the ListView/GridView with Views.
-	private ListAdapter mAdapter;
+	private ListAdapter adapter;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -57,7 +57,7 @@ public class LocationListFragment extends ListFragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_location_list, container, false);
-		setListAdapter(mAdapter);
+		setListAdapter(adapter);
 		return view;
 	}
 
@@ -65,7 +65,7 @@ public class LocationListFragment extends ListFragment implements
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			mListener = (LocationsListListener) activity;
+			listener = (LocationsListListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
 					activity.toString() + " must implement LocationsListListener");
@@ -75,33 +75,31 @@ public class LocationListFragment extends ListFragment implements
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
+		listener = null;
 	}
 
 	@Override public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		// Notify the active callbacks interface (the activity, if the
-		// fragment is attached to one) that an item has been selected.
-		mListener.onLocationListItemSelected(locations.get(position));
+		listener.onLocationListItemSelected((Location) l.getAdapter().getItem(position));
 	}
 
 	public void activateLocations(LocationType type) {
 		locations.toggleLocationType(type, true);
-		mAdapter = new LocationListAdapter(getActivity());
-		setListAdapter(mAdapter);
+		adapter = new LocationListAdapter(getActivity());
+		setListAdapter(adapter);
 	}
 
 	public void deactivateLocations(LocationType type) {
 		locations.toggleLocationType(type, false);
-		mAdapter = new LocationListAdapter(getActivity());
-		setListAdapter(mAdapter);
+		adapter = new LocationListAdapter(getActivity());
+		setListAdapter(adapter);
 	}
 
 	@Override public void onLocationsListUpdated(Locations list) {
 		locations = list;
 		if(this.isAdded()) {
-			mAdapter = new LocationListAdapter(getActivity());
-			setListAdapter(mAdapter);
+			adapter = new LocationListAdapter(getActivity());
+			setListAdapter(adapter);
 		}
 	}
 

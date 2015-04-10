@@ -27,7 +27,7 @@ import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
  * with a GridView.
  * <p/>
  * Activities containing this fragment MUST implement the
- * {@link OnLocationDetailsInteractionListener}
+ * {@link OnLocationDetailsListener}
  * interface.
  */
 public class LocationDetailFragment extends Fragment
@@ -46,7 +46,7 @@ public class LocationDetailFragment extends Fragment
 	private TextView mTypeView;
 	private TextView mUpdatedAtView;
 
-	private OnLocationDetailsInteractionListener mListener;
+	private OnLocationDetailsListener mListener;
 	private OnDirectionsRequestedListener mDirectionsListener;
 
 	/**
@@ -99,7 +99,7 @@ public class LocationDetailFragment extends Fragment
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			mListener = (OnLocationDetailsInteractionListener) activity;
+			mListener = (OnLocationDetailsListener) activity;
 			mDirectionsListener = (OnDirectionsRequestedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(
@@ -165,7 +165,7 @@ public class LocationDetailFragment extends Fragment
 	 * "http://developer.android.com/training/basics/fragments/communicating.html"
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
-	public interface OnLocationDetailsInteractionListener {
+	public interface OnLocationDetailsListener {
 	}
 
 }
