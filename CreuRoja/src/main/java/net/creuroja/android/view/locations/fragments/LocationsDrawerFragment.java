@@ -25,7 +25,6 @@ import net.creuroja.android.model.Settings;
 import net.creuroja.android.model.locations.LocationType;
 import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.view.locations.ViewMode;
-import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
 
 import java.util.List;
 
@@ -207,7 +206,7 @@ public class LocationsDrawerFragment extends Fragment
 			v.setOnClickListener(new View.OnClickListener() {
 				@Override public void onClick(View view) {
 					mapDrawerCallbacks.onNavigationMapTypeSelected(mapType);
-					prefs.edit().putInt(Settings.MAP_TYPE, mapType.getValue()).apply();
+					prefs.edit().putInt(Settings.MAP_TYPE, mapType.value()).apply();
 					toggleMapType();
 				}
 			});
@@ -218,7 +217,7 @@ public class LocationsDrawerFragment extends Fragment
 		if (getActivity() != null) {
 			MapFragmentHandler.MapType type = MapFragmentHandler.MapType.fromValue(
 					prefs.getInt(Settings.MAP_TYPE,
-							MapFragmentHandler.MapType.MAP_TYPE_NORMAL.getValue()));
+							MapFragmentHandler.MapType.MAP_TYPE_NORMAL.value()));
 
 			changeToggleBackground(normal, MapFragmentHandler.MapType.MAP_TYPE_NORMAL == type);
 			changeToggleBackground(terrain, MapFragmentHandler.MapType.MAP_TYPE_TERRAIN == type);

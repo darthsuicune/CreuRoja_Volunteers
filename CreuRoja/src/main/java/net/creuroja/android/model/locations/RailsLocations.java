@@ -11,6 +11,7 @@ import net.creuroja.android.model.services.Service;
 import net.creuroja.android.model.services.Services;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,14 +39,8 @@ public class RailsLocations implements Locations {
 		}
 	}
 
-	@Override public List<Location> locations() {
-		List<Location> result = new ArrayList<>();
-		for (Location location : locationList.values()) {
-			if (toggledLocations.get(location.type)) {
-				result.add(location);
-			}
-		}
-		return result;
+	@Override public Collection<Location> locations() {
+		return locationList.values();
 	}
 
 	@Override public List<LocationType> locationTypes() {
@@ -84,7 +79,9 @@ public class RailsLocations implements Locations {
 			}
 			saveServices(cr, location);
 		} else {
-			location.delete(cr);
+			if(currentLocations.has(location)) {
+				location.delete(cr);
+			}
 		}
 	}
 
@@ -94,6 +91,26 @@ public class RailsLocations implements Locations {
 
 	@Override public boolean wasUpdated(Location location) {
 		return locationList.get(location.remoteId).newerThan(location.updatedAt);
+	}
+
+	public void saveServices(ContentResolver cr, Location location) {
+		for (Service service : location.serviceList) {
+			LocationService ls = new LocationService(location, service);
+			if (service.archived()) {
+				service.delete(cr);
+				ls.delete(cr);
+				continue;
+			}
+			if (Services.count(cr, service.id) > 0) {
+				service.update(cr);
+			} else {
+				cr.insert(CreuRojaContract.Services.CONTENT_URI, service.asValues());
+			}
+
+			if (LocationService.count(cr, service.id, location.remoteId) == 0) {
+				cr.insert(CreuRojaContract.LocationServices.CONTENT_URI, ls.asValues());
+			}
+		}
 	}
 
 	@Override public String lastUpdateTime() {
@@ -120,26 +137,6 @@ public class RailsLocations implements Locations {
 
 	@Override public boolean isTypeVisible(LocationType type) {
 		return toggledLocations.get(type);
-	}
-
-	public void saveServices(ContentResolver cr, Location location) {
-		for (Service service : location.serviceList) {
-			LocationService ls = new LocationService(location, service);
-			if (service.archived()) {
-				service.delete(cr);
-				ls.delete(cr);
-				continue;
-			}
-			if (Services.count(cr, service.id) > 0) {
-				service.update(cr);
-			} else {
-				cr.insert(CreuRojaContract.Services.CONTENT_URI, service.asValues());
-			}
-
-			if (LocationService.count(cr, service.id, location.remoteId) == 0) {
-				cr.insert(CreuRojaContract.LocationServices.CONTENT_URI, ls.asValues());
-			}
-		}
 	}
 
 	@Override public Iterator<Location> iterator() {

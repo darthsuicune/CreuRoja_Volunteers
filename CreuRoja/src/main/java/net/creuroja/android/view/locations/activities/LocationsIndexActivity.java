@@ -42,16 +42,16 @@ import net.creuroja.android.view.locations.fragments.LocationListFragment;
 import net.creuroja.android.view.locations.fragments.LocationListFragment.LocationsListListener;
 import net.creuroja.android.view.locations.fragments.LocationsDrawerFragment;
 import net.creuroja.android.view.locations.fragments.LocationsHandlerFragment;
-import net.creuroja.android.view.locations.fragments.maps.LocationCardFragment;
-import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler;
-import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandler.DirectionsDrawnListener;
-import net.creuroja.android.view.locations.fragments.maps.MapFragmentHandlerFactory;
+import net.creuroja.android.view.locations.fragments.LocationCardFragment;
+import net.creuroja.android.view.locations.fragments.MapFragmentHandler;
+import net.creuroja.android.view.locations.fragments.MapFragmentHandler.DirectionsDrawnListener;
+import net.creuroja.android.view.locations.fragments.MapFragmentHandlerFactory;
 import net.creuroja.android.view.users.activities.UserProfileActivity;
 
 import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.OnLocationDetailsListener;
 import static net.creuroja.android.view.locations.fragments.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
-import static net.creuroja.android.view.locations.fragments.maps.GoogleMapFragment.MapInteractionListener;
-import static net.creuroja.android.view.locations.fragments.maps.LocationCardFragment.OnLocationCardInteractionListener;
+import static net.creuroja.android.view.locations.fragments.gmaps.ClusteredGoogleMapFragment.MapInteractionListener;
+import static net.creuroja.android.view.locations.fragments.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity implements LoginManager,
         MapNavigationDrawerCallbacks, LocationsListListener, OnLocationCardInteractionListener,
@@ -120,7 +120,8 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
         locationsDrawerFragment =
                 (LocationsDrawerFragment) manager.findFragmentById(R.id.navigation_drawer);
         // Set up the drawer.
-        locationsDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+        locationsDrawerFragment
+                .setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     private void setupLocationDataHandler(FragmentManager manager) {
@@ -185,7 +186,7 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
         if (mapFragmentHandler == null) {
             mapFragmentHandler = (MapFragmentHandler) manager.findFragmentByTag(TAG_MAP);
             if (mapFragmentHandler == null) {
-                mapFragmentHandler = MapFragmentHandlerFactory.getHandler();
+                mapFragmentHandler = MapFragmentHandlerFactory.CLUSTERED.build();
             }
             mapFragmentHandler.setMapInteractionListener(this);
         }
@@ -198,9 +199,8 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
 
     private void openLocationDetails(Location location) {
         //Viewing the list in portrait, or the map, a new activity must be launched
-        if (currentViewMode == ViewMode.MAP ||
-                getResources().getConfiguration().orientation ==
-                        Configuration.ORIENTATION_PORTRAIT) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT
+                || currentViewMode == ViewMode.MAP) {
             openDetailsActivityFor(location);
         } else {
             openDetailsFragment(location);

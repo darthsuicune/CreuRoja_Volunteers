@@ -2,6 +2,7 @@ package net.creuroja.android.model.locations;
 
 import android.content.ContentResolver;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  */
 public interface Locations extends Iterable<Location> {
 	void addLocation(Location location);
-	List<Location> locations();
+	Collection<Location> locations();
 	List<LocationType> locationTypes();
 	void save(ContentResolver cr);
 	boolean has(Location location);

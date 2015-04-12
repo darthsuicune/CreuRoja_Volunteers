@@ -1,4 +1,4 @@
-package net.creuroja.android.view.locations.fragments.maps;
+package net.creuroja.android.view.locations.fragments.gmaps;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;

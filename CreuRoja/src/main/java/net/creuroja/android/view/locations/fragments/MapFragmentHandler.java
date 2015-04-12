@@ -1,4 +1,4 @@
-package net.creuroja.android.view.locations.fragments.maps;
+package net.creuroja.android.view.locations.fragments;
 
 import android.support.v4.app.Fragment;
 
@@ -9,23 +9,19 @@ import net.creuroja.android.model.locations.LocationType;
 import static net.creuroja.android.view.locations.fragments.LocationsHandlerFragment.OnLocationsListUpdated;
 
 public interface MapFragmentHandler extends OnLocationsListUpdated{
+	double DEFAULT_LATITUDE = 41.3958;
+	double DEFAULT_LONGITUDE = 2.1739;
+	int DEFAULT_ZOOM = 12;
+
 	void setMapType(MapType mapType);
-
 	void getDirections(android.location.Location origin, Location destination);
-
 	void activateLocationsOfType(LocationType type);
 	void deactivateLocationsOfType(LocationType type);
-
 	boolean locate(android.location.Location location);
-
 	Fragment fragment();
-
 	void removeDirections();
-
 	boolean hasDirections();
-
 	void setMapInteractionListener(MapInteractionListener mapInteractionListener);
-
 	enum MapType {
 		MAP_TYPE_NORMAL(0), MAP_TYPE_TERRAIN(1), MAP_TYPE_SATELLITE(2), MAP_TYPE_HYBRID(3);
 
@@ -49,7 +45,7 @@ public interface MapFragmentHandler extends OnLocationsListUpdated{
 			}
 		}
 
-		public int getValue() {
+		public int value() {
 			return value;
 		}
 	}

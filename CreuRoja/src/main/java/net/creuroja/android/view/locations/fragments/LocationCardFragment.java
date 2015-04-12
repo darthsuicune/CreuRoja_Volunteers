@@ -1,4 +1,4 @@
-package net.creuroja.android.view.locations.fragments.maps;
+package net.creuroja.android.view.locations.fragments;
 
 import android.app.Activity;
 import android.database.Cursor;

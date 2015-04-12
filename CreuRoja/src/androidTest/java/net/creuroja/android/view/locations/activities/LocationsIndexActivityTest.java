@@ -7,7 +7,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 
 import net.creuroja.android.R;
-import net.creuroja.android.view.locations.fragments.maps.GoogleMapFragment;
+import net.creuroja.android.view.locations.fragments.gmaps.ClusteredGoogleMapFragment;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -81,7 +81,7 @@ public class LocationsIndexActivityTest
 	}
 
 	private void itShouldntResetTheMap() {
-		GoogleMapFragment fragment = (GoogleMapFragment) activity.mapFragmentHandler.fragment();
+		ClusteredGoogleMapFragment fragment = (ClusteredGoogleMapFragment) activity.mapFragmentHandler.fragment();
 		GoogleMap map = fragment.getMap();
 		CameraPosition position = map.getCameraPosition();
 		assertTrue((int)position.zoom == 12);
