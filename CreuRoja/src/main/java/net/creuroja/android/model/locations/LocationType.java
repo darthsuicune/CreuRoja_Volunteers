@@ -79,25 +79,25 @@ public enum LocationType {
 
 	public static LocationType getType(String string) {
 		switch (string.toLowerCase()) {
-			case LocationFactory.sAdapted:
+			case LocationFactory.adapted:
 				return ADAPTED;
-			case LocationFactory.sAssembly:
+			case LocationFactory.assembly:
 				return ASSEMBLY;
-			case LocationFactory.sBravo:
+			case LocationFactory.bravo:
 				return BRAVO;
-			case LocationFactory.sCuap:
+			case LocationFactory.cuap:
 				return CUAP;
-			case LocationFactory.sGasStation:
+			case LocationFactory.gasStation:
 				return GAS_STATION;
-			case LocationFactory.sHospital:
+			case LocationFactory.hospital:
 				return HOSPITAL;
-			case LocationFactory.sSeaService:
+			case LocationFactory.seaService:
 				return SEA_SERVICE;
-			case LocationFactory.sNostrum:
+			case LocationFactory.nostrum:
 				return NOSTRUM;
-			case LocationFactory.sSeaBase:
+			case LocationFactory.seaBase:
 				return SEA_BASE;
-			case LocationFactory.sTerrestrial:
+			case LocationFactory.terrestrial:
 				return TERRESTRIAL;
 			default:
 				return NONE;

@@ -37,21 +37,21 @@ import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
 import net.creuroja.android.view.general.activities.SettingsActivity;
 import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
 import net.creuroja.android.view.locations.ViewMode;
+import net.creuroja.android.view.locations.fragments.LocationCardFragment;
 import net.creuroja.android.view.locations.fragments.LocationDetailFragment;
 import net.creuroja.android.view.locations.fragments.LocationListFragment;
 import net.creuroja.android.view.locations.fragments.LocationListFragment.LocationsListListener;
 import net.creuroja.android.view.locations.fragments.LocationsDrawerFragment;
 import net.creuroja.android.view.locations.fragments.LocationsHandlerFragment;
-import net.creuroja.android.view.locations.fragments.LocationCardFragment;
 import net.creuroja.android.view.locations.fragments.MapFragmentHandler;
 import net.creuroja.android.view.locations.fragments.MapFragmentHandler.DirectionsDrawnListener;
 import net.creuroja.android.view.locations.fragments.MapFragmentHandlerFactory;
 import net.creuroja.android.view.users.activities.UserProfileActivity;
 
+import static net.creuroja.android.view.locations.fragments.LocationCardFragment.OnLocationCardInteractionListener;
 import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.OnLocationDetailsListener;
 import static net.creuroja.android.view.locations.fragments.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
 import static net.creuroja.android.view.locations.fragments.gmaps.ClusteredGoogleMapFragment.MapInteractionListener;
-import static net.creuroja.android.view.locations.fragments.LocationCardFragment.OnLocationCardInteractionListener;
 
 public class LocationsIndexActivity extends ActionBarActivity implements LoginManager,
         MapNavigationDrawerCallbacks, LocationsListListener, OnLocationCardInteractionListener,
@@ -165,6 +165,9 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
         if (Configuration.ORIENTATION_LANDSCAPE == getResources().getConfiguration().orientation) {
             //noinspection ResourceType
             findViewById(R.id.location_details_container)
+                    .setVisibility(currentViewMode.getDetailsBlockVisibility());
+            //noinspection ResourceType
+            findViewById(R.id.locations_index_separator)
                     .setVisibility(currentViewMode.getDetailsBlockVisibility());
         }
     }

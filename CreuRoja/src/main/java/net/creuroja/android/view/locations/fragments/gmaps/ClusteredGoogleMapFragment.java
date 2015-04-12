@@ -94,7 +94,7 @@ public class ClusteredGoogleMapFragment extends SupportMapFragment
         setClusterOptions();
         setCameraPosition(savedInstanceState);
         //This will only hold true upon map-list-map
-        if(locations != null && savedInstanceState == null) {
+        if (locations != null && savedInstanceState == null) {
             drawMarkers();
         }
     }
@@ -174,7 +174,7 @@ public class ClusteredGoogleMapFragment extends SupportMapFragment
     }
 
     public void drawMarkers() {
-        if (locations != null) {
+         if (locations != null) {
             cluster.clearItems();
             cluster.addItems(createCollectionForCluster());
             cluster.cluster();
@@ -183,7 +183,7 @@ public class ClusteredGoogleMapFragment extends SupportMapFragment
 
     private Collection<ClusterMarker> createCollectionForCluster() {
         Collection<ClusterMarker> markers = new ArrayList<>();
-        for (Location location : locations) {
+        for (Location location : locations.locations()) {
             ClusterMarker marker = new ClusterMarker(location);
             markers.add(marker);
             currentMarkers.put(location, marker);
@@ -228,12 +228,8 @@ public class ClusteredGoogleMapFragment extends SupportMapFragment
     }
 
     @Override public void activateLocationsOfType(LocationType type) {
+        locations.toggleLocationType(type, true);
         addMarkersOfType(type);
-        cluster.cluster();
-    }
-
-    @Override public void deactivateLocationsOfType(LocationType type) {
-        removeMarkersOfType(type);
         cluster.cluster();
     }
 
@@ -256,9 +252,15 @@ public class ClusteredGoogleMapFragment extends SupportMapFragment
         return marker;
     }
 
+    @Override public void deactivateLocationsOfType(LocationType type) {
+        locations.toggleLocationType(type, false);
+        removeMarkersOfType(type);
+        drawMarkers();
+    }
+
     private void removeMarkersOfType(LocationType type) {
         for (ClusterMarker marker : currentMarkers.values()) {
-            if (marker.isOneOf(type)) {
+            if(marker.isOneOf(type)) {
                 cluster.removeItem(marker);
             }
         }
@@ -273,11 +275,9 @@ public class ClusteredGoogleMapFragment extends SupportMapFragment
     }
 
     @Override public void onLocationsListUpdated(Locations list) {
-        if(isAdded()) {
-            this.locations = list;
-            if (cluster != null) {
-                drawMarkers();
-            }
+        this.locations = list;
+        if (isAdded() && cluster != null) {
+            drawMarkers();
         }
     }
 

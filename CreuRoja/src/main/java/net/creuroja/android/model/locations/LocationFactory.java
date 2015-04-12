@@ -18,38 +18,38 @@ import java.text.ParseException;
  * Created by lapuente on 21.11.14.
  */
 public class LocationFactory {
-	private static final String sRemoteId = "id";
-	private static final String sName = "name";
-	private static final String sDescription = "description";
-	private static final String sPhone = "phone";
-	private static final String sAddress = "address";
-	private static final String sLatitude = "latitude";
-	private static final String sLongitude = "longitude";
-	private static final String sLocationType = "location_type";
-	private static final String sUpdatedAt = "updated_at";
-	private static final String sActive = "active";
-	private static final String sServices = "active_services";
+	private static final String remoteId = "id";
+	private static final String name = "name";
+	private static final String description = "description";
+	private static final String phone = "phone";
+	private static final String address = "address";
+	private static final String latitude = "latitude";
+	private static final String longitude = "longitude";
+	private static final String locationType = "location_type";
+	private static final String updatedAt = "updated_at";
+	private static final String active = "active";
+	private static final String services = "active_services";
 
-	protected static final String sAdapted = "adaptadas";
-	protected static final String sAssembly = "asamblea";
-	protected static final String sBravo = "bravo";
-	protected static final String sCuap = "cuap";
-	protected static final String sGasStation = "gasolinera";
-	protected static final String sHospital = "hospital";
-	protected static final String sSeaService = "maritimo";
-	protected static final String sNostrum = "nostrum";
-	protected static final String sSeaBase = "salvamento";
-	protected static final String sTerrestrial = "terrestre";
+	protected static final String adapted = "adaptadas";
+	protected static final String assembly = "asamblea";
+	protected static final String bravo = "bravo";
+	protected static final String cuap = "cuap";
+	protected static final String gasStation = "gasolinera";
+	protected static final String hospital = "hospital";
+	protected static final String seaService = "maritimo";
+	protected static final String nostrum = "nostrum";
+	protected static final String seaBase = "salvamento";
+	protected static final String terrestrial = "terrestre";
 
 
 	public static Location fromJson(JSONObject json) throws JSONException, ParseException {
-		Location location = new Location(json.getInt(sRemoteId), json.getString(sName),
-				(json.has(sDescription)) ? json.getString(sDescription) : "",
-				(json.has(sPhone) ? json.getString(sPhone) : ""),
-				(json.has(sAddress)) ? json.getString(sAddress) : "", json.getDouble(sLatitude),
-				json.getDouble(sLongitude), LocationType.getType(json.getString(sLocationType)),
-				json.getString(sUpdatedAt), json.getBoolean(sActive));
-		JSONArray services = json.getJSONArray(sServices);
+		Location location = new Location(json.getInt(remoteId), json.getString(name),
+				(json.has(description)) ? json.getString(description) : "",
+				(json.has(phone) ? json.getString(phone) : ""),
+				(json.has(address)) ? json.getString(address) : "", json.getDouble(latitude),
+				json.getDouble(longitude), LocationType.getType(json.getString(locationType)),
+				json.getString(updatedAt), json.getBoolean(active));
+		JSONArray services = json.getJSONArray(LocationFactory.services);
 		for (int i = 0; i < services.length(); i++) {
 			Service service = ServiceFactory.fromJson(services.getJSONObject(i));
 			if (!service.archived()) {

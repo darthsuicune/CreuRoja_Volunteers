@@ -40,7 +40,13 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override public Collection<Location> locations() {
-		return locationList.values();
+		Collection<Location> locations = new ArrayList<>();
+		for(Location location : locationList.values()) {
+			if(toggledLocations.get(location.type)) {
+				locations.add(location);
+			}
+		}
+		return locations;
 	}
 
 	@Override public List<LocationType> locationTypes() {
@@ -140,6 +146,6 @@ public class RailsLocations implements Locations {
 	}
 
 	@Override public Iterator<Location> iterator() {
-		return locationList.values().iterator();
+		return locations().iterator();
 	}
 }

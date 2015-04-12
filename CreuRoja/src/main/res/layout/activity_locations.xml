@@ -13,16 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/locations_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/location_index_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/location_index_toolbar"/>
+
+        <FrameLayout
+            android:id="@+id/locations_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/location_index_toolbar"/>
 
         <FrameLayout
             android:id="@+id/location_card_container"
