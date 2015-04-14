@@ -56,16 +56,32 @@ public class Location {
 	public ContentValues getAsValues() {
 		ContentValues values = new ContentValues();
 		values.put(CreuRojaContract.Locations.ACTIVE, (active) ? 1 : 0);
-		values.put(CreuRojaContract.Locations.ADDRESS, address);
-		values.put(CreuRojaContract.Locations.DESCRIPTION, description);
+		values.put(CreuRojaContract.Locations.ADDRESS, address());
+		values.put(CreuRojaContract.Locations.DESCRIPTION, description());
 		values.put(CreuRojaContract.Locations.LATITUD, latitude);
 		values.put(CreuRojaContract.Locations.LONGITUD, longitude);
 		values.put(CreuRojaContract.Locations.NAME, name);
-		values.put(CreuRojaContract.Locations.PHONE, phone);
+		values.put(CreuRojaContract.Locations.PHONE, phone());
 		values.put(CreuRojaContract.Locations.REMOTE_ID, remoteId);
 		values.put(CreuRojaContract.Locations.TYPE, type.nameString);
 		values.put(CreuRojaContract.Locations.UPDATED_AT, updatedAt);
 		return values;
+	}
+
+	private String address() {
+		return (isValid(address)) ? address : "";
+	}
+
+	private String description() {
+		return (isValid(description) ? description : "");
+	}
+
+	private String phone() {
+		return (isValid(phone) ? phone : "");
+	}
+
+	private boolean isValid(String string) {
+		return string != null && !string.equals("null");
 	}
 
 	public void update(ContentResolver cr) {

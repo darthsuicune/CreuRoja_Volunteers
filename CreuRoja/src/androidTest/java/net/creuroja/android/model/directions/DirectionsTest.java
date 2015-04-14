@@ -10,7 +10,6 @@ public class DirectionsTest extends TestCase {
 	private LatLng destination;
 	Directions directions;
 
-
 	public void testGet() throws Exception {
 		whenWeAskForValidDirections();
 		expectTheObjectToBePopulated();
@@ -42,7 +41,6 @@ public class DirectionsTest extends TestCase {
 	}
 
 	private void expectTheObjectToBePopulated() {
-		assertNotNull(directions.points());
 		assertFalse(directions.points().isEmpty());
 	}
 

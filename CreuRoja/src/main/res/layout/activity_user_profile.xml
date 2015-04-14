@@ -3,5 +3,5 @@
     android:id="@+id/user_profile_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.creuroja.android.activities.users.UserProfileActivity"
+    tools:context="net.creuroja.android.view.users.activities.UserProfileActivity"
     tools:ignore="MergeRootFrame" />

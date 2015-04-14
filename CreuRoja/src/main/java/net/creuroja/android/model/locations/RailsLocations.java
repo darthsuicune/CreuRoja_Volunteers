@@ -8,65 +8,48 @@ import android.net.Uri;
 import net.creuroja.android.model.locationservices.LocationService;
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.services.Service;
+import net.creuroja.android.model.services.Services;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by denis on 19.06.14.
- */
 public class RailsLocations implements Locations {
-	private List<Location> locationList = new ArrayList<>();
-	private List<Integer> idList = new ArrayList<>();
-	private List<LocationType> mTypeList = new ArrayList<>();
-	private String lastUpdateTime = "";
-	private Map<LocationType, Boolean> mToggledLocations;
-	private SharedPreferences prefs;
+	Map<Integer, Location> locationList = new HashMap<>();
+	List<LocationType> typeList = new ArrayList<>();
+	Map<LocationType, Boolean> toggledLocations;
+	SharedPreferences prefs;
 
 	public RailsLocations(SharedPreferences prefs) {
 		this.prefs = prefs;
-		mToggledLocations = new HashMap<>();
+		toggledLocations = new HashMap<>();
 		for (LocationType type : LocationType.values()) {
-			mToggledLocations.put(type, type.getViewable(prefs));
+			toggledLocations.put(type, type.getViewable(prefs));
 		}
 	}
 
 	@Override public void addLocation(Location location) {
-		locationList.add(location);
-		idList.add(location.remoteId);
-		if (!mTypeList.contains(location.type)) {
-			mTypeList.add(location.type);
+		locationList.put(location.remoteId, location);
+		if (!typeList.contains(location.type)) {
+			typeList.add(location.type);
 		}
 	}
 
-	@Override
-	public List<Location> getLocations() {
-		List<Location> result = new ArrayList<>();
-		for (Location location : locationList) {
-			if (mToggledLocations.get(location.type)) {
-				result.add(location);
+	@Override public Collection<Location> locations() {
+		Collection<Location> locations = new ArrayList<>();
+		for(Location location : locationList.values()) {
+			if(toggledLocations.get(location.type)) {
+				locations.add(location);
 			}
 		}
-		return result;
+		return locations;
 	}
 
-	@Override public List<LocationType> getLocationTypes() {
-		return mTypeList;
-	}
-
-	@Override public Location getById(long id) {
-		for (Location location : locationList) {
-			if (location.remoteId == id) {
-				return location;
-			}
-		}
-		return null;
-	}
-
-	@Override public Location get(int position) {
-		return locationList.get(position);
+	@Override public List<LocationType> locationTypes() {
+		return typeList;
 	}
 
 	@Override public void save(ContentResolver cr) {
@@ -74,56 +57,49 @@ public class RailsLocations implements Locations {
 		Locations currentLocations =
 				LocationFactory.fromCursor(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
-		for (Location location : locationList) {
-			if (location.newerThan(lastUpdateTime)) {
-				lastUpdateTime = location.updatedAt;
-			}
-			if (location.active) {
-				if (currentLocations.has(location)) {
-					location.update(cr);
-				} else {
-					forInsert.add(location.getAsValues());
-				}
-				saveServices(cr, location);
-			} else {
-				location.delete(cr);
-			}
+		for (Location location : locationList.values()) {
+			decideLocationAction(location, currentLocations, forInsert, cr);
 		}
 		if (forInsert.size() > 0) {
 			cr.bulkInsert(uri, forInsert.toArray(new ContentValues[forInsert.size()]));
 		}
 	}
 
-	public boolean has(Location location) {
-		for (Integer current : idList) {
-			if (current == location.remoteId) {
-				return true;
+	private void decideLocationAction(Location location, Locations currentLocations,
+									  List<ContentValues> forInsert, ContentResolver cr) {
+		if (location.active) {
+			if (currentLocations.has(location)) {
+				if(currentLocations.wasUpdated(location)) {
+					location.update(cr);
+				}
+			} else {
+				forInsert.add(location.getAsValues());
+			}
+			saveServices(cr, location);
+		} else {
+			if(currentLocations.has(location)) {
+				location.delete(cr);
 			}
 		}
-		return false;
 	}
 
-	@Override public String getLastUpdateTime() {
-		return lastUpdateTime;
+	public boolean has(Location location) {
+		return locationList.containsKey(location.remoteId);
 	}
 
-	@Override public void toggleLocationType(LocationType type, boolean newState) {
-		mToggledLocations.put(type, newState);
-	}
-
-	@Override public boolean isVisible(int position) {
-		return locationList.get(position).isVisible(prefs);
+	@Override public boolean wasUpdated(Location location) {
+		return locationList.get(location.remoteId).newerThan(location.updatedAt);
 	}
 
 	public void saveServices(ContentResolver cr, Location location) {
 		for (Service service : location.serviceList) {
 			LocationService ls = new LocationService(location, service);
-			if(service.archived()) {
+			if (service.archived()) {
 				service.delete(cr);
 				ls.delete(cr);
 				continue;
 			}
-			if (Service.count(cr, service.id) > 0) {
+			if (Services.count(cr, service.id) > 0) {
 				service.update(cr);
 			} else {
 				cr.insert(CreuRojaContract.Services.CONTENT_URI, service.asValues());
@@ -133,5 +109,31 @@ public class RailsLocations implements Locations {
 				cr.insert(CreuRojaContract.LocationServices.CONTENT_URI, ls.asValues());
 			}
 		}
+	}
+
+	@Override public void toggleLocationType(LocationType type, boolean newState) {
+		toggledLocations.put(type, newState);
+	}
+
+	@Override public boolean isVisible(int position) {
+		return locationList.get(position).isVisible(prefs);
+	}
+
+	@Override public List<Location> ofType(LocationType type) {
+		List<Location> list = new ArrayList<>();
+		for (Location location : locationList.values()) {
+			if (location.type == type) {
+				list.add(location);
+			}
+		}
+		return list;
+	}
+
+	@Override public boolean isTypeVisible(LocationType type) {
+		return toggledLocations.get(type);
+	}
+
+	@Override public Iterator<Location> iterator() {
+		return locations().iterator();
 	}
 }

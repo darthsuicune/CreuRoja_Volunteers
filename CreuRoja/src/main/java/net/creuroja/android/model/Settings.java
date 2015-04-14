@@ -1,11 +1,13 @@
 package net.creuroja.android.model;
 
+import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 
 import net.creuroja.android.model.db.CreuRojaContract;
+import net.creuroja.android.model.webservice.auth.AccountUtils;
 
 /**
  * Created by denis on 14.06.14.
@@ -45,5 +47,9 @@ public class Settings {
 		cr.delete(CreuRojaContract.Services.CONTENT_URI, null, null);
 		cr.delete(CreuRojaContract.Vehicles.CONTENT_URI, null, null);
 		cr.delete(CreuRojaContract.Users.CONTENT_URI, null, null);
+	}
+
+	public static void removeAccount(AccountManager accountManager, String accessToken) {
+		accountManager.invalidateAuthToken(AccountUtils.ACCOUNT_TYPE, accessToken);
 	}
 }

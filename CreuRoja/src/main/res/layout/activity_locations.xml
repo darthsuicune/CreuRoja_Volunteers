@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.creuroja.android.activities.locations.LocationsIndexActivity">
+    tools:context="net.creuroja.android.view.locations.activities.LocationsIndexActivity">
 
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
@@ -13,16 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/locations_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/location_index_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/location_index_toolbar"/>
+
+        <FrameLayout
+            android:id="@+id/locations_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/location_index_toolbar"/>
 
         <FrameLayout
             android:id="@+id/location_card_container"
@@ -44,7 +45,7 @@
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="net.creuroja.android.view.fragments.locations.LocationsDrawerFragment"
+        android:name="net.creuroja.android.view.locations.fragments.LocationsDrawerFragment"
         tools:layout="@layout/fragment_locations_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

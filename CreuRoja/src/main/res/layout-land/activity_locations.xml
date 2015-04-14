@@ -5,52 +5,50 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.creuroja.android.activities.locations.LocationsIndexActivity">
+    tools:context="net.creuroja.android.view.locations.activities.LocationsIndexActivity">
 
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:baselineAligned="false"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/location_index_toolbar"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             style="@style/location_index_toolbar" />
-        <LinearLayout
+
+        <View
+            android:id="@+id/locations_index_separator"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:layout_centerInParent="true"/>
+
+        <FrameLayout
+            android:id="@+id/locations_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:baselineAligned="false">
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2">
+            android:layout_below="@id/location_index_toolbar"
+            android:layout_toLeftOf="@id/locations_index_separator"/>
 
-                <FrameLayout
-                    android:id="@+id/locations_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+        <FrameLayout
+            android:id="@+id/location_card_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_alignBottom="@+id/locations_container"
+            android:layout_toLeftOf="@id/locations_index_separator" />
 
-                <FrameLayout
-                    android:id="@+id/location_card_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_alignBottom="@+id/locations_container"/>
-            </RelativeLayout>
-
-            <FrameLayout
-                android:id="@+id/location_details_container"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:visibility="gone"/>
-        </LinearLayout>
-    </LinearLayout>
-
+        <FrameLayout
+            android:id="@+id/location_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/location_index_toolbar"
+            android:layout_toRightOf="@id/locations_index_separator"
+            android:visibility="gone"/>
+    </RelativeLayout>
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right
          languages and on the right side for right-to-left languages.
@@ -63,7 +61,7 @@
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="net.creuroja.android.view.fragments.locations.LocationsDrawerFragment"
+        android:name="net.creuroja.android.view.locations.fragments.LocationsDrawerFragment"
         tools:layout="@layout/fragment_locations_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>
