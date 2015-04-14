@@ -1,6 +1,7 @@
 package net.creuroja.android.view.locations.activities;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.UiThreadTest;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -68,7 +69,7 @@ public class LocationsIndexActivityTest
 	}
 
 	// Bug: map will reset and not show points after going map - list - map
-	public void testMapDoesntResetAfterMapListMap() throws Exception {
+	@UiThreadTest public void testMapDoesntResetAfterMapListMap() throws Exception {
 		whenWeOpenTheMap();
 		whenWeOpenTheList();
 		whenWeOpenTheMap(); //Again

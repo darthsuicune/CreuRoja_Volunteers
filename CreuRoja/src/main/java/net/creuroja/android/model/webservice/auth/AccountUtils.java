@@ -4,12 +4,14 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class AccountUtils {
 	public static final String ACCOUNT_TYPE = "Creu Roja";
@@ -53,6 +55,7 @@ public class AccountUtils {
 	}
 
 	public static class LoginResponseTask extends AsyncTask<Void, Void, String> {
+		public static final String LOGIN_TASK_TAG = "login attempt";
 		private LoginManager entryPoint;
 		private AccountManagerFuture<Bundle> accountManagerFuture;
 
@@ -69,6 +72,9 @@ public class AccountUtils {
 			try {
 				bundle = accountManagerFuture.getResult();
 				authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+			} catch (OperationCanceledException e) {
+				Log.d(LOGIN_TASK_TAG, "Login attempt cancelled by the user");
+				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

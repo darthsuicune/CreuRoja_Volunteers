@@ -44,4 +44,5 @@ dependencies {
     androidTestCompile 'org.mockito:mockito-core:2.0.5-beta'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    compile 'joda-time:joda-time:2.7'
 }

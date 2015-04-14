@@ -8,6 +8,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -198,8 +199,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         emailView.setAdapter(adapter);
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private interface ProfileQuery {
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) private interface ProfileQuery {
         String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
 
@@ -207,8 +207,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private class AutoCompleteLoaderHelper
-            implements LoaderManager.LoaderCallbacks<Cursor> {
+    private class AutoCompleteLoaderHelper implements LoaderCallbacks<Cursor> {
         @Override public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
             Uri uri = null;
             String[] projection = null;

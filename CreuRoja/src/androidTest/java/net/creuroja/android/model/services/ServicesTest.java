@@ -15,7 +15,7 @@ public class ServicesTest extends ProviderTestCase2<CreuRojaProvider> {
 		super(CreuRojaProvider.class, CreuRojaProvider.CONTENT_NAME);
 	}
 
-	public void setUp() throws Exception {
+	@Override public void setUp() throws Exception {
 		super.setUp();
 		cr = getMockContentResolver();
 	}

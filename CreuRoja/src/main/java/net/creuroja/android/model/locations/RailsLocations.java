@@ -20,7 +20,6 @@ import java.util.Map;
 public class RailsLocations implements Locations {
 	Map<Integer, Location> locationList = new HashMap<>();
 	List<LocationType> typeList = new ArrayList<>();
-	String lastUpdateTime = "";
 	Map<LocationType, Boolean> toggledLocations;
 	SharedPreferences prefs;
 
@@ -59,17 +58,10 @@ public class RailsLocations implements Locations {
 				LocationFactory.fromCursor(cr.query(uri, null, null, null, null), prefs);
 		List<ContentValues> forInsert = new ArrayList<>();
 		for (Location location : locationList.values()) {
-			updateLastUpdateTime(location);
 			decideLocationAction(location, currentLocations, forInsert, cr);
 		}
 		if (forInsert.size() > 0) {
 			cr.bulkInsert(uri, forInsert.toArray(new ContentValues[forInsert.size()]));
-		}
-	}
-
-	public void updateLastUpdateTime(Location location) {
-		if (location.newerThan(lastUpdateTime)) {
-			lastUpdateTime = location.updatedAt;
 		}
 	}
 
@@ -117,10 +109,6 @@ public class RailsLocations implements Locations {
 				cr.insert(CreuRojaContract.LocationServices.CONTENT_URI, ls.asValues());
 			}
 		}
-	}
-
-	@Override public String lastUpdateTime() {
-		return lastUpdateTime;
 	}
 
 	@Override public void toggleLocationType(LocationType type, boolean newState) {

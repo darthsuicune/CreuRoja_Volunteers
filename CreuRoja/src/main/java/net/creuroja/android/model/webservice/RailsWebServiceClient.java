@@ -14,7 +14,7 @@ public class RailsWebServiceClient implements CRWebServiceClient {
     private static final String WS_CR_TAG = "CreuRoja Rails webservice";
     private static final String ARG_EMAIL = "email";
     private static final String ARG_PASSWORD = "password";
-    private static final String ARG_ACCESS_TOKEN = "Authorization: Token ";
+    private static final String ARG_AUTHORIZATION = "Authorization";
     private static final String ARG_LAST_UPDATE = "updated_at";
     private static final String RESOURCE_SESSIONS = "sessions.json";
     private static final String RESOURCE_LOCATIONS = "locations.json";
@@ -75,7 +75,7 @@ public class RailsWebServiceClient implements CRWebServiceClient {
 
     private List<WebServiceOption> authAsOptions(String accessToken) {
         List<WebServiceOption> options = new ArrayList<>();
-        options.add(new WebServiceOption(ARG_ACCESS_TOKEN, "token=\"" + accessToken + "\""));
+        options.add(new WebServiceOption(ARG_AUTHORIZATION, "Token token=" + accessToken));
         return options;
     }
 

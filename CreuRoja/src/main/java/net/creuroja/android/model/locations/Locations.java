@@ -15,7 +15,6 @@ public interface Locations extends Iterable<Location> {
 	void save(ContentResolver cr);
 	boolean has(Location location);
 	boolean wasUpdated(Location location);
-	String lastUpdateTime();
 	void toggleLocationType(LocationType type, boolean newState);
 	boolean isVisible(int position);
 
