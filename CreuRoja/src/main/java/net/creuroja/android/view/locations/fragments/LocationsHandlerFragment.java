@@ -46,7 +46,14 @@ public class LocationsHandlerFragment extends Fragment {
 		super.onAttach(activity);
 		prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 		getLoaderManager().restartLoader(LOADER_LOCATIONS, null, new LocationListCallbacks());
-		performSync();
+	}
+
+	@Override public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		//Do sync on starting the app, don't do it after each device rotation
+		if(savedInstanceState == null) {
+			performSync();
+		}
 	}
 
 	@Override
