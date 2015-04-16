@@ -1,7 +1,6 @@
 package net.creuroja.android.view.locations.activities;
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.UiThreadTest;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -15,6 +14,8 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static net.creuroja.android.view.MoreViewActions.openDrawer;
 import static net.creuroja.android.view.locations.ViewMode.MAP;
+import static net.creuroja.android.view.locations.fragments.MapFragmentHandler.DEFAULT_LATITUDE;
+import static net.creuroja.android.view.locations.fragments.MapFragmentHandler.DEFAULT_LONGITUDE;
 
 public class LocationsIndexActivityTest
 		extends ActivityInstrumentationTestCase2<LocationsIndexActivity> {
@@ -65,11 +66,12 @@ public class LocationsIndexActivityTest
 	}
 
 	private void itShouldLoadTheMapFragmentCorrectly() {
-		assertTrue(activity.mapFragmentHandler.fragment().isResumed());
+		assertTrue(activity.mapFragmentHandler.fragment().isResumed() &&
+				   activity.mapFragmentHandler.fragment().isAdded());
 	}
 
 	// Bug: map will reset and not show points after going map - list - map
-	@UiThreadTest public void testMapDoesntResetAfterMapListMap() throws Exception {
+	public void testMapDoesntResetAfterMapListMap() throws Throwable {
 		whenWeOpenTheMap();
 		whenWeOpenTheList();
 		whenWeOpenTheMap(); //Again
@@ -81,10 +83,21 @@ public class LocationsIndexActivityTest
 		whenWeClickOnThe(R.id.locations_drawer_see_as_map);
 	}
 
-	private void itShouldntResetTheMap() {
-		ClusteredGoogleMapFragment fragment = (ClusteredGoogleMapFragment) activity.mapFragmentHandler.fragment();
-		GoogleMap map = fragment.getMap();
-		CameraPosition position = map.getCameraPosition();
-		assertTrue((int)position.zoom == 12);
+	private void itShouldntResetTheMap() throws Throwable {
+		ClusteredGoogleMapFragment fragment =
+				(ClusteredGoogleMapFragment) activity.mapFragmentHandler.fragment();
+		final GoogleMap map = fragment.getMap();
+		runTestOnUiThread(new Runnable() {
+			@Override public void run() {
+				CameraPosition position = map.getCameraPosition();
+				assertTrue((int) position.zoom == 12);
+				assertTrue(areNearEnough(position.target.latitude, DEFAULT_LATITUDE));
+				assertTrue(areNearEnough(position.target.latitude, DEFAULT_LONGITUDE));
+			}
+		});
+	}
+
+	private boolean areNearEnough(double current, double expected) {
+		return current - 0.01 < expected && current + 0.01 > expected;
 	}
 }

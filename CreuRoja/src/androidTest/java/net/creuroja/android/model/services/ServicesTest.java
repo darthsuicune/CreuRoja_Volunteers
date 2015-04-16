@@ -1,14 +1,14 @@
 package net.creuroja.android.model.services;
 
-import android.content.ContentResolver;
 import android.test.ProviderTestCase2;
+import android.test.mock.MockContentResolver;
 
 import net.creuroja.android.model.db.CreuRojaContract;
 import net.creuroja.android.model.db.CreuRojaProvider;
 
 public class ServicesTest extends ProviderTestCase2<CreuRojaProvider> {
 	Service s1, s2;
-	ContentResolver cr;
+	MockContentResolver cr;
 	int id, initialCount;
 
 	public ServicesTest() {
@@ -20,32 +20,51 @@ public class ServicesTest extends ProviderTestCase2<CreuRojaProvider> {
 		cr = getMockContentResolver();
 	}
 
-	public void testCount() throws Exception {
-		initialCount = Services.count(cr, id);
-		addACoupleServices();
-		expectACoupleServicesToBePresent();
+	@Override public void tearDown() throws Exception {
+		super.tearDown();
+	}
+
+	public void testCountForGeneralServices() throws Exception {
+		initialCount = Services.count(cr);
+		addTwoServices();
+		expectServicesToBeAdded(2);
 		removeTheAddedServices();
 	}
 
-	private void addACoupleServices() {
-		s1 = ServiceFactory.fromValues(-1, "asd", "asd", "asd", "asd", "asd", "asd", "asd", false);
-		s2 = ServiceFactory
-				.fromValues(-2, "asdf", "asdf", "asdf", "asdf", "asdf", "asdf", "asdf", false);
-		cr.insert(CreuRojaContract.Services.CONTENT_URI, s1.asValues());
-		cr.insert(CreuRojaContract.Services.CONTENT_URI, s2.asValues());
+	private void addTwoServices() {
+		s1 = addAServiceWithValues(-1, "asd", false);
+		s2 = addAServiceWithValues(-2, "asdf", false);
 	}
 
-	private void expectACoupleServicesToBePresent() {
-		int count = Services.count(cr, id);
-		assertTrue(count == (initialCount + 2));
+	private Service addAServiceWithValues(int id, String string, boolean bool) {
+		Service s = ServiceFactory
+				.fromValues(id, string, string, string, string, string, string, string, bool);
+		cr.insert(CreuRojaContract.Services.CONTENT_URI, s.asValues());
+		return s;
 	}
 
-	@Override public void tearDown() throws Exception {
-		super.tearDown();
+	private void expectServicesToBeAdded(int newCount) {
+		int count = Services.count(cr);
+		assertTrue(count == (initialCount + newCount));
 	}
 
 	private void removeTheAddedServices() {
 		s1.delete(cr);
 		s2.delete(cr);
 	}
+
+	public void testCountForSpecificServices() throws Exception {
+		id = 1;
+		initialCount = Services.count(cr, id);
+		addTwoServicesWithId(id);
+		expectServicesToBeAdded(2);
+		removeTheAddedServices();
+	}
+
+	private void addTwoServicesWithId(int id) {
+		s1 = addAServiceWithValues(id, "asd", false);
+		s2 = addAServiceWithValues(id, "asdf", false);
+	}
+
+
 }
