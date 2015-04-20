@@ -1,10 +1,11 @@
-package net.creuroja.android.model.users;
+package net.creuroja.android.model.webservice.auth;
 
 import android.content.ContentResolver;
 
+import net.creuroja.android.model.users.User;
 import net.creuroja.android.model.webservice.ErrorResponse;
-import net.creuroja.android.model.webservice.Response;
-import net.creuroja.android.model.webservice.ResponseFactory;
+import net.creuroja.android.model.webservice.util.Response;
+import net.creuroja.android.model.webservice.util.ResponseFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;

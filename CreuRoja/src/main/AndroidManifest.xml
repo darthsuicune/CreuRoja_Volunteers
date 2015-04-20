@@ -101,7 +101,7 @@
         </activity>
 
         <service
-            android:name=".model.locations.sync.LocationsSyncService"
+            android:name=".model.webservice.sync.LocationsSyncService"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

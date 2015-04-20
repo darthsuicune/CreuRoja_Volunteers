@@ -1,6 +1,7 @@
 package net.creuroja.android.model.webservice;
 
 import net.creuroja.android.R;
+import net.creuroja.android.model.webservice.util.Response;
 
 public class ErrorResponse extends Response {
     private final String content;

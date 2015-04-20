@@ -1,4 +1,4 @@
-package net.creuroja.android.model.locations.sync;
+package net.creuroja.android.model.webservice.sync;
 
 import android.app.Service;
 import android.content.Intent;

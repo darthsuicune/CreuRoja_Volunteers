@@ -1,4 +1,4 @@
-package net.creuroja.android.model.webservice;
+package net.creuroja.android.model.webservice.util;
 
 /**
  * Created by denis on 26.03.15.

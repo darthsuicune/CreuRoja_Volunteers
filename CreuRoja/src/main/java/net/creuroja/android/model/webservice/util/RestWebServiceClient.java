@@ -1,8 +1,5 @@
 package net.creuroja.android.model.webservice.util;
 
-import net.creuroja.android.model.webservice.Response;
-import net.creuroja.android.model.webservice.ResponseFactory;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -15,21 +12,24 @@ public class RestWebServiceClient {
     String protocol;
     String host;
     HttpURLConnection connection;
-    ResponseFactory responseFactory;
     Response response;
     URL url;
+    ResponseFactory factory;
 
-    public RestWebServiceClient(ResponseFactory factory, String protocol, String serverUrl) {
-        this.responseFactory = factory;
+    public RestWebServiceClient(String protocol, String serverUrl) {
         this.protocol = protocol;
         this.host = serverUrl;
+    }
+
+    public void setResponseFactory(ResponseFactory factory) {
+        this.factory = factory;
     }
 
     public Response get(String resource, List<WebServiceOption> headerOptions,
                         List<WebServiceOption> getOptions) throws IOException {
         try {
             setUpConnection(resource, headerOptions, getOptions);
-            response = responseFactory.build(connection);
+            response = factory.build(connection);
         } finally {
             connection.disconnect();
         }
@@ -80,7 +80,7 @@ public class RestWebServiceClient {
         try {
             setUpConnection(resource, headerOptions, urlOptions);
             writePostOptions(postOptions);
-            response = responseFactory.build(connection);
+            response = factory.build(connection);
         } finally {
             connection.disconnect();
         }

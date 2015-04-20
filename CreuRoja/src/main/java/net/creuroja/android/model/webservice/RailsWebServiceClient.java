@@ -1,6 +1,11 @@
 package net.creuroja.android.model.webservice;
 
+import android.content.ContentResolver;
+
 import net.creuroja.android.R;
+import net.creuroja.android.model.locations.RailsLocationsResponseFactory;
+import net.creuroja.android.model.webservice.auth.RailsLoginResponseFactory;
+import net.creuroja.android.model.webservice.util.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 import net.creuroja.android.model.webservice.util.WebServiceOption;
 
@@ -9,30 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RailsWebServiceClient implements CRWebServiceClient {
-    public static final String PROTOCOL = "https";
-    public static final String URL = "creuroja.net";
-    private static final String WS_CR_TAG = "CreuRoja Rails webservice";
-    private static final String ARG_EMAIL = "email";
-    private static final String ARG_PASSWORD = "password";
-    private static final String ARG_AUTHORIZATION = "Authorization";
-    private static final String ARG_LAST_UPDATE = "updated_at";
-    private static final String RESOURCE_SESSIONS = "sessions.json";
-    private static final String RESOURCE_LOCATIONS = "locations.json";
-
+    ContentResolver cr;
     RestWebServiceClient client;
     ClientConnectionListener listener;
 
-    public RailsWebServiceClient(RestWebServiceClient client, ClientConnectionListener listener) {
+    public RailsWebServiceClient(ContentResolver cr, RestWebServiceClient client,
+                                 ClientConnectionListener listener) {
+        this.cr = cr;
         this.client = client;
         this.listener = listener;
     }
 
-    @Override
-    public void signInUser(String email, String password) {
+    @Override public void signInUser(String email, String password) {
         try {
-            List<WebServiceOption> options = loginAsOptions(email, password);
+            client.setResponseFactory(new RailsLoginResponseFactory(cr));
             Response response = client.post(RESOURCE_SESSIONS, acceptAsOptions(),
-                    WebServiceOption.noOptions(), options);
+                    WebServiceOption.noOptions(), loginAsOptions(email, password));
             sendResponse(response);
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,14 +38,12 @@ public class RailsWebServiceClient implements CRWebServiceClient {
     }
 
     private List<WebServiceOption> acceptAsOptions() {
-        List<WebServiceOption> options = new ArrayList<>();
-        //Include here headers as needed.
-        return options;
+        return new ArrayList<>();
     }
 
-    @Override
-    public void getLocations(String accessToken, String lastUpdateTime) {
+    @Override public void getLocations(String accessToken, String lastUpdateTime) {
         try {
+            client.setResponseFactory(new RailsLocationsResponseFactory());
             Response response = client.get(RESOURCE_LOCATIONS, authAsOptions(accessToken),
                     lastUpdateAsOptions(lastUpdateTime));
             sendResponse(response);

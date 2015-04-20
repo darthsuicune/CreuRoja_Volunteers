@@ -1,6 +1,6 @@
-package net.creuroja.android.model.webservice;
+package net.creuroja.android.model.webservice.util;
 
-import android.util.Log;
+import net.creuroja.android.model.webservice.ErrorResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public abstract class ResponseFactory {
         return response;
     }
 
-    protected Response readData(HttpURLConnection connection) throws IOException {
+    private Response readData(HttpURLConnection connection) throws IOException {
         InputStream result = connection.getInputStream();
         if (connection.getResponseCode() == 200) {
             response = fillResponseData(asString(result));
@@ -35,7 +35,7 @@ public abstract class ResponseFactory {
         return response;
     }
 
-    public abstract Response fillResponseData(String input);
+    protected abstract Response fillResponseData(String input);
 
     private String asString(InputStream stream) throws IOException {
         StringBuilder builder = new StringBuilder();

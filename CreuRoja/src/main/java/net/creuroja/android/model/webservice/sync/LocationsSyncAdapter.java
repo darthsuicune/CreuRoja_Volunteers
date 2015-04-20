@@ -1,4 +1,4 @@
-package net.creuroja.android.model.locations.sync;
+package net.creuroja.android.model.webservice.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -7,12 +7,10 @@ import android.accounts.OperationCanceledException;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.format.Time;
 import android.util.Log;
 
 import net.creuroja.android.R;
@@ -21,12 +19,10 @@ import net.creuroja.android.model.locations.LocationFactory;
 import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
-import net.creuroja.android.model.locations.RailsLocationsResponseFactory;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
-import net.creuroja.android.model.webservice.Response;
+import net.creuroja.android.model.webservice.util.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
-import net.creuroja.android.view.users.activities.LoginActivity;
 
 import org.json.JSONException;
 
@@ -36,6 +32,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import static net.creuroja.android.model.webservice.CRWebServiceClient.PROTOCOL;
+import static net.creuroja.android.model.webservice.RailsWebServiceClient.*;
 
 public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
         implements ClientConnectionListener {
@@ -67,12 +66,9 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
         this.account = account;
         if (Settings.isConnected(context)) {
             try {
-                RestWebServiceClient restClient =
-                        new RestWebServiceClient(
-                                new RailsLocationsResponseFactory(getContext().getContentResolver()),
-                                RailsWebServiceClient.PROTOCOL,
-                                RailsWebServiceClient.URL);
-                CRWebServiceClient client = new RailsWebServiceClient(restClient, this);
+                RestWebServiceClient restClient = new RestWebServiceClient(PROTOCOL, URL);
+                CRWebServiceClient client = new RailsWebServiceClient(
+                        getContext().getContentResolver(), restClient, this);
 
                 accessToken = accountManager
                         .blockingGetAuthToken(account, AccountUtils.AUTH_TOKEN_TYPE, true);

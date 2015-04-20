@@ -7,7 +7,6 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -30,12 +29,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.creuroja.android.R;
-import net.creuroja.android.model.users.RailsLoginResponseFactory;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
-import net.creuroja.android.model.webservice.Response;
 import net.creuroja.android.model.webservice.auth.AccountUtils;
+import net.creuroja.android.model.webservice.util.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
 import java.util.ArrayList;
@@ -199,7 +197,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         emailView.setAdapter(adapter);
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) private interface ProfileQuery {
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private interface ProfileQuery {
         String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
 
@@ -269,9 +268,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         Intent intent;
 
         UserLoginTask(String email, String password) {
-            client = new RailsWebServiceClient(
-                    new RestWebServiceClient(new RailsLoginResponseFactory(getContentResolver()),
-                            RailsWebServiceClient.PROTOCOL,
+            client = new RailsWebServiceClient(getContentResolver(),
+                    new RestWebServiceClient(RailsWebServiceClient.PROTOCOL,
                             RailsWebServiceClient.URL), this);
             this.email = email;
             this.password = password;
