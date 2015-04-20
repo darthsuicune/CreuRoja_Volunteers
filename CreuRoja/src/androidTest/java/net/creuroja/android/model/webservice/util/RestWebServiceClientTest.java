@@ -2,10 +2,15 @@ package net.creuroja.android.model.webservice.util;
 
 import junit.framework.TestCase;
 
+import net.creuroja.android.model.locations.RailsLocationsResponse;
+import net.creuroja.android.model.webservice.auth.RailsLoginResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RestWebServiceClientTest extends TestCase {
     static final String RESOURCE_SESSIONS = "sessions.json";
@@ -18,7 +23,7 @@ public class RestWebServiceClientTest extends TestCase {
     static final String USERNAME = "user@user.us";
     static final String PASSWORD = "password";
     static final String TOKEN = "eA8fd5v-g59ru9E-VQzfvg";
-    static final String UPDATE_TIME = "2015-04-08 09:11:16";
+    static final String UPDATE_TIME = "2015-04-08 00:00:00";
 
     RestWebServiceClient client;
     ResponseFactory factory;
@@ -32,6 +37,7 @@ public class RestWebServiceClientTest extends TestCase {
     public void testGetWithLocations() throws Exception {
         setUpFactoryFor(RESOURCE_LOCATION);
         response = client.get(RESOURCE_LOCATION, authOptions(), lastUpdate());
+        assertTrue(response != null && response.isValid());
     }
 
 
@@ -58,15 +64,20 @@ public class RestWebServiceClientTest extends TestCase {
         factory = mock(ResponseFactory.class);
         switch (resourceLocation) {
             case RESOURCE_LOCATION:
-
+                response = new RailsLocationsResponse("Locations");
+                when(factory.fillResponseData(anyString())).thenReturn(response);
                 break;
             case RESOURCE_SESSIONS:
-
+                response = new RailsLoginResponse(TOKEN);
+                when(factory.fillResponseData(anyString())).thenReturn(response);
                 break;
             case RESOURCE_VEHICLES:
-
+                response = mock(Response.class);
+                when(response.content()).thenReturn("Vehicles!");
+                when(factory.fillResponseData(anyString())).thenReturn(response);
                 break;
         }
+        client.setResponseFactory(factory);
     }
 
     public void testPost() throws Exception {

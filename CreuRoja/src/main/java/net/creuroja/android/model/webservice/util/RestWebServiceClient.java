@@ -11,10 +11,10 @@ import java.util.List;
 public class RestWebServiceClient {
     String protocol;
     String host;
-    HttpURLConnection connection;
-    Response response;
     URL url;
+    HttpURLConnection connection;
     ResponseFactory factory;
+    Response response;
 
     public RestWebServiceClient(String protocol, String serverUrl) {
         this.protocol = protocol;

@@ -8,9 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-/**
- * Created by denis on 26.03.15.
- */
 public abstract class ResponseFactory {
     Response response;
 
