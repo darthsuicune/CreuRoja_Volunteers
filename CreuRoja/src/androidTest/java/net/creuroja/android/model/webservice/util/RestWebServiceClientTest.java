@@ -22,7 +22,7 @@ public class RestWebServiceClientTest extends TestCase {
     static final String ARG_LAST_UPDATE = "updated_at";
     static final String USERNAME = "user@user.us";
     static final String PASSWORD = "password";
-    static final String TOKEN = "eA8fd5v-g59ru9E-VQzfvg";
+    static final String TOKEN = "token";
     static final String UPDATE_TIME = "2015-04-08 00:00:00";
 
     RestWebServiceClient client;
