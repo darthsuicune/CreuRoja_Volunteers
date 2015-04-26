@@ -62,7 +62,6 @@
                     android:id="@+id/imageView"
                     android:layout_width="253dp"
                     android:layout_height="207dp"
-                    android:contentDescription="@string/login_logo_description"
                     android:paddingLeft="40dp"
                     android:paddingRight="40dp"
                     android:src="@drawable/logologin"

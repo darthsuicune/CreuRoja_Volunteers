@@ -7,6 +7,5 @@
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="login_progress_signing_in">Signin in</string>
-    <string name="login_notice">Notice: This application is currently limited to the Barcelona Red Cross volunteers.
-  If you're already a volunteer and have access problems, contact the local assembly.</string>
+    <string name="login_notice"></string>
 </resources>

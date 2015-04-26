@@ -7,6 +7,5 @@
     <string name="action_sign_in">Iniciar sesión</string>
     <string name="action_sign_in_short">Iniciar sesión</string>
     <string name="login_progress_signing_in">Iniciando sesión</string>
-    <string name="login_notice">"Aviso: Esta aplicación actualmente está limitada a los voluntarios de Cruz Roja Barcelona.
- Si ya eres voluntario y tienes problemas de acceso, contacta con la asamblea local."</string>
+    <string name="login_notice"></string>
 </resources>
