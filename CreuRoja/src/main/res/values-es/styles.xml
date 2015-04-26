@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="LoginFormContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/cruz_roja_main_red</item>
+        <item name="colorPrimaryDark">@color/cruz_roja_darker_red</item>
+    </style>
+
+    <style name="NavigationDrawerSectionHeader">
+        <item name="android:padding">4dp</item>
+        <item name="android:background">@color/navigation_drawer_header</item>
+    </style>
+
+    <style name="NavigationDrawerToggeableButton">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="NavigationDrawerToggeableDrawableButton" parent="NavigationDrawerToggeableButton">
+        <item name="android:drawablePadding">16dp</item>
+    </style>
+    <style name="InfoScreenLabel">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="InfoScreenInfo">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="location_index_toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="actionBarStyle">@style/ToolbarStyle</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+    <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:minHeight">?attr/actionBarSize</item>
+    </style>
+    <style name="LoginNotice">
+        <item name="android:background">@color/notice_background</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="LocationDetails">
+        <item name="android:background">@color/location_card_background</item>
+    </style>
+
+    <style name="LocationCard">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="LocationCard.Icon" parent="LocationCard">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+    <style name="LocationCard.Title" parent="LocationCard">
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+    </style>
+    <style name="LocationCard.Detail" parent="LocationCard"></style>
+
+</resources>
