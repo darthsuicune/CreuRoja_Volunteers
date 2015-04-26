@@ -6,6 +6,10 @@
     <string name="error_connecting">Error durante la conexión, inténtelo más tarde</string>
     <string name="error_invalid_response">Error del servidor</string>
     <string name="error_invalid_password">Contraseña incorrecta</string>
+    <string name="error_invalid_email">El correo es incorrecto</string>
     <string name="error_invalid_user">El usuario es inválido</string>
+    <string name="error_unsupported_encoding">Este dispositivo no admite el sistema de inicio de sesión</string>
+    <string name="error_user_removed">"El usuario ha sido invalidado por el administrador. Si cree que esto es un error, por favor contacte con su oficina mas cercana."</string>
     <string name="error_field_required">Todos los campos son obligatorios</string>
+    <string name="error_invalid_directions">Invalid Directions obtained.</string>
 </resources>

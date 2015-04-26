@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cruz_roja_main_red">#da291c</color>
+    <color name="cruz_roja_darker_red">#d32f2f</color>
+    <color name="notice_background">#ff8888</color>
+    <color name="navigation_drawer_header">#ccc</color>
+    <color name="navigation_drawer_background">#eee</color>
+    <color name="location_card_background">#eee</color>
+    <color name="drawer_item_selected">#ffff857f</color>
+</resources>

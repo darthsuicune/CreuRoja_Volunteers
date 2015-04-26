@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="navigation_drawer_open">Abrir panel de navegación</string>
+    <string name="navigation_drawer_close">Cerrar panel de navegación</string>
+    <string name="navigation_drawer_view_modes">Modo de mapa</string>
+    <string name="navigation_drawer_view_map">Ver mapa</string>
+    <string name="navigation_drawer_view_list">Ver listado</string>
+    <string name="navigation_drawer_location_types">Tipo de localización</string>
+    <string name="navigation_drawer_map_types">Tipo de mapa</string>
+</resources>

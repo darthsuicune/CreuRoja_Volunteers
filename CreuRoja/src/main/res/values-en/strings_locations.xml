@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fragment_location_detail_name_label">"Name"</string>
+    <string name="fragment_location_detail_description_label">"Description"</string>
+    <string name="fragment_location_detail_phone_label">"Phone"</string>
+    <string name="fragment_location_detail_address_label">"Address"</string>
+    <string name="fragment_location_detail_latitude_label">"Latitude"</string>
+    <string name="fragment_location_detail_longitude_label">"Longitude"</string>
+    <string name="fragment_location_detail_type_label">"Type"</string>
+    <string name="fragment_location_detail_updated_at_label">"Last updated at"</string>
+</resources>

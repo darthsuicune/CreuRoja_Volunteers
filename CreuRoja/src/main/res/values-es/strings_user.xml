@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_user_profile">Perfil del usuario</string>
+    <string name="user_role_volunteer">"Voluntario"</string>
+    <string name="user_role_technician">"Técnico"</string>
+    <string name="user_role_admin">"Administrador"</string>
+    <string name="view_profile">"Ver perfil"</string>
+    <string name="user_profile_name_label">"Nombre"</string>
+    <string name="user_profile_email_label">"Correo"</string>
+    <string name="user_profile_role_label">"Rol"</string>
+    <string name="user_profile_types_label">"Tipo"</string>
+    <string name="user_profile_phone_label">"Teléfono"</string>
+</resources>
