@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="map_style_normal">Mapa</string>
-    <string name="map_style_terrain">Terreny</string>
-    <string name="map_style_satellite">Satèl·lit</string>
-    <string name="map_style_hybrid">Híbrid</string>
-    <string name="marker_type_adaptadas">Adaptades</string>
-    <string name="marker_type_asamblea">Assemblees</string>
+    <string name="map_style_normal">Map</string>
+    <string name="map_style_terrain">Terrain</string>
+    <string name="map_style_satellite">Satellit</string>
+    <string name="map_style_hybrid">Hybrid</string>
+    <string name="marker_type_not_available">Not available</string>
+    <string name="marker_type_adaptadas">Adapted beaches</string>
+    <string name="marker_type_asamblea">Assemblies</string>
     <string name="marker_type_bravo">Bravos</string>
     <string name="marker_type_cuap">CUAPs</string>
-    <string name="marker_type_gasolinera">Gasolineres</string>
+    <string name="marker_type_gasolinera">Gas stations</string>
     <string name="marker_type_hospital">Hospitals</string>
-    <string name="marker_type_maritimo">Boat service</string>
-    <string name="marker_type_nostrum">Clau 2</string>
-    <string name="marker_type_salvamento">Salvmentiu</string>
-    <string name="marker_type_terrestre">Preventius</string>
-    <string name="no_marker_type">Desconocido</string>
+    <string name="marker_type_maritimo">Maritime preventive</string>
+    <string name="marker_type_nostrum">Code 2</string>
+    <string name="marker_type_salvamento">Rescue base</string>
+    <string name="marker_type_terrestre">Terrestrial preventive</string>
+    <string name="no_marker_type">Unknown</string>
 
     <string-array name="map_styles">
         <item>@string/map_style_normal</item>

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="api_key">AIzaSyApRMee00Mk5jRKjbM1azp5OdySR387eFo</string>
     <string name="app_name">Red Cross</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_locations">Locations</string>
+    <string name="title_activity_location_details">Location details</string>
+    <string name="error_unknown">Unknown error</string>
 
 </resources>

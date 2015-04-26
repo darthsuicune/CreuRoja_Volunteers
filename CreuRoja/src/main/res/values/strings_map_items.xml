@@ -4,17 +4,17 @@
     <string name="map_style_terrain">Terreny</string>
     <string name="map_style_satellite">Satèl·lit</string>
     <string name="map_style_hybrid">Híbrid</string>
-    <string name="marker_type_not_available">N/A</string>
+    <string name="marker_type_not_available">No disponible</string>
     <string name="marker_type_adaptadas">Adaptades</string>
     <string name="marker_type_asamblea">Assemblees</string>
     <string name="marker_type_bravo">Bravos</string>
     <string name="marker_type_cuap">CUAPs</string>
     <string name="marker_type_gasolinera">Gasolineres</string>
     <string name="marker_type_hospital">Hospitals</string>
-    <string name="marker_type_maritimo">Marítims</string>
+    <string name="marker_type_maritimo">Preventius marítims</string>
     <string name="marker_type_nostrum">Clau 2</string>
-    <string name="marker_type_salvamento">Salvmentiu</string>
-    <string name="marker_type_terrestre">Preventius</string>
+    <string name="marker_type_salvamento">Bases de salvament</string>
+    <string name="marker_type_terrestre">Preventius terrestres</string>
     <string name="no_marker_type">Desconegut</string>
 
     <string-array name="map_styles">

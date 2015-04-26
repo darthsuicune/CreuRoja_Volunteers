@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="navigation_drawer_view_modes">View Modes</string>
-    <string name="navigation_drawer_view_map">View map</string>
-    <string name="navigation_drawer_view_list">View list</string>
-    <string name="navigation_drawer_location_types">Location types</string>
-    <string name="navigation_drawer_map_types">Map types</string>
+    <string name="navigation_drawer_open">Obrir panel de navegació</string>
+    <string name="navigation_drawer_close">Tancar panel de navegació</string>
+    <string name="navigation_drawer_view_modes">Veure manera</string>
+    <string name="navigation_drawer_view_map">Veure mapa</string>
+    <string name="navigation_drawer_view_list">Veure llista</string>
+    <string name="navigation_drawer_location_types">Tipus de localització</string>
+    <string name="navigation_drawer_map_types">Tipus de mapa</string>
 </resources>

@@ -11,6 +11,6 @@
     <!--other-->
     <string name="location_disabled_title">Lozalització està desactivada</string>
     <string name="location_disabled_message">Localització desactivada, vol activarla?</string>
-    <string name="open_location_settings">Sí</string>
-    <string name="cancel">No</string>
+    <string name="open_location_settings">Acceptar</string>
+    <string name="cancel">Cancelar</string>
 </resources>

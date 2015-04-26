@@ -11,6 +11,6 @@
     <!--other-->
     <string name="location_disabled_title">Location is disabled</string>
     <string name="location_disabled_message">Location is disabled. Do you want to activate it?</string>
-    <string name="open_location_settings">Yes, please</string>
-    <string name="cancel">No, ty</string>
+    <string name="open_location_settings">Accept</string>
+    <string name="cancel">Cancel</string>
 </resources>

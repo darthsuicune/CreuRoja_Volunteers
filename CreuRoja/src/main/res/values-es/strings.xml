@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="api_key">AIzaSyApRMee00Mk5jRKjbM1azp5OdySR387eFo</string>
     <string name="app_name">Cruz Roja</string>
     <string name="action_settings">Ajustes</string>
+    <string name="title_activity_locations">Localizaciones</string>
+    <string name="title_activity_location_details">Detalles de la localización</string>
+    <string name="error_unknown">Error desconocido</string>
 
 </resources>

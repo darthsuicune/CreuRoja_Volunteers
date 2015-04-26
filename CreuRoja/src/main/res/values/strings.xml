@@ -4,8 +4,8 @@
     <string name="api_key">AIzaSyApRMee00Mk5jRKjbM1azp5OdySR387eFo</string>
     <string name="app_name">Creu Roja</string>
     <string name="action_settings">Configuració</string>
-    <string name="title_activity_locations">Locations</string>
-    <string name="title_activity_location_details">Location Details</string>
-    <string name="error_unknown">Unknown error</string>
+    <string name="title_activity_locations">Localitzacions</string>
+    <string name="title_activity_location_details">Detalls de la localització</string>
+    <string name="error_unknown">Error desconegut</string>
 
 </resources>
