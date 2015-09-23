@@ -34,7 +34,7 @@ public abstract class ResponseFactory {
 
     protected abstract Response fillResponseData(String input);
 
-    private String asString(InputStream stream) throws IOException {
+    public static String asString(InputStream stream) throws IOException {
         StringBuilder builder = new StringBuilder();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         String line = reader.readLine();
