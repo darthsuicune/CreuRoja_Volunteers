@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CreuRoja.iml" filepath="$PROJECT_DIR$/CreuRoja.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CreuRoja_Volunteers.iml" filepath="$PROJECT_DIR$/CreuRoja_Volunteers.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CreuRoja_Volunteers.iml" filepath="$PROJECT_DIR$/CreuRoja_Volunteers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CreuRoja/CreuRoja-CreuRoja.iml" filepath="$PROJECT_DIR$/CreuRoja/CreuRoja-CreuRoja.iml" />
       <module fileurl="file://$PROJECT_DIR$/directions/directions.iml" filepath="$PROJECT_DIR$/directions/directions.iml" />
     </modules>
   </component>
