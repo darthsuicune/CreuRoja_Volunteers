@@ -1,4 +1,4 @@
-package net.creuroja.android.model.directions;
+package com.dlgdev.directions;
 
 
 import com.google.android.gms.maps.model.LatLng;
@@ -12,16 +12,15 @@ import java.util.List;
 public class Directions {
     LatLng origin;
     LatLng destination;
-	private List<LatLng> points;
-	private List<DirectionsRoute> routes;
+	List<LatLng> points = new ArrayList<>();
+	List<DirectionsRoute> routes;
 
-	public Directions(LatLng origin, LatLng destination) {
-        points = new ArrayList<>();
-        this.origin = origin;
-        this.destination = destination;
+	public Directions() {
     }
 
-	public Directions get() {
+	public Directions get(LatLng origin, LatLng destination) {
+		this.origin = origin;
+		this.destination = destination;
 		getRoutes(origin.latitude, origin.longitude, destination.latitude, destination.longitude);
 		createPointList();
 		return this;

@@ -1,4 +1,4 @@
-package net.creuroja.android.model.directions;
+package com.dlgdev.directions;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;

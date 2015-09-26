@@ -46,7 +46,7 @@ public class CreuRojaAuthenticator extends AbstractAccountAuthenticator {
 							 String authTokenType, String[] requiredFeatures, Bundle options)
 			throws NetworkErrorException {
 		final AccountManager manager = AccountManager.get(mContext);
-		if(manager.getAccountsByType(AccountUtils.ACCOUNT_TYPE).length > 0) {
+		if(manager.getAccountsByType(AccountsHelper.ACCOUNT_TYPE).length > 0) {
 			Toast.makeText(mContext, "Test", Toast.LENGTH_LONG).show();
 			return null;
 		}

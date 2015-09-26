@@ -4,9 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.dlgdev.directions.Directions;
 import com.google.android.gms.maps.model.LatLng;
-
-import net.creuroja.android.model.directions.Directions;
 
 /**
  * Loader for retrieving directions. Requires
@@ -56,7 +55,7 @@ public class DirectionsLoader extends AsyncTaskLoader<Directions> {
 
     @Override
     public Directions loadInBackground() {
-        directions = new Directions(origin, destination);
-        return directions.get();
+        directions = new Directions();
+        return directions.get(origin, destination);
     }
 }

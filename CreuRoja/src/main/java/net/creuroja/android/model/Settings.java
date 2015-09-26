@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.webservice.auth.AccountUtils;
+import net.creuroja.android.model.webservice.auth.AccountsHelper;
 
 /**
  * Created by denis on 14.06.14.
@@ -50,6 +50,6 @@ public class Settings {
 	}
 
 	public static void removeAccount(AccountManager accountManager, String accessToken) {
-		accountManager.invalidateAuthToken(AccountUtils.ACCOUNT_TYPE, accessToken);
+		accountManager.invalidateAuthToken(AccountsHelper.ACCOUNT_TYPE, accessToken);
 	}
 }

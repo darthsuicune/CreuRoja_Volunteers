@@ -1,4 +1,4 @@
-package net.creuroja.android.model.directions;
+package com.dlgdev.directions;
 
 /**
  * Created by lapuente on 12.01.15.

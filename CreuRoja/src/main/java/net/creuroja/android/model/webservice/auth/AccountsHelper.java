@@ -13,15 +13,21 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class AccountUtils {
+public class AccountsHelper {
 	public static final String ACCOUNT_TYPE = "Creu Roja";
 	public static final String AUTH_TOKEN_TYPE = "";
 
-	public static Account getAccount(Context context) {
-		return AccountManager.get(context).getAccountsByType(ACCOUNT_TYPE)[0];
+	Activity activity;
+
+	public AccountsHelper(Activity activity) {
+		this.activity = activity;
 	}
 
-	public static void validateLogin(final Activity activity, final LoginManager entryPoint) {
+	public Account getAccount() {
+		return AccountManager.get(activity).getAccountsByType(ACCOUNT_TYPE)[0];
+	}
+
+	public void requestLogin(final LoginManager entryPoint) {
 		AccountManager accountManager = AccountManager.get(activity);
 		MyAccountCallback callback = new MyAccountCallback(entryPoint);
 		Handler handler = new MyAccountHandler();

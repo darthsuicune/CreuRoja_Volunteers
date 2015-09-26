@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.dlgdev.directions.Directions;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -25,7 +26,6 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
 
 import net.creuroja.android.R;
-import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.directions.loader.DirectionsLoader;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;

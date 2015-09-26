@@ -1,5 +1,8 @@
 package net.creuroja.android.model.directions;
 
+import com.dlgdev.directions.DirectionsException;
+import com.dlgdev.directions.DirectionsRequest;
+
 import junit.framework.TestCase;
 
 /**

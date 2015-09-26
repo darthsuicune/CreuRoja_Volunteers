@@ -1,4 +1,4 @@
-package net.creuroja.android.model.directions;
+package com.dlgdev.directions;
 
 import org.json.JSONArray;
 import org.json.JSONException;

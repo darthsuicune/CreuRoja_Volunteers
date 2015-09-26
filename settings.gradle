@@ -1,1 +1,1 @@
-include ':CreuRoja'
+include ':CreuRoja', ':directions'

@@ -20,7 +20,7 @@ import net.creuroja.android.model.locations.Locations;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
-import net.creuroja.android.model.webservice.auth.AccountUtils;
+import net.creuroja.android.model.webservice.auth.AccountsHelper;
 import net.creuroja.android.model.webservice.util.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
@@ -71,7 +71,7 @@ public class LocationsSyncAdapter extends AbstractThreadedSyncAdapter
                         getContext().getContentResolver(), restClient, this);
 
                 accessToken = accountManager
-                        .blockingGetAuthToken(account, AccountUtils.AUTH_TOKEN_TYPE, true);
+                        .blockingGetAuthToken(account, AccountsHelper.AUTH_TOKEN_TYPE, true);
 
                 String lastUpdateTime = prefs.getString(Settings.LAST_UPDATE_TIME, "0");
                 client.getLocations(accessToken, lastUpdateTime);

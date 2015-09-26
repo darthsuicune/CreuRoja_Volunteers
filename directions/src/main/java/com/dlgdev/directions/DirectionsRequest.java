@@ -1,9 +1,9 @@
-package net.creuroja.android.model.directions;
+package com.dlgdev.directions;
 
-import net.creuroja.android.model.webservice.util.ResponseFactory;
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -40,8 +40,21 @@ public class DirectionsRequest {
 
     private DirectionsResponse connect() throws IOException {
         InputStream stream = connection.getInputStream();
-        String response = ResponseFactory.asString(stream);
+        String response = asString(stream);
         return new DirectionsResponse(response);
+    }
+
+    private String asString(InputStream stream) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        String line = null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        do {
+            line = reader.readLine();
+            if(line != null) {
+                builder.append(line);
+            }
+        } while(line != null);
+        return builder.toString();
     }
 
     private void buildConnectionUrl(double originLat, double originLng, double destinationLat,

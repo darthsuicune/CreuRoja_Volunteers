@@ -1,5 +1,7 @@
 package net.creuroja.android.model.directions;
 
+import com.dlgdev.directions.DirectionsException;
+import com.dlgdev.directions.DirectionsResponse;
 import com.google.android.gms.maps.model.LatLng;
 
 import junit.framework.TestCase;

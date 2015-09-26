@@ -1,8 +1,7 @@
 package net.creuroja.android.view.users.activities;
 
-
+import android.Manifest;
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,12 +10,15 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,7 +34,8 @@ import net.creuroja.android.R;
 import net.creuroja.android.model.webservice.CRWebServiceClient;
 import net.creuroja.android.model.webservice.ClientConnectionListener;
 import net.creuroja.android.model.webservice.RailsWebServiceClient;
-import net.creuroja.android.model.webservice.auth.AccountUtils;
+import net.creuroja.android.model.webservice.auth.AccountsHelper;
+import net.creuroja.android.model.webservice.auth.BaseAuthenticatorActivity;
 import net.creuroja.android.model.webservice.util.Response;
 import net.creuroja.android.model.webservice.util.RestWebServiceClient;
 
@@ -42,11 +45,12 @@ import java.util.List;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AccountAuthenticatorActivity {
+public class LoginActivity extends BaseAuthenticatorActivity {
     public static final int E_MAIL_AUTO_COMPLETE_LOADER = 0;
     public static final String ARG_ACCOUNT_TYPE = "accountType";
     public static final String ARG_AUTH_TYPE = "authType";
     public static final String ARG_IS_ADDING_NEW_ACCOUNT = "is adding new account";
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 1;
 
     // Keep track of the login task to ensure we can cancel it if requested.
     private UserLoginTask mAuthTask = null;
@@ -63,7 +67,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
         // Set up the login form.
         emailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        readContacts();
 
         passwordView = (EditText) findViewById(R.id.password);
         passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -87,10 +91,39 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         progressView = findViewById(R.id.login_progress);
     }
 
+    private void readContacts() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS},
+                    REQUEST_CODE_ASK_PERMISSIONS);
+            return;
+        }
+        populateAutoComplete();
+    }
+
     private void populateAutoComplete() {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             getLoaderManager()
                     .initLoader(E_MAIL_AUTO_COMPLETE_LOADER, null, new AutoCompleteLoaderHelper());
+        }
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                     @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    populateAutoComplete();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(this, "READ_CONTACTS Denied", Toast.LENGTH_LONG)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -335,7 +368,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
                 onErrorResponse(401, R.string.error_user_removed);
             }
             intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, email);
-            intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountUtils.ACCOUNT_TYPE);
+            intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountsHelper.ACCOUNT_TYPE);
             intent.putExtra(AccountManager.KEY_AUTHTOKEN, response.content());
             intent.putExtra(AccountManager.KEY_PASSWORD, password);
         }

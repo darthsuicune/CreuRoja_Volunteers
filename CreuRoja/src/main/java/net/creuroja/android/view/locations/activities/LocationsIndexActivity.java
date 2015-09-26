@@ -1,39 +1,42 @@
 package net.creuroja.android.view.locations.activities;
 
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.dlgdev.directions.Directions;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 
 import net.creuroja.android.R;
+import net.creuroja.android.dagger.DaggerLocationsActivityComponent;
+import net.creuroja.android.dagger.LocationsActivityComponent;
+import net.creuroja.android.dagger.LocationsActivityModule;
 import net.creuroja.android.model.Settings;
-import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
-import net.creuroja.android.model.webservice.auth.AccountUtils;
-import net.creuroja.android.model.webservice.auth.AccountUtils.LoginManager;
+import net.creuroja.android.model.webservice.auth.AccountsHelper;
+import net.creuroja.android.model.webservice.auth.AccountsHelper.LoginManager;
 import net.creuroja.android.view.general.activities.SettingsActivity;
 import net.creuroja.android.view.locations.OnDirectionsRequestedListener;
 import net.creuroja.android.view.locations.ViewMode;
@@ -48,12 +51,14 @@ import net.creuroja.android.view.locations.fragments.MapFragmentHandler.Directio
 import net.creuroja.android.view.locations.fragments.MapFragmentHandlerFactory;
 import net.creuroja.android.view.users.activities.UserProfileActivity;
 
+import javax.inject.Inject;
+
 import static net.creuroja.android.view.locations.fragments.LocationCardFragment.OnLocationCardInteractionListener;
 import static net.creuroja.android.view.locations.fragments.LocationDetailFragment.OnLocationDetailsListener;
 import static net.creuroja.android.view.locations.fragments.LocationsDrawerFragment.MapNavigationDrawerCallbacks;
 import static net.creuroja.android.view.locations.fragments.gmaps.ClusteredGoogleMapFragment.MapInteractionListener;
 
-public class LocationsIndexActivity extends ActionBarActivity implements LoginManager,
+public class LocationsIndexActivity extends AppCompatActivity implements LoginManager,
         MapNavigationDrawerCallbacks, LocationsListListener, OnLocationCardInteractionListener,
         MapInteractionListener, OnDirectionsRequestedListener, OnLocationDetailsListener,
         DirectionsDrawnListener, ConnectionCallbacks, OnConnectionFailedListener {
@@ -62,6 +67,8 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
     private static final String TAG_HANDLER = "CreuRojaLocationsHandler";
     private static final String TAG_CARD = "CreuRojaLocationCard";
     private static final String TAG_DETAILS = "CreuRojaDetail";
+    private static final int REQUEST_RESOLVE_ERROR = 1234;
+    private static final String DIALOG_ERROR = "dialog error";
 
     // This are the fragments that the activity handles
     LocationsDrawerFragment locationsDrawerFragment;
@@ -70,33 +77,29 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
     LocationCardFragment cardFragment;
     LocationsHandlerFragment locationsHandlerFragment;
 
-    SharedPreferences prefs;
-
     ViewMode currentViewMode;
 
-    GoogleApiClient client;
+    @Inject SharedPreferences prefs;
+    @Inject GoogleApiClient client;
+    @Inject AccountsHelper helper;
+    boolean resolvingError;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (savedInstanceState != null && AccountUtils.getAccount(this) != null) {
+        LocationsActivityComponent component = DaggerLocationsActivityComponent.builder()
+                .locationsActivityModule(new LocationsActivityModule(this, this, this))
+                .build();
+        component.inject(this);
+        if (savedInstanceState != null && helper.getAccount() != null) {
             successfulLogin();
         } else {
-            AccountUtils.validateLogin(this, this);
+            helper.requestLogin(this);
         }
     }
 
     // Callbacks for when the auth token is returned
     @Override public void successfulLogin() {
-        if (currentViewMode == null) {
-            int preferredMode = prefs.getInt(Settings.VIEW_MODE, ViewMode.MAP.getValue());
-            currentViewMode = ViewMode.getViewMode(preferredMode);
-        }
-
-        client = new GoogleApiClient.Builder(this).addApi(LocationServices.API)
-                .addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         client.connect();
-
         startUi();
     }
 
@@ -105,6 +108,10 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
     }
 
     private void startUi() {
+        if (currentViewMode == null) {
+            int preferredMode = prefs.getInt(Settings.VIEW_MODE, ViewMode.MAP.getValue());
+            currentViewMode = ViewMode.getViewMode(preferredMode);
+        }
         setContentView(R.layout.activity_locations);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.location_index_toolbar);
@@ -133,10 +140,6 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
             manager.beginTransaction().add(locationsHandlerFragment, TAG_HANDLER).commit();
         }
         locationsHandlerFragment.registerListener(locationsDrawerFragment);
-    }
-
-    private void performSync() {
-        locationsHandlerFragment.performSync();
     }
 
     @Override public void onViewModeChanged(ViewMode newViewMode) {
@@ -304,27 +307,8 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
         if (locationsDrawerFragment != null && !locationsDrawerFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen if the drawer is not
             // showing. Otherwise, let the drawer decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.locations, menu);
+            getMenuInflater().inflate(R.menu.locate, menu);
             getMenuInflater().inflate(R.menu.global, menu);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-                SearchManager searchManager =
-                        (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-                SearchView searchView =
-                        (SearchView) menu.findItem(R.id.action_search).getActionView();
-                searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-                searchView.setIconifiedByDefault(true);
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override public boolean onQueryTextSubmit(String s) {
-                        performSearch(s);
-                        return true;
-                    }
-
-                    @Override public boolean onQueryTextChange(String s) {
-                        performSearch(s);
-                        return true;
-                    }
-                });
-            }
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -339,12 +323,6 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
                 return true;
             case R.id.action_settings:
                 openSettings();
-                return true;
-            case R.id.action_refresh:
-                performSync();
-                return true;
-            case R.id.action_search:
-                //Handled upon menu creation
                 return true;
             case R.id.action_locate:
                 locate();
@@ -386,8 +364,7 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
     }
 
     private boolean areLocationServicesEnabled() {
-        LocationManager lm =
-                (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         return (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER));
     }
@@ -407,10 +384,6 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
         builder.create().show();
     }
 
-    private void performSearch(String query) {
-        locationsHandlerFragment.search(query);
-    }
-
     @Override public void onDirectionsDrawn(Directions directions) {
         cardFragment.onDirectionsDrawn(directions);
     }
@@ -423,7 +396,53 @@ public class LocationsIndexActivity extends ActionBarActivity implements LoginMa
         //Nothing to do here
     }
 
-    @Override public void onConnectionFailed(ConnectionResult connectionResult) {
-        //Nothing to do here
+    @Override public void onConnectionFailed(ConnectionResult result) {
+        if (resolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (result.hasResolution()) {
+            try {
+                resolvingError = true;
+                result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
+            } catch (IntentSender.SendIntentException e) {
+                // There was an error with the resolution intent. Try again.
+                client.connect();
+            }
+        } else {
+            resolvingError = true;
+            showErrorDialog(result.getErrorCode());
+        }
+    }
+
+    /* Creates a dialog for an error message */
+    private void showErrorDialog(int errorCode) {
+        // Create a fragment for the error dialog
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getSupportFragmentManager(), "errordialog");
+    }
+
+    /* A fragment to display an error dialog */
+    public static class ErrorDialogFragment extends DialogFragment {
+        public ErrorDialogFragment() { }
+
+        @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Get the error code and retrieve the appropriate dialog
+            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
+            return GoogleApiAvailability.getInstance().getErrorDialog(
+                    this.getActivity(), errorCode, REQUEST_RESOLVE_ERROR);
+        }
+
+        @Override public void onDismiss(DialogInterface dialog) {
+            onDialogDismissed();
+        }
+
+        /* Called from ErrorDialogFragment when the dialog is dismissed. */
+        public void onDialogDismissed() {
+            ((LocationsIndexActivity)getActivity()).resolvingError = false;
+        }
     }
 }

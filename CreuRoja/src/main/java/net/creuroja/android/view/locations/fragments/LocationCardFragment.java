@@ -12,9 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.dlgdev.directions.Directions;
+
 import net.creuroja.android.R;
 import net.creuroja.android.model.db.CreuRojaContract;
-import net.creuroja.android.model.directions.Directions;
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locationservices.LocationService;
 import net.creuroja.android.model.services.Service;

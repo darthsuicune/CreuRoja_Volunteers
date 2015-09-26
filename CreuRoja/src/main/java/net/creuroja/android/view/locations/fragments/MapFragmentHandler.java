@@ -2,7 +2,8 @@ package net.creuroja.android.view.locations.fragments;
 
 import android.support.v4.app.Fragment;
 
-import net.creuroja.android.model.directions.Directions;
+import com.dlgdev.directions.Directions;
+
 import net.creuroja.android.model.locations.Location;
 import net.creuroja.android.model.locations.LocationType;
 

@@ -37,12 +37,14 @@
     <output-test url="file://$MODULE_DIR$/CreuRoja/build/intermediates/classes/androidTest/debug" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/CreuRoja">
+      <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/apt/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/r/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/aidl/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/buildConfig/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/rs/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/res/rs/debug" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/res/resValues/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/apt/androidTest/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/r/androidTest/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/aidl/androidTest/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/CreuRoja/build/generated/source/buildConfig/androidTest/debug" isTestSource="true" generated="true" />
@@ -90,29 +92,30 @@
       <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.android.support/mediarouter-v7/22.2.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-appinvite/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-appstate/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-cast/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-nearby/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-panorama/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-safetynet/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-vision/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services/7.8.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.maps.android/android-maps-utils/0.3.4/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-appinvite/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-appstate/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-cast/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-measurement/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-nearby/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-panorama/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-safetynet/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-vision/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/8.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/exploded-aar/com.google.android.gms/play-services/8.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/jacoco" />
       <excludeFolder url="file://$MODULE_DIR$/CreuRoja/build/intermediates/javaResources" />
@@ -132,56 +135,61 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="mediarouter-v7-22.2.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-idling-resource-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-gcm-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-appindexing-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="dexmaker-1.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="runner-0.4" level="project" />
-    <orderEntry type="library" exported="" name="play-services-games-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-wallet-7.8.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="accessibility-test-framework-2.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-identity-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-library-1.3" level="project" />
-    <orderEntry type="library" exported="" name="play-services-drive-7.8.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="asm-5.0.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="asm-commons-5.0.4" level="project" />
     <orderEntry type="library" exported="" name="android-maps-utils-0.3.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="dexmaker-mockito-1.4" level="project" />
+    <orderEntry type="library" exported="" name="play-services-analytics-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-base-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-cast-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-intents-2.2.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="byte-buddy-dep-0.6.10" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="exposed-instrumentation-api-publish-0.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javax.annotation-api-1.2" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-23.0.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-appstate-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="design-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-location-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-safetynet-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-games-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-basement-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="javawriter-2.1.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-panorama-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-plus-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-maps-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-cast-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-nearby-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-fitness-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-wearable-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="dagger-2.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-measurement-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-base-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-location-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-integration-1.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-contrib-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-ads-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-analytics-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-appindexing-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-vision-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-appinvite-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-safetynet-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-drive-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="mockito-core-2.0.17-beta" level="project" />
+    <orderEntry type="library" exported="" name="jsr250-api-1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="jsr305-2.0.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-7.8.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="objenesis-2.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="espresso-core-2.2.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-fitness-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-vision-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-appinvite-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-ads-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="rules-0.4" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="javax.inject-1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-nearby-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-appstate-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-wearable-7.8.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-identity-7.8.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-gcm-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-wallet-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-maps-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
+    <orderEntry type="library" exported="" name="play-services-panorama-8.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
+    <orderEntry type="library" exported="" name="play-services-plus-8.1.0" level="project" />
+    <orderEntry type="module" module-name="directions" exported="" />
   </component>
 </module>
