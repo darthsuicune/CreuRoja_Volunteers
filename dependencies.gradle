@@ -1,0 +1,46 @@
+ext {
+    //Runtime versions
+    supportLibraryVersion = "23.2.1"
+    ollieVersion = "0.3.2-SNAPSHOT"
+    daggerVersion = "2.0.2"
+    javaxAnnotationVersion = '1.0'
+    butterKnifeVersion = "7.0.1"
+    picassoVersion = "2.5.2"
+    retrofitVersion = "2.0.0-beta4"
+    playServicesVersion = "8.4.0"
+    mapUtilsVersion = "0.3.4"
+
+    //Runtime libraries
+    runtime = [
+            //APT
+            daggerCompiler: "com.google.dagger:dagger-compiler:${daggerVersion}",
+            ollieCompiler: "com.michaelpardo:ollie-compiler:${ollieVersion}",
+            //Provided
+            javaxAnnotation: "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
+            //Compile
+            maps: "com.google.android.gms:play-services-maps:${playServicesVersion}",
+            location: "com.google.android.gms:play-services-location:${playServicesVersion}",
+            mapsUtils: "com.google.maps.android:android-maps-utils:${mapUtilsVersion}",
+            ollie: "com.michaelpardo:ollie:${ollieVersion}",
+            dagger: "com.google.dagger:dagger:${daggerVersion}",
+            design: "com.android.support:design:${supportLibraryVersion}",
+            cardView: "com.android.support:cardview-v7:${supportLibraryVersion}",
+            butterKnife: "com.jakewharton:butterknife:${butterKnifeVersion}",
+            picasso: "com.squareup.picasso:picasso:${picassoVersion}",
+            retrofit: "com.squareup.retrofit2:retrofit:${retrofitVersion}",
+    ]
+    //Testing versions
+    espressoLibraryVersion = "2.2.1"
+    dexmakerVersion = "1.4"
+    mockitoVersion = "2.0.17-beta"
+    jUnitVersion = "4.12"
+
+    //Testing libraries
+    test = [
+            espressoIntents: "com.android.support.test.espresso:espresso-intents:${espressoLibraryVersion}",
+            espressoContrib: "com.android.support.test.espresso:espresso-contrib:${espressoLibraryVersion}",
+            dexmakerMockito: "com.crittercism.dexmaker:dexmaker-mockito:${dexmakerVersion}",
+            dexmakerDx: "com.crittercism.dexmaker:dexmaker-dx:${dexmakerVersion}",
+            annotations: "com.android.support:support-annotations:${supportLibraryVersion}",
+    ]
+}
