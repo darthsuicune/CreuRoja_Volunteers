@@ -1,13 +1,11 @@
 package net.creuroja.android.model.directions;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -41,21 +39,22 @@ public class DirectionsRequest {
 	}
 
 	private DirectionsResponse connect() {
-		HttpResponse response;
+		HttpURLConnection connection;
 		try {
-			HttpClient client = new DefaultHttpClient();
-			response = client.execute(new HttpGet(url));
+			URL url = new URL(this.url);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.connect();
+			return new DirectionsResponse(read(connection.getInputStream()));
 		} catch (IOException e) {
 			throw new DirectionsException(e);
 		}
-		return new DirectionsResponse(read(response));
 	}
 
-	private String read(HttpResponse response) {
+	private String read(InputStream stream) {
 		StringBuilder builder;
 		try {
 			BufferedReader reader =
-					new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+					new BufferedReader(new InputStreamReader(stream));
 			builder = new StringBuilder();
 			String line;
 			for(line = reader.readLine(); line != null; line = reader.readLine()) {
